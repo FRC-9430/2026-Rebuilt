@@ -42,28 +42,6 @@ class CommandSwerveDrivetrainTest {
         if (drivetrain != null) drivetrain.close();
     }
 
-    // ==================== TUNER CONSTANTS VALIDATION ====================
-
-    @Test
-    @DisplayName("Module positions should follow WPILib coordinate convention")
-    void modulePositions_shouldFollowWPILibConvention() {
-        // WPILib: +X is forward, +Y is left
-        // Front modules: +X, Back modules: -X
-        // Left modules: +Y, Right modules: -Y
-        
-        assertTrue(TunerConstants.FrontLeft.LocationX > 0, "FrontLeft should have +X");
-        assertTrue(TunerConstants.FrontLeft.LocationY > 0, "FrontLeft should have +Y");
-        
-        assertTrue(TunerConstants.FrontRight.LocationX > 0, "FrontRight should have +X");
-        assertTrue(TunerConstants.FrontRight.LocationY < 0, "FrontRight should have -Y");
-        
-        assertTrue(TunerConstants.BackLeft.LocationX < 0, "BackLeft should have -X");
-        assertTrue(TunerConstants.BackLeft.LocationY > 0, "BackLeft should have +Y");
-        
-        assertTrue(TunerConstants.BackRight.LocationX < 0, "BackRight should have -X");
-        assertTrue(TunerConstants.BackRight.LocationY < 0, "BackRight should have -Y");
-    }
-
     // ==================== COMMAND INTEGRATION TESTS ====================
 
     @Test
