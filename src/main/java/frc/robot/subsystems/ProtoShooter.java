@@ -14,7 +14,7 @@ public class ProtoShooter extends SubsystemBase {
     public double subSpeed = 0.0;
 
     public ProtoShooter() {
-    
+
     }
 
     public void runForward() {
@@ -37,10 +37,20 @@ public class ProtoShooter extends SubsystemBase {
 
     public void setMainSpeed(double speed) {
         mainSpeed = speed;
+        if (mainSpeed > 1.0) {
+            mainSpeed = 1.0;
+        } else if (mainSpeed < 0.0) {
+            mainSpeed = 0.0;
+        }
     }
 
     public void setSubSpeed(double speed) {
         subSpeed = speed;
+        if (subSpeed > 1.0) {
+            subSpeed = 1.0;
+        } else if (subSpeed < 0.0) {
+            subSpeed = 0.0;
+        }
     }
 
 }
