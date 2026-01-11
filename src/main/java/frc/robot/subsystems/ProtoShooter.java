@@ -20,13 +20,13 @@ public class ProtoShooter extends SubsystemBase {
 
     public void runForward() {
         mainMotor1.set(mainSpeed);
-        mainMotor2.set(mainSpeed);
+        mainMotor2.set(-mainSpeed);
         subMotor.set(subSpeed);
     }
 
     public void runBackward() {
         mainMotor1.set(-mainSpeed);
-        mainMotor2.set(-mainSpeed);
+        mainMotor2.set(mainSpeed);
         subMotor.set(-subSpeed);
     }
 
