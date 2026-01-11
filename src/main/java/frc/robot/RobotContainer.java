@@ -6,8 +6,15 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.util.ElasticDashboard;
+
 
 public class RobotContainer {
+  
+  
+  public ElasticDashboard dash = new ElasticDashboard();
+  
+  
   public RobotContainer() {
     configureBindings();
   }
