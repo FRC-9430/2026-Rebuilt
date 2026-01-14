@@ -13,8 +13,8 @@ public class ClimbSubsystem extends SubsystemBase {
   /** Creates a new ClimbSubsystem. */
   public ClimbSubsystem() {}
 
-   
-   private PIDController climberController = new PIDController (PIDConstants.kClimberkp, PIDConstants.kClimberki, PIDConstants.kClimberkd);
+  private AbsoluteEncoder ClimberEncoder;   
+  private PIDController climberController = new PIDController (PIDConstants.kClimberkp, PIDConstants.kClimberki, PIDConstants.kClimberkd);
 
 
 
@@ -36,5 +36,7 @@ public class ClimbSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+     climberController.calculate(ClimberEncoder.getPosition(), 0.5);
   }
 }
