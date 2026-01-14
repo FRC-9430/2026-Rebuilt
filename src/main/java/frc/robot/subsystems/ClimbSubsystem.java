@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.AbsoluteEncoder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PIDConstants;
@@ -12,7 +13,8 @@ public class ClimbSubsystem extends SubsystemBase {
   /** Creates a new ClimbSubsystem. */
   public ClimbSubsystem() {}
 
-private PIDController climberController = new PIDController (PIDConstants.kClimberkp, PIDConstants.kClimberki, PIDConstants.kClimberkd);
+   
+   private PIDController climberController = new PIDController (PIDConstants.kClimberkp, PIDConstants.kClimberki, PIDConstants.kClimberkd);
 
 
 
