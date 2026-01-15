@@ -35,7 +35,7 @@ public class ShooterSubsystemTest {
 
     @BeforeEach
     void setUp() {
-        assert HAL.initialize(500, 0);
+        assertTrue(HAL.initialize(500, 0));
         m_shooter = new ShooterSubsystem();
         m_topFlywheelSim = new SparkFlexSim(m_shooter.getTopFlywheelMotor(), null);
         m_bottomFlywheelSim = new SparkFlexSim(m_shooter.getBottomFlywheelMotor(), null);
@@ -73,7 +73,7 @@ public class ShooterSubsystemTest {
     @Test
     void testFlywheelsSpinUp() {
         double targetRPM = ShooterConstants.kShooterTargetRPM;
-        m_shooter.setFlywheelRPM(targetRPM);
+        m_shooter.setFlywheelSpeeds(targetRPM, targetRPM);
         step();
 
         // Simulate flywheels spinning up
@@ -95,7 +95,7 @@ public class ShooterSubsystemTest {
      */
     @Test
     void testFlywheelsStop() {
-        m_shooter.setFlywheelRPM(ShooterConstants.kShooterTargetRPM);
+        m_shooter.setFlywheelSpeeds(ShooterConstants.kShooterTargetRPM, ShooterConstants.kShooterTargetRPM);
         step();
 
         m_shooter.stopFlywheels();
@@ -113,7 +113,7 @@ public class ShooterSubsystemTest {
     @Test
     void testFlywheelsAtSpeed() {
         double targetRPM = ShooterConstants.kShooterTargetRPM;
-        m_shooter.setFlywheelRPM(targetRPM);
+        m_shooter.setFlywheelSpeeds(targetRPM, targetRPM);
 
         m_topFlywheelSim.setVelocity(targetRPM);
         m_bottomFlywheelSim.setVelocity(targetRPM);
@@ -129,7 +129,7 @@ public class ShooterSubsystemTest {
      */
     @Test
     void testFlywheelsNotAtSpeed() {
-        m_shooter.setFlywheelRPM(ShooterConstants.kShooterTargetRPM);
+        m_shooter.setFlywheelSpeeds(ShooterConstants.kShooterTargetRPM, ShooterConstants.kShooterTargetRPM);
 
         m_topFlywheelSim.setVelocity(ShooterConstants.kShooterIdleRPM);
         m_bottomFlywheelSim.setVelocity(ShooterConstants.kShooterIdleRPM);
@@ -176,7 +176,7 @@ public class ShooterSubsystemTest {
      */
     @Test
     void testHoodAtPosition() {
-        m_shooter.setHoodPosition(TARGET_HOOD_POSITION);
+        m_shooter.setShootingAngle(TARGET_HOOD_POSITION);
         m_hoodEncoderSim.setPosition(TARGET_HOOD_POSITION);
         step();
 
@@ -190,7 +190,7 @@ public class ShooterSubsystemTest {
      */
     @Test
     void testHoodNotAtPosition() {
-        m_shooter.setHoodPosition(TARGET_HOOD_POSITION);
+        m_shooter.setShootingAngle(TARGET_HOOD_POSITION);
         m_hoodEncoderSim.setPosition(CURRENT_HOOD_POSITION);
         step();
 
@@ -233,7 +233,7 @@ public class ShooterSubsystemTest {
      */
     @Test
     void testStopAll() {
-        m_shooter.setFlywheelRPM(ShooterConstants.kShooterTargetRPM);
+        m_shooter.setFlywheelSpeeds(ShooterConstants.kShooterTargetRPM, ShooterConstants.kShooterTargetRPM);
         m_shooter.manualHoodControl(MANUAL_HOOD_CONTROL_SPEED);
         step();
 
