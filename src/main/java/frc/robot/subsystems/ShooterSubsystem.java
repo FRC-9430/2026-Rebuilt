@@ -18,7 +18,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private final ShooterInterpolation m_shooterInterpolation = new ShooterInterpolation();
 
     /** Creates a new ShooterSubsystem. */
-  public ShooterSubsystem() {
+    public ShooterSubsystem() {
         m_topFlywheelMotor = new SparkFlex(ShooterConstants.kShooterLeftMotorId, MotorType.kBrushless);
         m_bottomFlywheelMotor = new SparkFlex(ShooterConstants.kShooterRightMotorId, MotorType.kBrushless);
         m_hoodMotor = new SparkFlex(ShooterConstants.kShooterHoodMotorId, MotorType.kBrushless);
