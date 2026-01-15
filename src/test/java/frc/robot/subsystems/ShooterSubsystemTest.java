@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import com.revrobotics.sim.SparkAbsoluteEncoderSim;
 import com.revrobotics.sim.SparkFlexSim;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.simulation.SimHooks;
 import frc.robot.Constants.ShooterConstants;
@@ -243,5 +246,74 @@ public class ShooterSubsystemTest {
         assertEquals(0, m_topFlywheelSim.getAppliedOutput(), TOLERANCE);
         assertEquals(0, m_bottomFlywheelSim.getAppliedOutput(), TOLERANCE);
         assertEquals(0, m_hoodSim.getAppliedOutput(), TOLERANCE);
+    }
+
+     // complex shooter calculation tests assert true when motion matches expected rotational offset
+     // NOTE: passing these tests does NOT imply accurate shots; just that the core functionality works
+
+    /**
+     * GIVEN a ShooterSubsystem with fuel, ready to shoot.
+     * WHEN the robot's tangential velocity relative to the hub is zero (stationary or moving radially).
+     * THEN the drivetrain heading must maintain a 0deg offset from the center of the hub.
+     */
+    @Test
+    void testAimingZeroTangentialVelocity() {
+        Translation2d robotPose = new Translation2d(10, 0);
+        Translation2d targetPose = new Translation2d(0, 0);
+        double projectileSpeed = 10.0;
+
+        // Case 1: Stationary
+        ChassisSpeeds stationary = new ChassisSpeeds(0, 0, 0);
+        Rotation2d headingStationary = m_shooter.calculateAimingHeading(robotPose, stationary, targetPose, projectileSpeed);
+        // Expected: Pointing from (10,0) to (0,0) is 180 degrees (PI radians)
+        assertEquals(0.0, headingStationary.minus(new Rotation2d(Math.PI)).getRadians(), TOLERANCE);
+
+        // Case 2: Moving Radially (towards hub)
+        ChassisSpeeds radialMove = new ChassisSpeeds(-2.0, 0, 0);
+        Rotation2d headingRadial = m_shooter.calculateAimingHeading(robotPose, radialMove, targetPose, projectileSpeed);
+        assertEquals(0.0, headingRadial.minus(new Rotation2d(Math.PI)).getRadians(), TOLERANCE);
+    }
+
+    /**
+     * GIVEN a ShooterSubsystem with fuel, ready to shoot.
+     * WHEN moving tangentially right (Clockwise orbit).
+     * THEN the drivetrain must maintain a calculated positive angular offset (aiming left of center).
+     */
+    @Test
+    void testAimingTangentialRightCW() {
+        Translation2d robotPose = new Translation2d(10, 0);
+        Translation2d targetPose = new Translation2d(0, 0);
+        double projectileSpeed = 10.0;
+
+        // Moving -Y is Right relative to facing -X (the target).
+        // This corresponds to a Clockwise orbit around the hub.
+        ChassisSpeeds cwVelocity = new ChassisSpeeds(0, -2.0, 0);
+
+        Rotation2d heading = m_shooter.calculateAimingHeading(robotPose, cwVelocity, targetPose, projectileSpeed);
+        Rotation2d directAngle = new Rotation2d(Math.PI);
+
+        // Offset = Heading - DirectAngle. Expect Positive (Aim Left).
+        assertTrue(heading.minus(directAngle).getRadians() > TOLERANCE, "Should have positive offset for CW motion (aim to the left of the hub)");
+    }
+
+    /**
+     * GIVEN a ShooterSubsystem with fuel, ready to shoot.
+     * WHEN moving Tangentially Left (Counter-clockwise orbit).
+     * THEN the drivetrain must maintain a calculated negative angular offset (aiming right of center).
+     */
+    @Test
+    void testAimingTangentialLeftCCW() {
+        Translation2d robotPose = new Translation2d(10, 0);
+        Translation2d targetPose = new Translation2d(0, 0);
+        double projectileSpeed = 10.0;
+
+        // Moving +Y is Left relative to facing -X (the target).
+        ChassisSpeeds ccwVelocity = new ChassisSpeeds(0, 2.0, 0);
+
+        Rotation2d heading = m_shooter.calculateAimingHeading(robotPose, ccwVelocity, targetPose, projectileSpeed);
+        Rotation2d directAngle = new Rotation2d(Math.PI);
+
+        // Offset = Heading - DirectAngle. Expect Negative (Aim Right).
+        assertTrue(heading.minus(directAngle).getRadians() < -TOLERANCE, "Should have negative offset for CCW motion (aim to the right of hub)");
     }
 }

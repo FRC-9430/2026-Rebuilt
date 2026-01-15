@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -131,6 +134,21 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public boolean isReadyToShoot() {
         return false; // placeholder
+    }
+
+    /**
+     * Calculates the robot heading required to aim at a target while moving.
+     *
+     * @param robotPosition The current position of the robot on the field.
+     * @param fieldRelativeVelocity The current velocity of the robot on the field.
+     * @param targetPosition The position of the target on the field.
+     * @param projectileSpeed The speed of the projectile in m/s.
+     * @return The target heading for the robot.
+     */
+    public Rotation2d calculateAimingHeading(Translation2d robotPosition, ChassisSpeeds fieldRelativeVelocity,
+            Translation2d targetPosition, double projectileSpeed) {
+        // TODO: Implement aiming logic based on vector addition of robot velocity and projectile velocity
+        return new Rotation2d();
     }
 
     /** This method is called once per scheduler run. */
