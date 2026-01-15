@@ -7,12 +7,15 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.util.ShooterInterpolation;
 
 public class ShooterSubsystem extends SubsystemBase {
 
     private final SparkFlex m_topFlywheelMotor;
     private final SparkFlex m_bottomFlywheelMotor;
     private final SparkFlex m_hoodMotor;
+
+    private final ShooterInterpolation m_shooterInterpolation = new ShooterInterpolation();
 
     /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
@@ -149,6 +152,16 @@ public class ShooterSubsystem extends SubsystemBase {
             Translation2d targetPosition, double projectileSpeed) {
         // TODO: Implement aiming logic based on vector addition of robot velocity and projectile velocity
         return new Rotation2d();
+    }
+
+    /**
+     * Calculates the target hood angle based on distance to target.
+     *
+     * @param distanceMeters Distance to the target in meters.
+     * @return Target hood angle in degrees (0 to 90).
+     */
+    public double calculateHoodAngle(double distanceMeters) {
+        return 0; // TODO: use shooter interpolation to calculate shooter hood angle
     }
 
     /** This method is called once per scheduler run. */

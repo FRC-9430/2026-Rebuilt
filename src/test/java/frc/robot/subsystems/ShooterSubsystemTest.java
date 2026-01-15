@@ -316,4 +316,42 @@ public class ShooterSubsystemTest {
         // Offset = Heading - DirectAngle. Expect Negative (Aim Right).
         assertTrue(heading.minus(directAngle).getRadians() < -TOLERANCE, "Should have negative offset for CCW motion (aim to the right of hub)");
     }
+
+    /**
+     * GIVEN a ShooterSubsystem with a populated interpolation table.
+     * WHEN calculateHoodAngle is called with various distances.
+     * THEN it should return the expected angle, interpolated or clamped.
+     */
+    @Test
+    void testHoodAngleInterpolation() {
+        // Exact points from constructor initialization
+        assertEquals(60.0, m_shooter.calculateHoodAngle(2.0), TOLERANCE);
+        assertEquals(40.0, m_shooter.calculateHoodAngle(4.0), TOLERANCE);
+        assertEquals(20.0, m_shooter.calculateHoodAngle(6.0), TOLERANCE);
+
+        // Interpolated point (3.0m should be halfway between 60 and 40 -> 50.0 deg)
+        assertEquals(50.0, m_shooter.calculateHoodAngle(3.0), TOLERANCE);
+
+        // Extrapolated and Clamped (High)
+        // Slope is -10 deg/m. At -2m, expected 100 deg, clamped to 90.
+        assertEquals(90.0, m_shooter.calculateHoodAngle(-2.0), TOLERANCE);
+
+        // Extrapolated and Clamped (Low)
+        // At 10m, expected -20 deg, clamped to 0.
+        assertEquals(0.0, m_shooter.calculateHoodAngle(10.0), TOLERANCE);
+    }
+
+    /**
+     * GIVEN a ShooterSubsystem.
+     * WHEN the robot moves radially towards and away from the hub.
+     * THEN the calculated hood angle should raise as it gets closer and lower as it gets farther.
+     */
+    @Test
+    void testHoodAngleRadialMovement() {
+        double angleFar = m_shooter.calculateHoodAngle(6.0);
+        double angleClose = m_shooter.calculateHoodAngle(2.0);
+
+        // Should raise (increase angle) as we get closer
+        assertTrue(angleClose > angleFar, "Hood angle should increase as robot gets closer to hub");
+    }
 }
