@@ -23,7 +23,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // TODO: Get PID controllers
   }
 
-  public void setFlywheelRPM(double rpm) {
+  public void setFlywheelSpeeds(double topRPM, double bottomRPM) {
     // TODO: Set flywheel velocity for both motors
   }
 
@@ -45,7 +45,7 @@ public class ShooterSubsystem extends SubsystemBase {
     return 0.0;
   }
 
-  public void setHoodPosition(double position) {
+  public void setShootingAngle(double position) {
     // TODO: Set hood position (clamped to limits)
   }
 
@@ -74,6 +74,16 @@ public class ShooterSubsystem extends SubsystemBase {
   public double getHoodPosition() {
     // TODO: Return hood position
     return 0.0;
+  }
+
+  /**
+   * Checks if the flywheels are at their target RPM and the hood is at its target
+   * position.
+   *
+   * @return true if the shooter is ready to fire, false otherwise.
+   */
+  public boolean isReadyToShoot() {
+    return false; // placeholder
   }
 
   @Override
