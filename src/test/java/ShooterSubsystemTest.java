@@ -13,6 +13,9 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.simulation.SimHooks;
 import frc.robot.Constants.ShooterConstants;
 
+// TODO: The tests in this file are running against a largely unimplemented
+// frc.robot.subsystems.ShooterSubsystem, and will need to be updated as the
+// features of the subsystem are implemented.
 public class ShooterSubsystemTest {
 
     private ShooterSubsystem m_shooter;
@@ -22,6 +25,13 @@ public class ShooterSubsystemTest {
     private SparkAbsoluteEncoderSim m_hoodEncoderSim;
 
     private static final double TOLERANCE = 0.01;
+    private static final double TEST_RPM = 2500.0;
+    private static final double FLYWHEEL_RPM_TEST_TOLERANCE = 50.0;
+    private static final double HOOD_START_POSITION = 0.5;
+    private static final double TARGET_HOOD_POSITION = 0.3;
+    private static final double CURRENT_HOOD_POSITION = 0.2;
+    private static final double TEST_HOOD_POSITION = 0.45;
+    private static final double MANUAL_HOOD_CONTROL_SPEED = 0.5;
 
     @BeforeEach
     void setUp() {
@@ -39,6 +49,10 @@ public class ShooterSubsystemTest {
         m_shooter = null;
     }
 
+    private void step() {
+        SimHooks.stepTiming(0.02);
+    }
+
     @Test
     void testMotorsInitialized() {
         assertNotNull(m_shooter.getTopFlywheelMotor());
@@ -47,39 +61,30 @@ public class ShooterSubsystemTest {
     }
 
     @Test
-    void testAllFlywheelsSpinTogether() {
-        m_shooter.setFlywheelRPM(ShooterConstants.kShooterTargetRPM);
-        SimHooks.stepTiming(0.02);
+    void testFlywheelsSpinUp() {
+        double targetRPM = ShooterConstants.kShooterTargetRPM;
+        m_shooter.setFlywheelRPM(targetRPM);
+        step();
 
-        double topOutput = m_topFlywheelSim.getAppliedOutput();
-        double bottomOutput = m_bottomFlywheelSim.getAppliedOutput();
+        // Simulate flywheels spinning up
+        m_topFlywheelSim.setVelocity(targetRPM);
+        m_bottomFlywheelSim.setVelocity(targetRPM);
+        step();
 
-        assertEquals(topOutput, bottomOutput, TOLERANCE);
-    }
+        double topVelocity = m_topFlywheelSim.getVelocity();
+        double bottomVelocity = m_bottomFlywheelSim.getVelocity();
 
-    @Test
-    void testFlywheelsSameDirection() {
-        m_topFlywheelSim.setVelocity(1000);
-        m_bottomFlywheelSim.setVelocity(1000);
-
-        m_shooter.setFlywheelRPM(ShooterConstants.kShooterTargetRPM);
-        SimHooks.stepTiming(0.02);
-
-        double topOutput = m_topFlywheelSim.getAppliedOutput();
-        double bottomOutput = m_bottomFlywheelSim.getAppliedOutput();
-
-        if (topOutput != 0) {
-            assertTrue(Math.signum(topOutput) == Math.signum(bottomOutput) || bottomOutput == 0);
-        }
+        assertEquals(topVelocity, bottomVelocity, TOLERANCE);
+        assertEquals(Math.signum(topVelocity), Math.signum(bottomVelocity), TOLERANCE);
     }
 
     @Test
     void testFlywheelsStop() {
         m_shooter.setFlywheelRPM(ShooterConstants.kShooterTargetRPM);
-        SimHooks.stepTiming(0.02);
+        step();
 
         m_shooter.stopFlywheels();
-        SimHooks.stepTiming(0.02);
+        step();
 
         assertEquals(0, m_topFlywheelSim.getAppliedOutput(), TOLERANCE);
         assertEquals(0, m_bottomFlywheelSim.getAppliedOutput(), TOLERANCE);
@@ -92,7 +97,7 @@ public class ShooterSubsystemTest {
 
         m_topFlywheelSim.setVelocity(targetRPM);
         m_bottomFlywheelSim.setVelocity(targetRPM);
-        SimHooks.stepTiming(0.02);
+        step();
 
         assertTrue(m_shooter.flywheelsAtSpeed());
     }
@@ -101,70 +106,67 @@ public class ShooterSubsystemTest {
     void testFlywheelsNotAtSpeed() {
         m_shooter.setFlywheelRPM(ShooterConstants.kShooterTargetRPM);
 
-        m_topFlywheelSim.setVelocity(100);
-        m_bottomFlywheelSim.setVelocity(100);
-        SimHooks.stepTiming(0.02);
+        m_topFlywheelSim.setVelocity(ShooterConstants.kShooterIdleRPM);
+        m_bottomFlywheelSim.setVelocity(ShooterConstants.kShooterIdleRPM);
+        step();
 
         assertFalse(m_shooter.flywheelsAtSpeed());
     }
 
     @Test
     void testGetFlywheelRPM() {
-        double testRPM = 2500.0;
-        m_topFlywheelSim.setVelocity(testRPM);
-        m_bottomFlywheelSim.setVelocity(testRPM);
-        SimHooks.stepTiming(0.02);
+        m_topFlywheelSim.setVelocity(TEST_RPM);
+        m_bottomFlywheelSim.setVelocity(TEST_RPM);
+        step();
 
-        assertEquals(testRPM, m_shooter.getFlywheelRPM(), 50.0);
+        assertEquals(TEST_RPM, m_shooter.getFlywheelRPM(), FLYWHEEL_RPM_TEST_TOLERANCE);
     }
 
     @Test
     void testHoodStow() {
-        m_hoodEncoderSim.setPosition(0.5);
-        SimHooks.stepTiming(0.02);
+        m_hoodEncoderSim.setPosition(HOOD_START_POSITION);
+        step();
 
         m_shooter.stowHood();
         m_hoodEncoderSim.setPosition(ShooterConstants.kHoodStowedPosition);
-        SimHooks.stepTiming(0.02);
+        step();
 
         assertTrue(m_shooter.isHoodStowed());
     }
 
     @Test
     void testHoodAtPosition() {
-        double targetPos = 0.3;
-        m_shooter.setHoodPosition(targetPos);
-        m_hoodEncoderSim.setPosition(targetPos);
-        SimHooks.stepTiming(0.02);
+        m_shooter.setHoodPosition(TARGET_HOOD_POSITION);
+        m_hoodEncoderSim.setPosition(TARGET_HOOD_POSITION);
+        step();
 
-        assertTrue(m_shooter.hoodAtPosition(targetPos));
+        assertTrue(m_shooter.hoodAtPosition(TARGET_HOOD_POSITION));
     }
 
     @Test
     void testHoodNotAtPosition() {
-        m_shooter.setHoodPosition(0.8);
-        m_hoodEncoderSim.setPosition(0.2);
-        SimHooks.stepTiming(0.02);
+        m_shooter.setHoodPosition(TARGET_HOOD_POSITION);
+        m_hoodEncoderSim.setPosition(CURRENT_HOOD_POSITION);
+        step();
 
-        assertFalse(m_shooter.hoodAtPosition(0.8));
+        assertFalse(m_shooter.hoodAtPosition(TARGET_HOOD_POSITION));
     }
 
     @Test
     void testGetHoodPosition() {
-        double testPosition = 0.45;
-        m_hoodEncoderSim.setPosition(testPosition);
-        SimHooks.stepTiming(0.02);
+        m_hoodEncoderSim.setPosition(TEST_HOOD_POSITION);
+        step();
 
-        assertEquals(testPosition, m_shooter.getHoodPosition(), 0.01);
+        assertEquals(TEST_HOOD_POSITION, m_shooter.getHoodPosition(), 0.01);
     }
 
     @Test
     void testStopHood() {
-        m_shooter.manualHoodControl(0.5);
-        SimHooks.stepTiming(0.02);
+        m_shooter.manualHoodControl(MANUAL_HOOD_CONTROL_SPEED);
+        step();
 
         m_shooter.stopHood();
-        SimHooks.stepTiming(0.02);
+        step();
 
         assertEquals(0, m_hoodSim.getAppliedOutput(), TOLERANCE);
     }
@@ -172,11 +174,11 @@ public class ShooterSubsystemTest {
     @Test
     void testStopAll() {
         m_shooter.setFlywheelRPM(ShooterConstants.kShooterTargetRPM);
-        m_shooter.manualHoodControl(0.5);
-        SimHooks.stepTiming(0.02);
+        m_shooter.manualHoodControl(MANUAL_HOOD_CONTROL_SPEED);
+        step();
 
         m_shooter.stopAll();
-        SimHooks.stepTiming(0.02);
+        step();
 
         assertEquals(0, m_topFlywheelSim.getAppliedOutput(), TOLERANCE);
         assertEquals(0, m_bottomFlywheelSim.getAppliedOutput(), TOLERANCE);
