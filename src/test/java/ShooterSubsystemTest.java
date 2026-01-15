@@ -48,7 +48,7 @@ public class ShooterSubsystemTest {
 
     @Test
     void testAllFlywheelsSpinTogether() {
-        m_shooter.runFlywheels();
+        m_shooter.setFlywheelRPM(ShooterConstants.kShooterTargetRPM);
         SimHooks.stepTiming(0.02);
 
         double topOutput = m_topFlywheelSim.getAppliedOutput();
@@ -75,7 +75,7 @@ public class ShooterSubsystemTest {
 
     @Test
     void testFlywheelsStop() {
-        m_shooter.runFlywheels();
+        m_shooter.setFlywheelRPM(ShooterConstants.kShooterTargetRPM);
         SimHooks.stepTiming(0.02);
 
         m_shooter.stopFlywheels();
@@ -137,7 +137,7 @@ public class ShooterSubsystemTest {
         m_hoodEncoderSim.setPosition(targetPos);
         SimHooks.stepTiming(0.02);
 
-        assertTrue(m_shooter.hoodAtPosition());
+        assertTrue(m_shooter.hoodAtPosition(targetPos));
     }
 
     @Test
@@ -146,7 +146,7 @@ public class ShooterSubsystemTest {
         m_hoodEncoderSim.setPosition(0.2);
         SimHooks.stepTiming(0.02);
 
-        assertFalse(m_shooter.hoodAtPosition());
+        assertFalse(m_shooter.hoodAtPosition(0.8));
     }
 
     @Test
@@ -171,7 +171,7 @@ public class ShooterSubsystemTest {
 
     @Test
     void testStopAll() {
-        m_shooter.runFlywheels();
+        m_shooter.setFlywheelRPM(ShooterConstants.kShooterTargetRPM);
         m_shooter.manualHoodControl(0.5);
         SimHooks.stepTiming(0.02);
 

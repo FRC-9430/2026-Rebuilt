@@ -27,10 +27,6 @@ public class ShooterSubsystem extends SubsystemBase {
     // TODO: Set flywheel velocity for both motors
   }
 
-  public void runFlywheels() {
-    // TODO: Run at target RPM
-  }
-
   public void idleFlywheels() {
     // TODO: Run at idle RPM
   }
@@ -57,7 +53,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // TODO: Move hood to stowed position
   }
 
-  public void manualHoodControl(double speed) {
+  public void manualHoodControl(double position) {
     // TODO: Manual hood control
   }
 
@@ -65,7 +61,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // TODO: Stop hood motor
   }
 
-  public boolean hoodAtPosition() {
+  public boolean hoodAtPosition(double position) {
     // TODO: Check if hood is at target position
     return false;
   }
