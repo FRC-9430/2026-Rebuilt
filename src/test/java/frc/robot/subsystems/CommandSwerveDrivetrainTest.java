@@ -1,3 +1,5 @@
+package frc.robot.subsystems;
+
 import static edu.wpi.first.units.Units.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,7 +50,7 @@ class CommandSwerveDrivetrainTest {
     @DisplayName("applyRequest should create command requiring drivetrain")
     void applyRequest_shouldRequireDrivetrain() {
         Command cmd = drivetrain.applyRequest(() -> new SwerveRequest.Idle());
-        
+
         assertTrue(cmd.getRequirements().contains(drivetrain),
             "Command should require the drivetrain subsystem");
     }
@@ -58,7 +60,7 @@ class CommandSwerveDrivetrainTest {
     void multipleApplyRequests_shouldConflict() {
         Command cmd1 = drivetrain.applyRequest(() -> new SwerveRequest.Idle());
         Command cmd2 = drivetrain.applyRequest(() -> new SwerveRequest.SwerveDriveBrake());
-        
+
         // Commands requiring the same subsystem should share requirements
         assertEquals(cmd1.getRequirements(), cmd2.getRequirements(),
             "Both commands should require the same subsystem");
@@ -70,9 +72,9 @@ class CommandSwerveDrivetrainTest {
     @DisplayName("resetPose should update reported pose")
     void resetPose_shouldUpdatePose() {
         Pose2d newPose = new Pose2d(5.0, 3.0, Rotation2d.fromDegrees(45));
-        
+
         drivetrain.resetPose(newPose);
-        
+
         Pose2d reported = drivetrain.getState().Pose;
         assertEquals(5.0, reported.getX(), 0.01);
         assertEquals(3.0, reported.getY(), 0.01);
@@ -85,9 +87,9 @@ class CommandSwerveDrivetrainTest {
     @DisplayName("Drivetrain should have four modules with correct device types")
     void drivetrain_shouldHaveCorrectHardware() {
         SwerveModule<TalonFX, TalonFX, CANcoder>[] modules = drivetrain.getModules();
-        
+
         assertEquals(4, modules.length, "Should have exactly 4 modules");
-        
+
         for (int i = 0; i < 4; i++) {
             assertNotNull(modules[i].getDriveMotor(), "Module " + i + " should have drive motor");
             assertNotNull(modules[i].getSteerMotor(), "Module " + i + " should have steer motor");
