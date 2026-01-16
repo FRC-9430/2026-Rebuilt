@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.ProtoShooter;
 
@@ -39,15 +40,27 @@ public class RobotContainer {
       protoShooter.setSubSpeed(protoShooter.subSpeed - 0.05);
     }));
 
-    driverController.leftTrigger(0.5).whileTrue(new InstantCommand(() -> {
+    driverController.leftBumper().onTrue(new InstantCommand(() -> {
       protoShooter.runBackward();
     })).onFalse(new InstantCommand(() -> {
       protoShooter.stopMotors();
     }));
 
-    driverController.rightTrigger(0.5).whileTrue(new InstantCommand(() -> {
+    driverController.rightBumper().onTrue(new InstantCommand(() -> {
       protoShooter.runForward();
     })).onFalse(new InstantCommand(() -> {
+      protoShooter.stopMotors();
+    }));
+
+    driverController.rightTrigger(0.1).whileTrue(new RepeatCommand(new InstantCommand(()->{
+      protoShooter.runAt(driverController.getRightTriggerAxis());
+    }))).onFalse(new InstantCommand(()->{
+      protoShooter.stopMotors();
+    }));
+
+    driverController.leftTrigger(0.1).whileTrue(new RepeatCommand(new InstantCommand(()->{
+      protoShooter.runAt(-driverController.getLeftTriggerAxis());
+    }))).onFalse(new InstantCommand(()->{
       protoShooter.stopMotors();
     }));
 
