@@ -8,6 +8,8 @@ public final class Constants {
         public static final double kP = 0.001; // TODO: Dummy value
         public static final double kI = 0; // TODO: Dummy value
         public static final double kD = 0; // TODO: Dummy value
+    }
+
       // TODO:CHANGE ALL OF BELOW
     public static final class ShooterConstants {
         // Motor CAN IDs - TODO: CHANGE ME
@@ -40,5 +42,3 @@ public final class Constants {
         public static final double kHoodStowedPosition = 0.0;
     }
   }
-
-}
