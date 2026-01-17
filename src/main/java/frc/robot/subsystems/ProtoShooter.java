@@ -61,4 +61,11 @@ public class ProtoShooter extends SubsystemBase {
         SmartDashboard.putNumber("SubSpeed", subSpeed);
     }
 
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("MM1RPM", mainMotor1.getEncoder().getVelocity());
+        // SmartDashboard.putNumber("MM2RPM", mainMotor2.getEncoder().getVelocity());
+        SmartDashboard.putNumber("SMRPM", subMotor.getEncoder().getVelocity());
+    }
+
 }
