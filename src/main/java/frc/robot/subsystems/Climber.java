@@ -5,13 +5,13 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
-import frc.robot.Constants.PIDConstants;
+import frc.robot.Constants.ClimbingArmConstants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.MotorConstants;
+import frc.robot.Constants.CANConstants;
 
 public class Climber extends SubsystemBase {
-    private PIDController climberController = new PIDController(PIDConstants.kclimberP,PIDConstants.kclimberI,PIDConstants.kclimberD);
+    private PIDController climberController = new PIDController(ClimbingArmConstants.kP,ClimbingArmConstants.kI,ClimbingArmConstants.kD);
 
     private SparkMax ClimberMotor1;
     private SparkMax ClimberMotor2;
@@ -21,8 +21,8 @@ public class Climber extends SubsystemBase {
 
 public  ClimbingArmSubsystem() {
 
-  ClimberMotor1 = new SparkMax(MotorConstants.ClimberMotor1CanID, SparkMax.MotorType.kBrushless);
-  ClimberMotor2 = new SparkMax(MotorConstants.ClimberMotor2CanID, SparkMax.MotorType.kBrushless);
+  ClimberMotor1 = new SparkMax(CANConstants.ClimberMotor1CanID, SparkMax.MotorType.kBrushless);
+  ClimberMotor2 = new SparkMax(CANConstants.ClimberMotor2CanID, SparkMax.MotorType.kBrushless);
   ClimbingEncoder1 = ClimberMotor1.getAbsoluteEncoder();
   ClimbingEncoder2 = ClimberMotor2.getAbsoluteEncoder();
 }
