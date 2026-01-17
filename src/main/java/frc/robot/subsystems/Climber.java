@@ -45,8 +45,8 @@ public class Climber extends SubsystemBase {
     }
 
     public void setClimbingMotor2(double speed) {
-        if (ClimbingEncoder1.getPosition() > ClimbingArmConstants.kClimber2Max
-                && ClimbingEncoder1.getPosition() < ClimbingArmConstants.kClimber2Min) {
+        if (ClimbingEncoder2.getPosition() > ClimbingArmConstants.kClimber2Max
+                && ClimbingEncoder2.getPosition() < ClimbingArmConstants.kClimber2Min) {
             ClimberMotor2.set(speed);
         } else {
             StopClimber2(speed);
