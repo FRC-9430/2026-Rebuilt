@@ -21,12 +21,20 @@ public class RobotContainer {
   }
 
   /**
-   * Configure button bindings
-   * <p> Uses the command based framework for button bindings with the syntax:
-   * <p> controller.button().condition(command);
-   * <p> ex. driverController.a().onTrue(new InstantCommand(() -> {...}));
-   * <p> For looping commands use RepeatCommand:
-   * <p> ex. driverController.b().whileTrue(new RepeatCommand(new InstantCommand(() -> {...})));
+   * Configure button bindings.
+   *
+   * <p>Use the command-based framework for button bindings. Example usages:
+   * <pre>{@code
+   * // Single-shot
+   * driverController.a().onTrue(new InstantCommand(() -> { ... }));
+   *
+   * // Repeating while held
+   * driverController.b().whileTrue(new RepeatCommand(
+   *     new InstantCommand(() -> { ... })));
+   *
+   * // Axis threshold
+   * driverController.rightTrigger(threshold).whileTrue(...);
+   * }</pre>
    */
   private void configureBindings() {
 
