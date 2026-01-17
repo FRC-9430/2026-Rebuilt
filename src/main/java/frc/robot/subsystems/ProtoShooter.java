@@ -46,7 +46,7 @@ public class ProtoShooter extends SubsystemBase {
         if (mainSpeed > 1.0) {
             mainSpeed = 1.0;
         } else if (mainSpeed < -1.0) {
-            mainSpeed = 1.0;
+            mainSpeed = -1.0;
         }
         SmartDashboard.putNumber("MainSpeed", mainSpeed);
     }
