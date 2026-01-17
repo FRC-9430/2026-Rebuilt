@@ -26,14 +26,30 @@ public void ClimbingArmSubsystem() {
   ClimbingEncoder1 = ClimberMotor1.getAbsoluteEncoder();
   ClimbingEncoder2 = ClimberMotor2.getAbsoluteEncoder();
 }
-public void moveClimber (double speed) {
-
-
-  
+public void MoveClimber1 (double speed) {
+  MoveClimber1(speed);
+}
+public void StopClimber1 (double speed){
+ClimberMotor1.stopMotor();
 }
 
+public void MoveClimber2 (double speed) {
+  MoveClimber2(speed);
+}
+public void StopClimber2 (double speed){
+ClimberMotor2.stopMotor();
+}
 
-
+ public void setClimbingMotor1(double speed) {
+    if (ClimbingEncoder1.getPosition() > ClimbingArmConstants.kClimber1Max
+        && ClimbingEncoder1.getPosition() < ClimbingArmConstants.kClimber1Min ) {
+          ClimberMotor1.set(speed);}
+}
+public void setClimbingMotor2(double speed) {
+    if (ClimbingEncoder1.getPosition() > ClimbingArmConstants.kClimber2Max
+        && ClimbingEncoder1.getPosition() < ClimbingArmConstants.kClimber2Min ) {
+          ClimberMotor2.set(speed);}
+}
 
 
 
