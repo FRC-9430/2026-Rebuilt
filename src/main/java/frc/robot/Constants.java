@@ -8,7 +8,7 @@ public final class Constants {
         public static final int ClimberMotor2CanID = 22; //TODO: get motor can ID
     }
 
-    public static final class ClimbingArmConstants {
+    public static final class ClimberArmConstants {
         public static final double kP = 0.001; // TODO: Dummy value
         public static final double kI = 0; // TODO: Dummy value
         public static final double kD = 0; // TODO: Dummy value
