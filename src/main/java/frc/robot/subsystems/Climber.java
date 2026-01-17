@@ -29,7 +29,7 @@ public class Climber extends SubsystemBase {
     public void StopClimber1(double speed) {
         ClimberMotor1.stopMotor();
     }
-    
+
     public void StopClimber2(double speed) {
         ClimberMotor2.stopMotor();
     }
@@ -39,7 +39,7 @@ public class Climber extends SubsystemBase {
                 && ClimbingEncoder1.getPosition() < ClimbingArmConstants.kClimber1Min) {
             ClimberMotor1.set(speed);
         } else {
-            StopClimber2(speed);
+            StopClimber1(speed);
         }
 
     }
