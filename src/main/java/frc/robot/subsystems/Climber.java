@@ -19,7 +19,7 @@ public class Climber extends SubsystemBase {
     private AbsoluteEncoder ClimbingEncoder2;
 
 
-public  ClimbingArmSubsystem() {
+public void ClimbingArmSubsystem() {
 
   ClimberMotor1 = new SparkMax(CANConstants.ClimberMotor1CanID, SparkMax.MotorType.kBrushless);
   ClimberMotor2 = new SparkMax(CANConstants.ClimberMotor2CanID, SparkMax.MotorType.kBrushless);
