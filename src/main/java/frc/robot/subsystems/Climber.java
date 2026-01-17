@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import frc.robot.Constants.ClimberArmConstants;
 import edu.wpi.first.math.controller.PIDController;
