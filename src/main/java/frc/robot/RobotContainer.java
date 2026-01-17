@@ -26,11 +26,13 @@ public class RobotContainer {
    * <p>Use the command-based framework for button bindings. Example usages:
    * <pre>{@code
    * // Single-shot
-   * driverController.a().onTrue(new InstantCommand(() -> { ... }));
+   * driverController.a().onTrue(
+   *     new InstantCommand(() -> { ... }));
    *
    * // Repeating while held
-   * driverController.b().whileTrue(new RepeatCommand(
-   *     new InstantCommand(() -> { ... })));
+   * driverController.b().whileTrue(
+   *     new RepeatCommand(
+   *         new InstantCommand(() -> { ... })));
    *
    * // Axis threshold
    * driverController.rightTrigger(threshold).whileTrue(...);
