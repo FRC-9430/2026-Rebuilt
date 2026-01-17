@@ -5,7 +5,7 @@ public final class Constants {
 
     public static final class CANConstants {
          public static final int ClimberMotor1CanID = 21; //TODO: get motor can ID
-        public static final int ClimberMotor2CanID = 22; //TODO: get motor can ID  
+        public static final int ClimberMotor2CanID = 22; //TODO: get motor can ID
     }
 
     public static final class ClimbingArmConstants {
@@ -17,12 +17,10 @@ public final class Constants {
         public static final double kClimber1Max = .48; //TODO: DummyValue
         public static final double kClimber1Min = .090;//TODO: DummyValue
 
-         public static final double kClimber2Max = .48;//TODO: DummyValue
+        public static final double kClimber2Max = .48;//TODO: DummyValue
         public static final double kClimber2Min = .090;//TODO: DummyValue
     }
 
-    
+
 
 }
-
-    
