@@ -15,16 +15,21 @@ public class Climber extends SubsystemBase {
 
     private SparkMax ClimberMotor1;
     private SparkMax ClimberMotor2;
-    private AbsoluteEncoder ClimbingEncoder;
+    private AbsoluteEncoder ClimbingEncoder1;
+    private AbsoluteEncoder ClimbingEncoder2;
 
 
 public  ClimbingArmSubsystem() {
 
   ClimberMotor1 = new SparkMax(MotorConstants.ClimberMotor1CanID, SparkMax.MotorType.kBrushless);
   ClimberMotor2 = new SparkMax(MotorConstants.ClimberMotor2CanID, SparkMax.MotorType.kBrushless);
+  ClimbingEncoder1 = ClimberMotor1.getAbsoluteEncoder();
+  ClimbingEncoder2 = ClimberMotor2.getAbsoluteEncoder();
+}
+public void moveClimber (double speed) {
 
 
-
+  
 }
 
 
@@ -38,6 +43,7 @@ public  ClimbingArmSubsystem() {
   public void periodic() {
 
 
-climberController.calculate(ClimbingEncoder.getPosition(), 0.2);
+climberController.calculate(ClimbingEncoder1.getPosition(), 0.2);
+climberController.calculate(ClimbingEncoder2.getPosition(), 0.2);
   }
 }
