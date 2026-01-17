@@ -4,8 +4,8 @@ package frc.robot;
 public final class Constants {
 
     public static final class CANConstants {
-        public static final int ClimberMotor1CanID = 21; //TODO: get motor can ID
-        public static final int ClimberMotor2CanID = 22; //TODO: get motor can ID
+        public static final int climberMotor1CanID = 21; //TODO: get motor can ID
+        public static final int climberMotor2CanID = 22; //TODO: get motor can ID
     }
 
     public static final class ClimberArmConstants {
