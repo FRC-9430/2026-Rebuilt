@@ -26,18 +26,10 @@ public class Climber extends SubsystemBase {
         ClimbingEncoder2 = ClimberMotor2.getAbsoluteEncoder();
     }
 
-    public void MoveClimber1(double speed) {
-        ClimberMotor1.set(speed);
-    }
-
     public void StopClimber1(double speed) {
         ClimberMotor1.stopMotor();
     }
-
-    public void MoveClimber2(double speed) {
-        ClimberMotor2.set(speed);
-    }
-
+    
     public void StopClimber2(double speed) {
         ClimberMotor2.stopMotor();
     }
