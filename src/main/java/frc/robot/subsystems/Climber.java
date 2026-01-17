@@ -43,12 +43,19 @@ ClimberMotor2.stopMotor();
  public void setClimbingMotor1(double speed) {
     if (ClimbingEncoder1.getPosition() > ClimbingArmConstants.kClimber1Max
         && ClimbingEncoder1.getPosition() < ClimbingArmConstants.kClimber1Min ) {
-          ClimberMotor1.set(speed);}
+          ClimberMotor1.set(speed);
+        }else{
+          StopClimber2(speed);
+        }
+      
 }
 public void setClimbingMotor2(double speed) {
     if (ClimbingEncoder1.getPosition() > ClimbingArmConstants.kClimber2Max
         && ClimbingEncoder1.getPosition() < ClimbingArmConstants.kClimber2Min ) {
-          ClimberMotor2.set(speed);}
+          ClimberMotor2.set(speed);
+        }else{
+          StopClimber2(speed);
+        }
 }
 
 
