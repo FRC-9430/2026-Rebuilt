@@ -63,7 +63,10 @@ public class Climber extends SubsystemBase {
      *      }
      *  }
      *
-     *
+     * public void setSetpoint(setpoint) {
+     *  if the setpoint is valid,
+     *      then this.setpoint = setpoint
+     * }
      *
      */
     @Override
