@@ -17,7 +17,7 @@ public class Climber extends SubsystemBase {
     private AbsoluteEncoder climberEncoder1;
     private AbsoluteEncoder climberEncoder2;
 
-    public void ClimberArmSubsystem() {
+    public  Climber() {
 
         climberMotor1 = new SparkFlex(CANConstants.climberMotor1CanID, SparkFlex.MotorType.kBrushless);
         climberMotor2 = new SparkFlex(CANConstants.climberMotor2CanID, SparkFlex.MotorType.kBrushless);
