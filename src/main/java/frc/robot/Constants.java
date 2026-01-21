@@ -41,4 +41,18 @@ public final class Constants {
         public static final double kHoodPositionTolerance = 0.1;
         public static final double kHoodStowedPosition = 0.0;
     }
+
+    public static final class TagConstants {
+      // Red team constants
+      public static final int[] redHubTags = {2, 3, 4, 5, 8, 9, 10, 11};
+      public static final int[] redLadderTags = {15, 16};
+      public static final int[] redDepotTags = {13, 14};
+      
+      // Blue team constants
+      public static final int[] blueHubTags = {18, 19, 20, 21, 24, 25, 26};
+      public static final int[] blueLadderTags = {31, 32};
+      public static final int[] blueDepotTags = {29, 30};
+    
+    }
+
   }
