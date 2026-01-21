@@ -52,9 +52,26 @@ public class Climber extends SubsystemBase {
         }
     }
 
+    /*
+     * public boolean isSetpointValid(double setpoint) {
+     *  if (setpoint is greater than climbing arm minimum
+     *      and setpoint is less than climbing arm maximum) {
+     *          then the setpoint is valid
+     *      }
+     *  else // setpoint is not valid {
+     *          then the setpoint is invalid
+     *      }
+     *  }
+     *
+     *
+     *
+     */
     @Override
     public void periodic() {
 
+        /*
+         * if setpoint is valid, THEN call .calculate(getPosition(), the setpoint)
+         */
         climberController.calculate(climberEncoder1.getPosition(), 0.2);
         climberController.calculate(climberEncoder2.getPosition(), 0.2);
     }
