@@ -6,13 +6,55 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.ControllerConstants;
 
 public class RobotContainer {
+
+  private CommandXboxController driverController = new CommandXboxController(
+      ControllerConstants.DRIVER_CONTROLLER_PORT);
+
   public RobotContainer() {
     configureBindings();
   }
 
-  private void configureBindings() {}
+  /**
+   * Configure button bindings.
+   *
+   * <p>Use the command-based framework for button bindings. Example usages:
+   * <pre>{@code
+   * // Single-shot
+   * driverController.a().onTrue(
+   *     new InstantCommand(() -> { ... }));
+   *
+   * // Repeating while held
+   * driverController.b().whileTrue(
+   *     new RepeatCommand(
+   *         new InstantCommand(() -> { ... })));
+   *
+   * // Axis threshold
+   * driverController.rightTrigger(threshold).whileTrue(...);
+   * }</pre>
+   */
+  private void configureBindings() {
+
+    driverController.a().onTrue(new InstantCommand(() -> {
+      // Code To Run
+    }));
+
+    driverController.b().whileTrue(new RepeatCommand(new InstantCommand(() -> {
+      // Code To Run
+    })));
+
+    driverController.rightTrigger(/* Threshold */).whileTrue(new RepeatCommand(new InstantCommand(() -> {
+      // drivercontroller.getRightTriggerAxis();
+    }))).onFalse(new InstantCommand(() -> {
+      // Code To Run
+    }));
+
+  }
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
