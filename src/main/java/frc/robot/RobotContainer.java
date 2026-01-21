@@ -28,7 +28,7 @@ public class RobotContainer {
    *
    * <p>
    * Use the command-based framework for button bindings. Example usages:
-   * 
+   *
    * <pre>{@code
    * // Single-shot
    * driverController.a().onTrue(
@@ -54,9 +54,9 @@ public class RobotContainer {
     })));
 
     driverController.x()
-        .whileTrue(new RepeatCommand(new InstantCommand() -> {
-          robotClimber.setclimberMotor1(1) )
-        }.onFalse(new InstantCommand() -> { robotClimber.StopClimber1(1) }));
+        .whileTrue(new RepeatCommand(new InstantCommand(() -> {
+          robotClimber.setClimberMotor1(1);
+        }))).onFalse(new InstantCommand(() -> { robotClimber.stopClimber1(0); }));
 
     driverController.rightTrigger(/* Threshold */).whileTrue(new RepeatCommand(new InstantCommand(() -> {
       // drivercontroller.getRightTriggerAxis();
