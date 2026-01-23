@@ -23,9 +23,9 @@ public class Climber extends SubsystemBase {
         climberEncoder2 = climberMotor2.getAbsoluteEncoder();
     }
 
-    public void stopClimber(double speed) {
-        climberMotor1.set(0);
-        climberMotor2.set(0);
+    public void stopClimber() {
+        climberMotor1.stopMotor();
+        climberMotor2.stopMotor();
     }
 
 
@@ -34,7 +34,7 @@ public class Climber extends SubsystemBase {
                 && climberEncoder1.getPosition() < ClimberArmConstants.kClimber1Min) {
             climberMotor1.set(speed);
         } else {
-            stopClimber(speed);
+            stopClimber();
         }
 
     }
@@ -44,27 +44,10 @@ public class Climber extends SubsystemBase {
                 && climberEncoder2.getPosition() < ClimberArmConstants.kClimber2Min) {
             climberMotor2.set(speed);
         } else {
-            stopClimber(speed);
+            stopClimber();
         }
     }
 
-
-    public boolean confirmSetPoint1 (double setpoint) {
- if (climberEncoder1.getPosition() > ClimberArmConstants.kClimber1Max
-                && climberEncoder1.getPosition() < ClimberArmConstants.kClimber1Min){
-                   
-
-            
-                }
-        return true;
-
-
-
-
-
-
-        
-    }
 
 
 
