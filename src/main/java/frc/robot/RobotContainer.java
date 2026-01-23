@@ -45,23 +45,22 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
-    driverController.a().onTrue(new InstantCommand(() -> {
-      // Code To Run
-    }));
-
-    driverController.b().whileTrue(new RepeatCommand(new InstantCommand(() -> {
-      // Code To Run
-    })));
-
-    driverController.x()
+    driverController.a()
         .whileTrue(new RepeatCommand(new InstantCommand(() -> {
-          robotClimber.setClimberMotor1(1);
-        }))).onFalse(new InstantCommand(() -> { robotClimber.stopClimber1(0); }));
+          robotClimber.setClimberMotor1(0.2);
+          robotClimber.setClimberMotor2(0.2);
+        }))).onFalse(new InstantCommand(() -> {
+          robotClimber.stopClimber1(0);
+          robotClimber.stopClimber2(0);
+        }));
 
-    driverController.rightTrigger(/* Threshold */).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-      // drivercontroller.getRightTriggerAxis();
-    }))).onFalse(new InstantCommand(() -> {
-      // Code To Run
+    driverController.b()
+        .whileTrue(new RepeatCommand(new InstantCommand(() -> {
+          robotClimber.setClimberMotor1(-0.2);
+          robotClimber.setClimberMotor2(-0.2);
+        }))).onFalse(new InstantCommand(() -> {
+        robotClimber.stopClimber1(0);
+        robotClimber.stopClimber2(0);
     }));
 
   }
