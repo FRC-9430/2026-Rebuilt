@@ -10,11 +10,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.subsystems.Climber;
 
 public class RobotContainer {
 
   private CommandXboxController driverController = new CommandXboxController(
       ControllerConstants.DRIVER_CONTROLLER_PORT);
+
+  private Climber robotClimber = new Climber();
 
   public RobotContainer() {
     configureBindings();
@@ -23,7 +26,9 @@ public class RobotContainer {
   /**
    * Configure button bindings.
    *
-   * <p>Use the command-based framework for button bindings. Example usages:
+   * <p>
+   * Use the command-based framework for button bindings. Example usages:
+   *
    * <pre>{@code
    * // Single-shot
    * driverController.a().onTrue(
@@ -47,6 +52,11 @@ public class RobotContainer {
     driverController.b().whileTrue(new RepeatCommand(new InstantCommand(() -> {
       // Code To Run
     })));
+
+    driverController.x()
+        .whileTrue(new RepeatCommand(new InstantCommand(() -> {
+          robotClimber.setClimberMotor1(1);
+        }))).onFalse(new InstantCommand(() -> { robotClimber.stopClimber1(0); }));
 
     driverController.rightTrigger(/* Threshold */).whileTrue(new RepeatCommand(new InstantCommand(() -> {
       // drivercontroller.getRightTriggerAxis();
