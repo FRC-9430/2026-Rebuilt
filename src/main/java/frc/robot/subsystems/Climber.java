@@ -9,8 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANConstants;
 
 public class Climber extends SubsystemBase {
-    private PIDController climberController = new PIDController(ClimberArmConstants.kP, ClimberArmConstants.kI,
-            ClimberArmConstants.kD);
+
 
     private SparkFlex climberMotor1;
     private SparkFlex climberMotor2;
@@ -52,6 +51,17 @@ public class Climber extends SubsystemBase {
         }
     }
 
+
+    public boolean confirmSetPoint1(double setpoint) {
+        if (climberEncoder1.getPosition() > ClimberArmConstants.kClimber1Max
+                && climberEncoder1.getPosition() < ClimberArmConstants.kClimber1Min) {
+
+        }
+        return true;
+    }
+
+
+
     /*
      * public boolean isSetpointValid(double setpoint) {
      *  if (setpoint is greater than climbing arm minimum
@@ -72,10 +82,6 @@ public class Climber extends SubsystemBase {
     @Override
     public void periodic() {
 
-        /*
-         * if setpoint is valid, THEN call .calculate(getPosition(), the setpoint)
-         */
-        climberController.calculate(climberEncoder1.getPosition(), 0.2);
-        climberController.calculate(climberEncoder2.getPosition(), 0.2);
+        
     }
 }

@@ -29,11 +29,7 @@ public final class Constants {
     * Constants for the Climbing Arm Subsystem
     */
     public static final class ClimberArmConstants {
-        public static final double kP = 0.001; // TODO: Dummy value
-        public static final double kI = 0; // TODO: Dummy value
-        public static final double kD = 0; // TODO: Dummy value
-
-
+    
         public static final double kClimber1Max = .48; //TODO: DummyValue
         public static final double kClimber1Min = .090;//TODO: DummyValue
 
