@@ -50,8 +50,7 @@ public class RobotContainer {
           robotClimber.setClimberMotor1(0.2);
           robotClimber.setClimberMotor2(0.2);
         }))).onFalse(new InstantCommand(() -> {
-          robotClimber.stopClimber1(0);
-          robotClimber.stopClimber2(0);
+          robotClimber.stopClimber();
         }));
 
     driverController.b()
@@ -59,8 +58,7 @@ public class RobotContainer {
           robotClimber.setClimberMotor1(-0.2);
           robotClimber.setClimberMotor2(-0.2);
         }))).onFalse(new InstantCommand(() -> {
-        robotClimber.stopClimber1(0);
-        robotClimber.stopClimber2(0);
+          robotClimber.stopClimber();
     }));
 
   }
