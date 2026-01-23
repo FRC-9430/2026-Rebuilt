@@ -51,12 +51,21 @@ public class Climber extends SubsystemBase {
     }
 
 
-    public boolean confirmSetPoint1(double setpoint) {
-        if (climberEncoder1.getPosition() > ClimberArmConstants.kClimber1Max
-                && climberEncoder1.getPosition() < ClimberArmConstants.kClimber1Min) {
+    public boolean confirmSetPoint1 (double setpoint) {
+ if (climberEncoder1.getPosition() > ClimberArmConstants.kClimber1Max
+                && climberEncoder1.getPosition() < ClimberArmConstants.kClimber1Min){
+                   
 
-        }
+            
+                }
         return true;
+
+
+
+
+
+
+        
     }
 
 
@@ -80,6 +89,8 @@ public class Climber extends SubsystemBase {
      */
     @Override
     public void periodic() {
+        climberEncoder1.getPosition();
+        climberEncoder2.getPosition();
 
         
     }
