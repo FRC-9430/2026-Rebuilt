@@ -62,16 +62,12 @@ public class Climber extends SubsystemBase {
      *  * @return void.
      */
     public void setClimberMotors(double speed) {
-        if (isClimberMotorsValid() == true)
-        setClimberMotors(speed);
+        if (isClimberMotorsValid() == true) {
+            climberMotor1.set(speed);
+            climberMotor2.set(speed);
+        }
+    
     }
-
-     /**
-     * get encoder postion periodicly.
-     * 
-     * @author Amaya Lewis
-     *  * @return void.
-     */
     @Override
     public void periodic() {
         climberEncoder1.getPosition();
