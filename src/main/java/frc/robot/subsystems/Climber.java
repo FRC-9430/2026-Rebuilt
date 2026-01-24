@@ -29,25 +29,12 @@ public class Climber extends SubsystemBase {
     }
 
 
-    public void setClimberMotor1(double speed) {
-        if (climberEncoder1.getPosition() > ClimberArmConstants.kClimber1Max
-                && climberEncoder1.getPosition() < ClimberArmConstants.kClimber1Min) {
-            climberMotor1.set(speed);
-        } else {
-            stopClimber();
-        }
-
+    public boolean areClimbersValid() {
+        if (climberEncoder1.getPosition() > ClimberArmConstants.kClimberMax
+                && climberEncoder1.getPosition() < ClimberArmConstants.kClimberMin);
+        
+       
     }
-
-    public void setClimberMotor2(double speed) {
-        if (climberEncoder2.getPosition() > ClimberArmConstants.kClimber2Max
-                && climberEncoder2.getPosition() < ClimberArmConstants.kClimber2Min) {
-            climberMotor2.set(speed);
-        } else {
-            stopClimber();
-        }
-    }
-
 
 
 

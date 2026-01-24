@@ -30,11 +30,8 @@ public final class Constants {
     */
     public static final class ClimberArmConstants {
     
-        public static final double kClimber1Max = .48; //TODO: DummyValue
-        public static final double kClimber1Min = .090;//TODO: DummyValue
-
-        public static final double kClimber2Max = .48;//TODO: DummyValue
-        public static final double kClimber2Min = .090;//TODO: DummyValue
+        public static final double kClimberMax = .48; //TODO: DummyValue
+        public static final double kClimberMin = .090;//TODO: DummyValue
     }
 
 }
