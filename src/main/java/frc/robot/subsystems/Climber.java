@@ -70,8 +70,5 @@ public class Climber extends SubsystemBase {
     }
     @Override
     public void periodic() {
-        climberEncoder1.getPosition();
-        climberEncoder2.getPosition();
-
     }
 }
