@@ -8,6 +8,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANConstants;
 
 // create climber
+ /**
+     * Brief description of the method or class.
+     * 
+     * @author Your Full Name
+     *  * @param param_name description of the parameter.
+     *  * @return return_type description of the return value.
+     */
 public class Climber extends SubsystemBase {
 
     private SparkFlex climberMotor1;
@@ -16,6 +23,13 @@ public class Climber extends SubsystemBase {
     private AbsoluteEncoder climberEncoder2;
 
     // Declare the climber
+     /**
+     * Brief description of the method or class.
+     * 
+     * @author Your Full Name
+     *  * @param param_name description of the parameter.
+     *  * @return return_type description of the return value.
+     */
     public Climber() {
         // Declare motors and their encoders
         climberMotor1 = new SparkFlex(CANConstants.climberMotor1CanID, SparkFlex.MotorType.kBrushless);
@@ -25,12 +39,26 @@ public class Climber extends SubsystemBase {
     }
 
     // stop climber command
+     /**
+     * Brief description of the method or class.
+     * 
+     * @author Your Full Name
+     *  * @param param_name description of the parameter.
+     *  * @return return_type description of the return value.
+     */
     public void stopClimber() {
         climberMotor1.stopMotor();
         climberMotor2.stopMotor();
     }
 
     // Verify motors are not above or below the limits
+     /**
+     * Brief description of the method or class.
+     * 
+     * @author Your Full Name
+     *  * @param param_name description of the parameter.
+     *  * @return return_type description of the return value.
+     */
     public boolean climberMotor1Valid() {
         if (climberEncoder1.getPosition() > ClimberArmConstants.kClimberMax
                 && climberEncoder1.getPosition() < ClimberArmConstants.kClimberMin)
@@ -46,6 +74,13 @@ public class Climber extends SubsystemBase {
     }
 
     // If both encoders valid set climber motors
+     /**
+     * Brief description of the method or class.
+     * 
+     * @author Your Full Name
+     *  * @param param_name description of the parameter.
+     *  * @return return_type description of the return value.
+     */
     public void setClimberMotors(double speed) {
         if (climberMotor1Valid() == true
                 && climberMotor2Valid() == true)
@@ -54,6 +89,13 @@ public class Climber extends SubsystemBase {
     }
 
     // get encoder postion periodicly
+     /**
+     * Brief description of the method or class.
+     * 
+     * @author Your Full Name
+     *  * @param param_name description of the parameter.
+     *  * @return return_type description of the return value.
+     */
     @Override
     public void periodic() {
         climberEncoder1.getPosition();
