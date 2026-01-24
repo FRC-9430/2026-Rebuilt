@@ -45,19 +45,16 @@ public class Climber extends SubsystemBase {
      * @author Amaya Lewis
      *  * @returns boolean.
      */
-    public boolean climberMotor1Valid() {
+    public boolean isClimberMotorsValid() {
         if (climberEncoder1.getPosition() > ClimberArmConstants.kClimberMax
-                && climberEncoder1.getPosition() < ClimberArmConstants.kClimberMin)
-            ;
-        return true;
-    }
-
-    public boolean climberMotor2Valid() {
-        if (climberEncoder2.getPosition() > ClimberArmConstants.kClimberMax
+                && climberEncoder1.getPosition() < ClimberArmConstants.kClimberMin
+                && climberEncoder2.getPosition() > ClimberArmConstants.kClimberMax
                 && climberEncoder2.getPosition() < ClimberArmConstants.kClimberMin)
             ;
         return true;
     }
+
+    
      /**
      * Runs motors if climber motors are valid.
      * 
@@ -65,9 +62,7 @@ public class Climber extends SubsystemBase {
      *  * @return void.
      */
     public void setClimberMotors(double speed) {
-        if (climberMotor1Valid() == true
-                && climberMotor2Valid() == true)
-            ;
+        if (isClimberMotorsValid() == true)
         setClimberMotors(speed);
     }
 
