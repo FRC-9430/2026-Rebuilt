@@ -42,7 +42,14 @@ public class Climber extends SubsystemBase {
     }
 
 
+    public void setClimberMotors(double speed){
+        if (climberMotor1Valid() == true
+                && climberMotor2Valid() == true);
+           setClimberMotors(speed);
+        
 
+
+    }
 
     /*
      * public boolean isSetpointValid(double setpoint) {

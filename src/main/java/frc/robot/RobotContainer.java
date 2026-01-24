@@ -47,16 +47,14 @@ public class RobotContainer {
 
     driverController.a()
         .whileTrue(new RepeatCommand(new InstantCommand(() -> {
-          robotClimber.setClimberMotor1(0.2);
-          robotClimber.setClimberMotor2(0.2);
+          robotClimber.setClimberMotors(0.2);
         }))).onFalse(new InstantCommand(() -> {
           robotClimber.stopClimber();
         }));
 
     driverController.b()
         .whileTrue(new RepeatCommand(new InstantCommand(() -> {
-          robotClimber.setClimberMotor1(-0.2);
-          robotClimber.setClimberMotor2(-0.2);
+          robotClimber.setClimberMotors(-0.2);
         }))).onFalse(new InstantCommand(() -> {
           robotClimber.stopClimber();
     }));
