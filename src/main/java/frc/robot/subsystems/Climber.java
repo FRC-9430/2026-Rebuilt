@@ -29,12 +29,18 @@ public class Climber extends SubsystemBase {
     }
 
 
-    public boolean areClimbersValid() {
+    public boolean climberMotor1Valid() {
         if (climberEncoder1.getPosition() > ClimberArmConstants.kClimberMax
                 && climberEncoder1.getPosition() < ClimberArmConstants.kClimberMin);
-        
-       
+            return true;
     }
+
+    public boolean climberMotor2Valid() {
+        if (climberEncoder2.getPosition() > ClimberArmConstants.kClimberMax
+                && climberEncoder2.getPosition() < ClimberArmConstants.kClimberMin);
+            return true;
+    }
+
 
 
 
