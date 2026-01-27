@@ -65,7 +65,7 @@ public class Climber extends SubsystemBase {
         if (isClimberMotorsValid() == true) {
             climberMotor1.set(speed);
             climberMotor2.set(speed);
-        }
+        }else{ stopClimber();}
     
     }
     @Override
