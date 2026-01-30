@@ -44,7 +44,12 @@ public class RobotContainer {
    * }</pre>
    */
   private void configureBindings() {
-
+ /**
+     * When a or b is pressed motor spin. when a or b released motor stop.
+     * 
+     * @author Daniel
+     *  * @return void.
+     */
     driverController.a()
         .whileTrue(new RepeatCommand(new InstantCommand(() -> {
           robotClimber.setClimberMotors(0.2);
