@@ -2,10 +2,14 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.util.ShooterInterpolation;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -13,8 +17,10 @@ public class ShooterSubsystem extends SubsystemBase {
     private final SparkFlex m_bottomFlywheelMotor;
     private final SparkFlex m_hoodMotor;
 
+    private final ShooterInterpolation m_shooterInterpolation = new ShooterInterpolation();
+
     /** Creates a new ShooterSubsystem. */
-  public ShooterSubsystem() {
+    public ShooterSubsystem() {
         m_topFlywheelMotor = new SparkFlex(ShooterConstants.kShooterLeftMotorId, MotorType.kBrushless);
         m_bottomFlywheelMotor = new SparkFlex(ShooterConstants.kShooterRightMotorId, MotorType.kBrushless);
         m_hoodMotor = new SparkFlex(ShooterConstants.kShooterHoodMotorId, MotorType.kBrushless);
@@ -133,6 +139,31 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public boolean isReadyToShoot() {
         return false; // placeholder
+    }
+
+    /**
+     * Calculates the robot heading required to aim at a target while moving.
+     *
+     * @param robotPosition The current position of the robot on the field.
+     * @param fieldRelativeVelocity The current velocity of the robot on the field.
+     * @param targetPosition The position of the target on the field.
+     * @param projectileSpeed The speed of the projectile in m/s.
+     * @return The target heading for the robot.
+     */
+    public Rotation2d calculateAimingHeading(Translation2d robotPosition, ChassisSpeeds fieldRelativeVelocity,
+            Translation2d targetPosition, double projectileSpeed) {
+        // TODO: Implement aiming logic based on vector addition of robot velocity and projectile velocity
+        return new Rotation2d();
+    }
+
+    /**
+     * Calculates the target hood angle based on distance to target.
+     *
+     * @param distanceMeters Distance to the target in meters.
+     * @return Target hood angle in degrees (0 to 90).
+     */
+    public double calculateHoodAngle(double distanceMeters) {
+        return 0; // TODO: use shooter interpolation to calculate shooter hood angle
     }
 
     /** This method is called once per scheduler run. */
