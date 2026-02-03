@@ -38,6 +38,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         configureBindings();
+        drivetrain.configureAutoBuilder();
     }
 
     private void configureBindings() {
