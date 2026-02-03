@@ -1,4 +1,4 @@
-package frc.robot.subsystem;
+package frc.robot.subsystems;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
