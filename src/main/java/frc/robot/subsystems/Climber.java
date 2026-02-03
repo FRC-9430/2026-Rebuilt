@@ -2,6 +2,11 @@ package frc.robot.subsystems;
 
 //Import packages (thumbs up)
 import com.revrobotics.AbsoluteEncoder;
+import edu.wpi.first.apriltag.AprilTag;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.controller.PIDController;
+
 import com.revrobotics.spark.SparkFlex;
 import frc.robot.Constants.ClimberArmConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -14,10 +19,13 @@ public class Climber extends SubsystemBase {
     private SparkFlex climberMotor2;
     private AbsoluteEncoder climberEncoder1;
     private AbsoluteEncoder climberEncoder2;
-
+    private PIDController climberController = new PIDController(
+            ClimberArmConstants.kP,
+            ClimberArmConstants.kI,
+            ClimberArmConstants.kD);
      /**
      * Constructs the climber with its motors, encoderes, and classes.
-     * 
+     *
      * @author Amaya Lewis
      *  * @return returns a climber object.
      */
@@ -31,7 +39,7 @@ public class Climber extends SubsystemBase {
 
     /**
      * Stops both climber motors simultaneously.
-     * 
+     *
      * @author Amaya Lewis
      *  * @return void
      */
@@ -41,7 +49,7 @@ public class Climber extends SubsystemBase {
     }
      /**
      * Checks if motors are above or below their limits using encoders.
-     * 
+     *
      * @author Amaya Lewis
      *  * @returns boolean.
      */
@@ -54,10 +62,10 @@ public class Climber extends SubsystemBase {
         return true;
     }
 
-    
+
      /**
      * Runs motors if climber motors are valid.
-     * 
+     *
      * @author Amaya Lewis
      *  * @return void.
      */
@@ -66,7 +74,7 @@ public class Climber extends SubsystemBase {
             climberMotor1.set(speed);
             climberMotor2.set(speed);
         }else{ stopClimber();}
-    
+
     }
     @Override
     public void periodic() {

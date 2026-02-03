@@ -23,14 +23,17 @@ public final class Constants {
         public static final double JOYSTICK_DEADBAND = 0.08;
         public static final double TRIGGER_DEADBAND = 0.05;
     }
-  
+
     /**
     * Constants for the Climbing Arm Subsystem
     */
     public static final class ClimberArmConstants {
-    
+
         public static final double kClimberMax = .48; //TODO: DummyValue
         public static final double kClimberMin = .090;//TODO: DummyValue
+        public static final double kP = 0.001;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
     }
 
     // TODO:CHANGE ALL OF BELOW
@@ -63,6 +66,23 @@ public final class Constants {
         public static final double kHoodMinPosition = 0.0;
         public static final double kHoodPositionTolerance = 0.1;
         public static final double kHoodStowedPosition = 0.0;
+    }
+
+    public static final class TagConstants {
+
+      // Red team constants
+      public static final int[] redHubTags = {2, 3, 4, 5, 8, 9, 10, 11};
+      public static final int[] redLadderTags = {15, 16};
+      public static final int[] redDepotTags = {13, 14};
+      public static final int[] redTrenchTags = {1, 6, 7, 12};
+      int[][] redTags = {redHubTags, redLadderTags, redDepotTags, redTrenchTags};
+
+      // Blue team constants
+      public static final int[] blueHubTags = {18, 19, 20, 21, 24, 25, 26};
+      public static final int[] blueLadderTags = {31, 32};
+      public static final int[] blueDepotTags = {29, 30};
+      public static final int[] blueTrenchTags = {17, 22, 23,28};
+      int[][] blueTags = {blueHubTags, blueLadderTags, blueDepotTags, blueTrenchTags};
     }
 
 }
