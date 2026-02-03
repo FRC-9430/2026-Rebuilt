@@ -22,6 +22,7 @@ import frc.robot.util.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystem.IntakeSubsystem;
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -41,6 +42,7 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     private final Climber robotClimber = new Climber();
+    private final IntakeSubsystem intake = new IntakeSubsystem();
 
     public RobotContainer() {
         configureBindings();
@@ -90,6 +92,17 @@ public class RobotContainer {
                 }))).onFalse(new InstantCommand(() -> {
                     robotClimber.stopClimber();
                 }));
+        joystick.rightTrigger(0.08).whileTrue(new RepeatCommand(new InstantCommand(() -> {
+            intake.setSpeed(joystick.getRightTriggerAxis());
+        })
+
+        ));
+
+        joystick.leftTrigger(0.08).whileTrue(new RepeatCommand(new InstantCommand(() -> {
+            intake.setSpeed(-joystick.getLeftTriggerAxis());
+        })
+
+        ));
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
