@@ -43,6 +43,11 @@ public class RobotContainer {
 
   private Climber robotClimber = new Climber();
 
+    public RobotContainer() {
+        configureBindings();
+        drivetrain.configureAutoBuilder();
+    }
+
   public RobotContainer() {
     configureBindings();
   }
