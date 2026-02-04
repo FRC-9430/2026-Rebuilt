@@ -37,7 +37,7 @@ public class RobotContainer {
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
-  private final CommandXboxController joystick = new CommandXboxController(0);
+  private final CommandXboxController controller = new CommandXboxController(0);
 
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -53,10 +53,10 @@ public class RobotContainer {
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
+        drivetrain.applyRequest(() -> drive.withVelocityX(-controller.getLeftY() * MaxSpeed) // Drive forward with
                                                                                            // negative Y (forward)
-            .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+            .withVelocityY(-controller.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(-controller.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
 
     // Idle while the robot is disabled. This ensures the configured
@@ -65,19 +65,19 @@ public class RobotContainer {
     RobotModeTriggers.disabled().whileTrue(
         drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
-    joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    joystick.b().whileTrue(drivetrain
-        .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
+    controller.a().whileTrue(drivetrain.applyRequest(() -> brake));
+    controller.b().whileTrue(drivetrain
+        .applyRequest(() -> point.withModuleDirection(new Rotation2d(-controller.getLeftY(), -controller.getLeftX()))));
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
-    joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+    controller.back().and(controller.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+    controller.back().and(controller.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+    controller.start().and(controller.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    controller.start().and(controller.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // Reset the field-centric heading on left bumper press.
-    joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+    controller.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -87,14 +87,14 @@ public class RobotContainer {
      * @author Daniel
      *         * @return void.
      */
-    joystick.x()
+    controller.x()
         .whileTrue(new RepeatCommand(new InstantCommand(() -> {
           robotClimber.setClimberMotors(0.2);
         }))).onFalse(new InstantCommand(() -> {
           robotClimber.stopClimber();
         }));
 
-    joystick.y()
+    controller.y()
         .whileTrue(new RepeatCommand(new InstantCommand(() -> {
           robotClimber.setClimberMotors(-0.2);
         }))).onFalse(new InstantCommand(() -> {
