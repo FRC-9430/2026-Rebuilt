@@ -50,14 +50,14 @@ public class RobotContainer {
      * @author Daniel
      *  * @return void.
      */
-    driverController.a()
+    driverController.x()
         .whileTrue(new RepeatCommand(new InstantCommand(() -> {
           robotClimber.setClimberMotors(0.2);
         }))).onFalse(new InstantCommand(() -> {
           robotClimber.stopClimber();
         }));
 
-    driverController.b()
+    driverController.y()
         .whileTrue(new RepeatCommand(new InstantCommand(() -> {
           robotClimber.setClimberMotors(-0.2);
         }))).onFalse(new InstantCommand(() -> {
