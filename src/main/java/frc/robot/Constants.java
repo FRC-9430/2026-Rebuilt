@@ -1,5 +1,9 @@
 package frc.robot;
 
+import com.revrobotics.spark.config.ClosedLoopConfig;
+import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 /**
  * Container class for other Constants classes
  */
@@ -30,9 +34,9 @@ public final class Constants {
 
         public static final int HOOD_ARTICULATE_CAN_ID = 20;
         public static final int FEEDER_CAN_ID = 21;
-        public static final int L_TOP_SHOOTER_CAN_ID = 22;
-        public static final int L_BOT_SHOOTER_CAN_ID = 23;
-        public static final int R_SHOOTER_CAN_ID = 24;
+        public static final int R_SHOOTER_CAN_ID = 22;
+        public static final int L_TOP_SHOOTER_CAN_ID = 23;
+        public static final int L_BOT_SHOOTER_CAN_ID = 24;
 
 
     }
@@ -55,14 +59,16 @@ public final class Constants {
         public static final double kFlywheelP = 0.0001;
         public static final double kFlywheelI = 0.0;
         public static final double kFlywheelD = 0.0;
-        public static final double kFlywheelFF = 0.0;
 
         // Hood PID
         public static final double kHoodP = 0.1;
         public static final double kHoodI = 0.0;
         public static final double kHoodD = 0.0;
-        public static final double kHoodFF = 0.0;
 
+        // Feed PID
+        public static final double kFeedP = 0.1;
+        public static final double kFeedI = 0.0;
+        public static final double kFeedD = 0.0;
 
         // Setpoints - TODO: CHANGE/REPLACE BELOW AS NECESSARY
         public static final double kShooterTargetRPM = 4000.0;
@@ -73,6 +79,35 @@ public final class Constants {
         public static final double kHoodMinPosition = 0.0;
         public static final double kHoodPositionTolerance = 0.1;
         public static final double kHoodStowedPosition = 0.0;
+
+        public static final SparkFlexConfig MAIN_SHOOTER_CONFIG = new SparkFlexConfig();
+        static {
+            MAIN_SHOOTER_CONFIG.apply(new ClosedLoopConfig().pid(kFlywheelP, kFlywheelI, kFlywheelD));
+            MAIN_SHOOTER_CONFIG.idleMode(IdleMode.kCoast);
+            MAIN_SHOOTER_CONFIG.inverted(false);
+        }
+
+        public static final SparkFlexConfig AUX_SHOOTER_CONFIG = new SparkFlexConfig();
+        static {
+            AUX_SHOOTER_CONFIG.apply(new ClosedLoopConfig().pid(kFlywheelP, kFlywheelI, kFlywheelD));
+            AUX_SHOOTER_CONFIG.idleMode(IdleMode.kCoast);
+            AUX_SHOOTER_CONFIG.follow(CANConstants.R_SHOOTER_CAN_ID,true);
+        }
+
+        public static final SparkFlexConfig HOOD_CONFIG = new SparkFlexConfig();
+        static {
+            HOOD_CONFIG.apply(new ClosedLoopConfig().pid(kHoodP, kHoodI, kHoodD));
+            HOOD_CONFIG.idleMode(IdleMode.kBrake);
+            HOOD_CONFIG.inverted(false);
+        }
+
+        public static final SparkFlexConfig FEED_CONFIG = new SparkFlexConfig();
+        static {
+            FEED_CONFIG.apply(new ClosedLoopConfig().pid(kFeedP, kFeedI, kFeedD));
+            FEED_CONFIG.idleMode(IdleMode.kBrake);
+            FEED_CONFIG.inverted(false);
+        }
+
     }
 
 }
