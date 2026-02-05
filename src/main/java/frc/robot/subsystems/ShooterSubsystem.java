@@ -1,35 +1,57 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANConstants;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
 
+    private final SparkFlex R_shooterMotor;
+    private final SparkFlex L_topShoooterMotor;
+    private final SparkFlex L_botShoooterMotor;
+
     private final SparkFlex m_hoodMotor;
     private final SparkFlex m_feedMotor;
 
-    private final SparkFlex m_LtopFlywheelMotor;
-    private final SparkFlex m_LbottomFlywheelMotor;
-    private final SparkFlex m_RtopFlywheelMotor;
+    private final RelativeEncoder shooterEncoder;
+    private final AbsoluteEncoder hoodEncoder;
+
+    private final SparkClosedLoopController shooterController;
+    private final SparkClosedLoopController hoodController;
 
 
     /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
-        m_LtopFlywheelMotor = new SparkFlex(CANConstants.L_TOP_SHOOTER_CAN_ID, MotorType.kBrushless);
-        m_LbottomFlywheelMotor = new SparkFlex(CANConstants.L_BOT_SHOOTER_CAN_ID, MotorType.kBrushless);
-        m_RtopFlywheelMotor = new SparkFlex(CANConstants.R_SHOOTER_CAN_ID, MotorType.kBrushless);
+        R_shooterMotor = new SparkFlex(CANConstants.R_SHOOTER_CAN_ID, MotorType.kBrushless);
+        L_topShoooterMotor = new SparkFlex(CANConstants.L_TOP_SHOOTER_CAN_ID, MotorType.kBrushless);
+        L_botShoooterMotor = new SparkFlex(CANConstants.L_BOT_SHOOTER_CAN_ID, MotorType.kBrushless);
 
         m_hoodMotor = new SparkFlex(CANConstants.HOOD_ARTICULATE_CAN_ID, MotorType.kBrushless);
         m_feedMotor = new SparkFlex(CANConstants.FEEDER_CAN_ID, MotorType.kBrushless);
 
-        // TODO: Configure motors
+        R_shooterMotor.configure(ShooterConstants.MAIN_SHOOTER_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        L_topShoooterMotor.configure(ShooterConstants.AUX_SHOOTER_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        L_botShoooterMotor.configure(ShooterConstants.AUX_SHOOTER_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        // TODO: Get encoders
+        m_hoodMotor.configure(ShooterConstants.HOOD_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_feedMotor.configure(ShooterConstants.FEED_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        // TODO: Get PID controllers
+        shooterEncoder = R_shooterMotor.getEncoder();
+        hoodEncoder = m_hoodMotor.getAbsoluteEncoder();
+
+        shooterController = R_shooterMotor.getClosedLoopController();
+        hoodController = m_hoodMotor.getClosedLoopController();
+
     }
 
     /**
@@ -38,8 +60,8 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param topRPM The target RPM for the top flywheel.
      * @param bottomRPM The target RPM for the bottom flywheel.
      */
-    public void setFlywheelSpeeds(double topRPM, double bottomRPM) {
-        // TODO: Set flywheel velocity for both motors
+    public void setFlywheelSpeeds(double speed) {
+        R_shooterMotor.set(speed);
     }
 
     /** Sets the flywheels to a slow idle speed. */
@@ -53,6 +75,16 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
+     * Gets the average RPM of the flywheels.
+     *
+     * @return The average flywheel RPM.
+     */
+    public double getFlywheelRPM() {
+        // TODO: Return average flywheel RPM
+        return 0.0;
+    }
+
+    /**
      * Checks if the flywheels are at their target speed.
      *
      * @return True if the flywheels are at speed, false otherwise.
@@ -63,12 +95,26 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * Gets the average RPM of the flywheels.
+     * Runs the feeder motor at the specified speed.
      *
-     * @return The average flywheel RPM.
+     * @param speed The speed to run the feeder motor at.
      */
-    public double getFlywheelRPM() {
-        // TODO: Return average flywheel RPM
+    public void runFeeder(double speed) {
+        m_feedMotor.set(speed);
+    }
+
+    /** Stops the feeder motor. */
+    public void stopFeeder() {
+        m_feedMotor.stopMotor();
+    }
+
+    /**
+     * Gets the current RPM of the feeder motor.
+     *
+     * @return The feeder RPM.
+     */
+    public double getFeederRPM() {
+        // TODO: Return feeder RPM
         return 0.0;
     }
 
@@ -97,7 +143,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Stops the hood motor. */
     public void stopHood() {
-        // TODO: Stop hood motor
+        m_hoodMotor.stopMotor();
     }
 
     /**
@@ -148,8 +194,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Stops all motors in the subsystem. */
     public void stopAll() {
-        stopFlywheels();
-        stopHood();
+        L_botShoooterMotor.stopMotor();
+        L_topShoooterMotor.stopMotor();
+        R_shooterMotor.stopMotor();
+        m_hoodMotor.stopMotor();
+        m_feedMotor.stopMotor();
     }
 
     /**
@@ -159,7 +208,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return The top flywheel motor.
      */
     public SparkFlex getTopFlywheelMotor() {
-        return m_LtopFlywheelMotor;
+        return L_topShoooterMotor;
     }
 
     /**
@@ -169,7 +218,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return The bottom flywheel motor.
      */
     public SparkFlex getBottomFlywheelMotor() {
-        return m_LbottomFlywheelMotor;
+        return L_botShoooterMotor;
     }
 
     /**
