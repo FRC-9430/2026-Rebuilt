@@ -12,18 +12,29 @@ public final class Constants {
         public static final int ROBORIO_CAN_ID = 0;
         public static final int PIGEON2_CAN_ID = 1;
         public static final int REV_PDH_CAN_ID = 2;
+
         public static final int FL_SWERVE_ENCODER_CAN_ID = 6;
         public static final int FR_SWERVE_ENCODER_CAN_ID = 7;
         public static final int BL_SWERVE_ENCODER_CAN_ID = 8;
         public static final int BR_SWERVE_ENCODER_CAN_ID = 9;
+
         public static final int FL_SWERVE_TURNING_CAN_ID = 10;
         public static final int FR_SWERVE_TURNING_CAN_ID = 11;
         public static final int BL_SWERVE_TURNING_CAN_ID = 12;
         public static final int BR_SWERVE_TURNING_CAN_ID = 13;
+
         public static final int FL_SWERVE_DRIVING_CAN_ID = 14;
         public static final int FR_SWERVE_DRIVING_CAN_ID = 15;
         public static final int BL_SWERVE_DRIVING_CAN_ID = 16;
         public static final int BR_SWERVE_DRIVING_CAN_ID = 17;
+
+        public static final int HOOD_ARTICULATE_CAN_ID = 20;
+        public static final int FEEDER_CAN_ID = 21;
+        public static final int L_TOP_SHOOTER_CAN_ID = 22;
+        public static final int L_BOT_SHOOTER_CAN_ID = 23;
+        public static final int R_SHOOTER_CAN_ID = 24;
+
+
     }
 
     /**
