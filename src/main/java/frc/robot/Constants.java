@@ -50,11 +50,6 @@ public final class Constants {
 
     // TODO:CHANGE ALL OF BELOW
     public static final class ShooterConstants {
-        // Motor CAN IDs - TODO: CHANGE ME
-        public static final int kShooterLeftMotorId = 0;
-        public static final int kShooterRightMotorId = 0;
-        public static final int kShooterTopMotorId = 0;
-        public static final int kShooterHoodMotorId = 0;
         
         // Flywheel PID
         public static final double kFlywheelP = 0.0001;
