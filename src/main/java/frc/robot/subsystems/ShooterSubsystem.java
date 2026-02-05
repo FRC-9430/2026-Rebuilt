@@ -9,7 +9,6 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -25,9 +24,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private final RelativeEncoder shooterEncoder;
     private final AbsoluteEncoder hoodEncoder;
+    private final RelativeEncoder feedEncoder;
 
     private final SparkClosedLoopController shooterController;
     private final SparkClosedLoopController hoodController;
+    private final SparkClosedLoopController feedController;
 
 
     /** Creates a new ShooterSubsystem. */
@@ -48,10 +49,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
         shooterEncoder = R_shooterMotor.getEncoder();
         hoodEncoder = m_hoodMotor.getAbsoluteEncoder();
+        feedEncoder = m_feedMotor.getEncoder();
 
         shooterController = R_shooterMotor.getClosedLoopController();
         hoodController = m_hoodMotor.getClosedLoopController();
-
+        feedController = m_feedMotor.getClosedLoopController();
     }
 
     /**
@@ -66,12 +68,12 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Sets the flywheels to a slow idle speed. */
     public void idleFlywheels() {
-        // TODO: Run at idle RPM
+        R_shooterMotor.set(0.0);
     }
 
     /** Stops the flywheel motors. */
     public void stopFlywheels() {
-        // TODO: Stop all flywheel motors
+        R_shooterMotor.stopMotor();
     }
 
     /**
@@ -80,8 +82,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return The average flywheel RPM.
      */
     public double getFlywheelRPM() {
-        // TODO: Return average flywheel RPM
-        return 0.0;
+        return shooterEncoder.getVelocity();
     }
 
     /**
@@ -90,8 +91,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return True if the flywheels are at speed, false otherwise.
      */
     public boolean flywheelsAtSpeed() {
-        // TODO: Check if all flywheels are within tolerance
-        return false;
+        return Math.abs(getFlywheelRPM() - ShooterConstants.kShooterTargetRPM) <= ShooterConstants.kFlywheelToleranceRPM;
     }
 
     /**
@@ -114,8 +114,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return The feeder RPM.
      */
     public double getFeederRPM() {
-        // TODO: Return feeder RPM
-        return 0.0;
+        return feedEncoder.getVelocity();
     }
 
     /**
@@ -124,12 +123,12 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param position The target hood position.
      */
     public void setShootingAngle(double position) {
-        // TODO: Set hood position (clamped to limits)
+        hoodController.setSetpoint(position, ControlType.kPosition);
     }
 
     /** Moves the hood to its stowed position. */
     public void stowHood() {
-        // TODO: Move hood to stowed position
+        setShootingAngle(ShooterConstants.kHoodStowedPosition);
     }
 
     /**
@@ -138,7 +137,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param speed The speed to set the motor to.
      */
     public void manualHoodControl(double speed) {
-        // TODO: Manual hood control
+        m_hoodMotor.set(speed);
     }
 
     /** Stops the hood motor. */
@@ -153,8 +152,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return True if the hood is at the position, false otherwise.
      */
     public boolean hoodAtPosition(double position) {
-        // TODO: Check if hood is at target position
-        return false;
+        return Math.abs(getHoodPosition() - position) <= ShooterConstants.kHoodPositionTolerance;
     }
 
     /**
@@ -163,8 +161,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return True if the hood is stowed, false otherwise.
      */
     public boolean isHoodStowed() {
-        // TODO: Check if hood is stowed
-        return false;
+        return hoodAtPosition(ShooterConstants.kHoodStowedPosition);
     }
 
     /**
@@ -173,8 +170,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return The hood position.
      */
     public double getHoodPosition() {
-        // TODO: Return hood position
-        return 0.0;
+        return hoodEncoder.getPosition();
     }
 
     /**
@@ -184,7 +180,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return true if the shooter is ready to fire, false otherwise.
      */
     public boolean isReadyToShoot() {
-        return false; // placeholder
+        return flywheelsAtSpeed() && hoodController.isAtSetpoint();
     }
 
     /** This method is called once per scheduler run. */
@@ -199,35 +195,5 @@ public class ShooterSubsystem extends SubsystemBase {
         R_shooterMotor.stopMotor();
         m_hoodMotor.stopMotor();
         m_feedMotor.stopMotor();
-    }
-
-    /**
-     * Gets the top flywheel motor object. // TODO: Might be more worth it to get
-     * object state
-     *
-     * @return The top flywheel motor.
-     */
-    public SparkFlex getTopFlywheelMotor() {
-        return L_topShoooterMotor;
-    }
-
-    /**
-     * Gets the bottom flywheel motor object. // TODO: Might be more worth it to get
-     * object state
-     *
-     * @return The bottom flywheel motor.
-     */
-    public SparkFlex getBottomFlywheelMotor() {
-        return L_botShoooterMotor;
-    }
-
-    /**
-     * Gets the hood motor object. // TODO: Might be more worth it to get object
-     * state
-     *
-     * @return The hood motor.
-     */
-    public SparkFlex getHoodMotor() {
-        return m_hoodMotor;
     }
 }
