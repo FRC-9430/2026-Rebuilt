@@ -3,19 +3,27 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CANConstants;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-    private final SparkFlex m_topFlywheelMotor;
-    private final SparkFlex m_bottomFlywheelMotor;
     private final SparkFlex m_hoodMotor;
+    private final SparkFlex m_feedMotor;
+
+    private final SparkFlex m_LtopFlywheelMotor;
+    private final SparkFlex m_LbottomFlywheelMotor;
+    private final SparkFlex m_RtopFlywheelMotor;
+
 
     /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
-        m_topFlywheelMotor = new SparkFlex(ShooterConstants.kShooterLeftMotorId, MotorType.kBrushless);
-        m_bottomFlywheelMotor = new SparkFlex(ShooterConstants.kShooterRightMotorId, MotorType.kBrushless);
-        m_hoodMotor = new SparkFlex(ShooterConstants.kShooterHoodMotorId, MotorType.kBrushless);
+        m_LtopFlywheelMotor = new SparkFlex(CANConstants.L_TOP_SHOOTER_CAN_ID, MotorType.kBrushless);
+        m_LbottomFlywheelMotor = new SparkFlex(CANConstants.L_BOT_SHOOTER_CAN_ID, MotorType.kBrushless);
+        m_RtopFlywheelMotor = new SparkFlex(CANConstants.R_SHOOTER_CAN_ID, MotorType.kBrushless);
+
+        m_hoodMotor = new SparkFlex(CANConstants.HOOD_ARTICULATE_CAN_ID, MotorType.kBrushless);
+        m_feedMotor = new SparkFlex(CANConstants.FEEDER_CAN_ID, MotorType.kBrushless);
 
         // TODO: Configure motors
 
@@ -151,7 +159,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return The top flywheel motor.
      */
     public SparkFlex getTopFlywheelMotor() {
-        return m_topFlywheelMotor;
+        return m_LtopFlywheelMotor;
     }
 
     /**
@@ -161,7 +169,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return The bottom flywheel motor.
      */
     public SparkFlex getBottomFlywheelMotor() {
-        return m_bottomFlywheelMotor;
+        return m_LbottomFlywheelMotor;
     }
 
     /**
