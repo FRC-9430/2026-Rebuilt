@@ -52,8 +52,9 @@ public final class Constants {
         public static final double TRIGGER_DEADBAND = 0.05;
     }
 
-    // TODO:CHANGE ALL OF BELOW
     public static final class ShooterConstants {
+
+        //TODO Tune PID
         
         // Flywheel PID
         public static final double kFlywheelP = 0.0001;
@@ -77,6 +78,7 @@ public final class Constants {
 
         // Hood limits
         public static final double kHoodMinPosition = 0.0;
+        public static final double kHoodMaxPosition = 0.8;
         public static final double kHoodPositionTolerance = 0.1;
         public static final double kHoodStowedPosition = 0.0;
 
