@@ -30,9 +30,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private final SparkClosedLoopController hoodController;
     private final SparkClosedLoopController feedController;
 
-
     /** Creates a new ShooterSubsystem. */
-  public ShooterSubsystem() {
+    public ShooterSubsystem() {
         R_shooterMotor = new SparkFlex(CANConstants.R_SHOOTER_CAN_ID, MotorType.kBrushless);
         L_topShoooterMotor = new SparkFlex(CANConstants.L_TOP_SHOOTER_CAN_ID, MotorType.kBrushless);
         L_botShoooterMotor = new SparkFlex(CANConstants.L_BOT_SHOOTER_CAN_ID, MotorType.kBrushless);
@@ -40,12 +39,14 @@ public class ShooterSubsystem extends SubsystemBase {
         m_hoodMotor = new SparkFlex(CANConstants.HOOD_ARTICULATE_CAN_ID, MotorType.kBrushless);
         m_feedMotor = new SparkFlex(CANConstants.FEEDER_CAN_ID, MotorType.kBrushless);
 
-    R_shooterMotor.configure(MAIN_SHOOTER_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    L_topShoooterMotor.configure(AUX_SHOOTER_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    L_botShoooterMotor.configure(AUX_SHOOTER_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        R_shooterMotor.configure(MAIN_SHOOTER_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        L_topShoooterMotor.configure(AUX_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
+                PersistMode.kPersistParameters);
+        L_botShoooterMotor.configure(AUX_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
+                PersistMode.kPersistParameters);
 
-    m_hoodMotor.configure(HOOD_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    m_feedMotor.configure(FEED_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_hoodMotor.configure(HOOD_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_feedMotor.configure(FEED_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         shooterEncoder = R_shooterMotor.getEncoder();
         hoodEncoder = m_hoodMotor.getAbsoluteEncoder();
@@ -59,7 +60,7 @@ public class ShooterSubsystem extends SubsystemBase {
     /**
      * Sets the target RPM for the top and bottom flywheel motors.
      *
-     * @param topRPM The target RPM for the top flywheel.
+     * @param topRPM    The target RPM for the top flywheel.
      * @param bottomRPM The target RPM for the bottom flywheel.
      */
     public void setFlywheelSpeeds(double speed) {
@@ -68,12 +69,12 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Sets the flywheels to a slow idle speed. */
     public void idleFlywheels() {
-        R_shooterMotor.set(0.0);
+        shooterController.setSetpoint(kShooterIdleRPM, ControlType.kVelocity);
     }
 
     /** Stops the flywheel motors. */
     public void stopFlywheels() {
-        R_shooterMotor.stopMotor();
+        shooterController.setSetpoint(0.0, ControlType.kVelocity);
     }
 
     /**
@@ -91,7 +92,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return True if the flywheels are at speed, false otherwise.
      */
     public boolean flywheelsAtSpeed() {
-    return Math.abs(getFlywheelRPM() - kShooterTargetRPM) <= kFlywheelToleranceRPM;
+        return Math.abs(getFlywheelRPM() - kShooterTargetRPM) <= kFlywheelToleranceRPM;
     }
 
     /**
@@ -100,12 +101,12 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param speed The speed to run the feeder motor at.
      */
     public void runFeeder(double speed) {
-        m_feedMotor.set(speed);
+        feedController.setSetpoint(speed, ControlType.kVelocity);
     }
 
     /** Stops the feeder motor. */
     public void stopFeeder() {
-        m_feedMotor.stopMotor();
+        feedController.setSetpoint(0.0, ControlType.kVelocity);
     }
 
     /**
@@ -128,7 +129,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Moves the hood to its stowed position. */
     public void stowHood() {
-    setShootingAngle(kHoodStowedPosition);
+        setShootingAngle(kHoodStowedPosition);
     }
 
     /**
@@ -142,7 +143,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Stops the hood motor. */
     public void stopHood() {
-        m_hoodMotor.stopMotor();
+        hoodController.setSetpoint(getHoodPosition(), ControlType.kPosition);
     }
 
     /**
@@ -152,7 +153,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return True if the hood is at the position, false otherwise.
      */
     public boolean hoodAtPosition(double position) {
-    return Math.abs(getHoodPosition() - position) <= kHoodPositionTolerance;
+        return Math.abs(getHoodPosition() - position) <= kHoodPositionTolerance;
     }
 
     /**
@@ -161,7 +162,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return True if the hood is stowed, false otherwise.
      */
     public boolean isHoodStowed() {
-    return hoodAtPosition(kHoodStowedPosition);
+        return hoodAtPosition(kHoodStowedPosition);
     }
 
     /**
@@ -190,6 +191,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Stops all motors in the subsystem. */
     public void stopAll() {
+        
+        shooterController.setSetpoint(0.0, ControlType.kVelocity);
+        feedController.setSetpoint(0.0, ControlType.kVelocity);
+        hoodController.setSetpoint(getHoodPosition(), ControlType.kPosition);
+
         L_botShoooterMotor.stopMotor();
         L_topShoooterMotor.stopMotor();
         R_shooterMotor.stopMotor();
