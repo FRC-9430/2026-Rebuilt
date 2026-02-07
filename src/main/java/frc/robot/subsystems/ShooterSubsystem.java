@@ -157,12 +157,13 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param speed The speed to set the motor to.
      */
     public void manualHoodControl(double speed) {
-       //  m_hoodMotor.set(speed);
+       m_hoodMotor.set(speed);
     }
 
     /** Stops the hood motor. */
     public void stopHood() {
         hoodController.setSetpoint(getHoodPosition(), ControlType.kPosition);
+        m_hoodMotor.stopMotor();
     }
 
     /**
