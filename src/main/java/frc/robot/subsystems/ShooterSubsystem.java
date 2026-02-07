@@ -63,10 +63,20 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param topRPM    The target RPM for the top flywheel.
      * @param bottomRPM The target RPM for the bottom flywheel.
      */
-    public void setShooterSpeeds(double speed) {
+    public void setShooterSpeedsRPM(double speed) {
         shooterController.setSetpoint(speed, ControlType.kVelocity);
     }
 
+    /**
+     * Sets the target speed for the top and bottom flywheel motors.
+     *
+     * @param topRPM    The target RPM for the top flywheel.
+     * @param bottomRPM The target RPM for the bottom flywheel.
+     */
+    public void setShooterSpeedsPercentage(double speed) {
+        R_shooterMotor.set(speed);
+    }
+    
     /** Sets the flywheels to a slow idle speed. */
     public void idleShooter() {
         shooterController.setSetpoint(kShooterIdleRPM, ControlType.kVelocity);
@@ -96,12 +106,21 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
+     * Runs the feeder motor at the specified RPM.
+     *
+     * @param speed The speed to run the feeder motor at.
+     */
+    public void runFeederRPM(double speed) {
+        feedController.setSetpoint(speed, ControlType.kVelocity);
+    }
+
+    /**
      * Runs the feeder motor at the specified speed.
      *
      * @param speed The speed to run the feeder motor at.
      */
-    public void runFeeder(double speed) {
-        feedController.setSetpoint(speed, ControlType.kVelocity);
+    public void runFeederPercentage(double speed) {
+        m_feedMotor.set(speed);
     }
 
     /** Stops the feeder motor. */
