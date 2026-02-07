@@ -85,6 +85,7 @@ public class ShooterSubsystem extends SubsystemBase {
     /** Stops the flywheel motors. */
     public void stopShooter() {
         shooterController.setSetpoint(0.0, ControlType.kVelocity);
+        R_shooterMotor.stopMotor();
     }
 
     /**
@@ -108,10 +109,10 @@ public class ShooterSubsystem extends SubsystemBase {
     /**
      * Runs the feeder motor at the specified RPM.
      *
-     * @param speed The speed to run the feeder motor at.
+     * @param RPM The speed to run the feeder motor at.
      */
-    public void runFeederRPM(double speed) {
-        feedController.setSetpoint(speed, ControlType.kVelocity);
+    public void runFeederRPM(double RPM) {
+        feedController.setSetpoint(RPM, ControlType.kVelocity);
     }
 
     /**
