@@ -63,17 +63,17 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param topRPM    The target RPM for the top flywheel.
      * @param bottomRPM The target RPM for the bottom flywheel.
      */
-    public void setFlywheelSpeeds(double speed) {
+    public void setShooterSpeeds(double speed) {
         shooterController.setSetpoint(speed, ControlType.kVelocity);
     }
 
     /** Sets the flywheels to a slow idle speed. */
-    public void idleFlywheels() {
+    public void idleShooter() {
         shooterController.setSetpoint(kShooterIdleRPM, ControlType.kVelocity);
     }
 
     /** Stops the flywheel motors. */
-    public void stopFlywheels() {
+    public void stopShooter() {
         shooterController.setSetpoint(0.0, ControlType.kVelocity);
     }
 
@@ -82,7 +82,7 @@ public class ShooterSubsystem extends SubsystemBase {
      *
      * @return The average flywheel RPM.
      */
-    public double getFlywheelRPM() {
+    public double getShooterRPM() {
         return shooterEncoder.getVelocity();
     }
 
@@ -91,8 +91,8 @@ public class ShooterSubsystem extends SubsystemBase {
      *
      * @return True if the flywheels are at speed, false otherwise.
      */
-    public boolean flywheelsAtSpeed() {
-        return Math.abs(getFlywheelRPM() - kShooterTargetRPM) <= kFlywheelToleranceRPM;
+    public boolean shooterIsAtSpeed() {
+        return Math.abs(getShooterRPM() - kShooterTargetRPM) <= kFlywheelToleranceRPM;
     }
 
     /**
@@ -138,7 +138,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param speed The speed to set the motor to.
      */
     public void manualHoodControl(double speed) {
-        m_hoodMotor.set(speed);
+       //  m_hoodMotor.set(speed);
     }
 
     /** Stops the hood motor. */
@@ -181,7 +181,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return true if the shooter is ready to fire, false otherwise.
      */
     public boolean isReadyToShoot() {
-        return flywheelsAtSpeed() && hoodController.isAtSetpoint();
+        return shooterIsAtSpeed() && hoodController.isAtSetpoint();
     }
 
     /** This method is called once per scheduler run. */
@@ -191,10 +191,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Stops all motors in the subsystem. */
     public void stopAll() {
-        
+
         shooterController.setSetpoint(0.0, ControlType.kVelocity);
         feedController.setSetpoint(0.0, ControlType.kVelocity);
-        hoodController.setSetpoint(getHoodPosition(), ControlType.kPosition);
+        //hoodController.setSetpoint(getHoodPosition(), ControlType.kPosition);
 
         L_botShoooterMotor.stopMotor();
         L_topShoooterMotor.stopMotor();
