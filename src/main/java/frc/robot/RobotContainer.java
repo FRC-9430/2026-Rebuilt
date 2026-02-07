@@ -66,8 +66,10 @@ public class RobotContainer {
                 drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
         controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            shooterSubsystem.setShooterSpeedsPercentage(controller.getRightTriggerAxis());
-        })));
+            shooterSubsystem.manualHoodControl(0.25*controller.getRightTriggerAxis());
+        }))).onFalse(new InstantCommand(()->{
+            shooterSubsystem.stopHood();
+        }));
 
         controller.leftTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
             shooterSubsystem.runFeederPercentage(controller.getLeftTriggerAxis());
