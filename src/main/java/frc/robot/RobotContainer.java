@@ -66,14 +66,18 @@ public class RobotContainer {
                 drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
         controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            shooterSubsystem.setShooterSpeedsPercentage(controller.getRightTriggerAxis());
+            shooterSubsystem.setShooterSpeedsRPM(3000);
         }))).onFalse(new InstantCommand(()->{
             shooterSubsystem.stopShooter();
         }));
 
         controller.leftTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
             shooterSubsystem.runFeederPercentage(controller.getLeftTriggerAxis());
-        })));
+            shooterSubsystem.setShooterSpeedsPercentage(controller.getLeftTriggerAxis());
+        }))).onFalse(new InstantCommand(()->{
+            shooterSubsystem.stopShooter();
+            shooterSubsystem.stopFeeder();
+        }));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
