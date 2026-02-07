@@ -57,12 +57,12 @@ public final class Constants {
         //TODO Tune PID
         
         // Flywheel PID
-        public static final double kFlywheelP = 0.0001;
+        public static final double kFlywheelP = 0.01;
         public static final double kFlywheelI = 0.0;
         public static final double kFlywheelD = 0.0;
 
         // Hood PID
-        public static final double kHoodP = 0.1;
+        public static final double kHoodP = 0.0001;
         public static final double kHoodI = 0.0;
         public static final double kHoodD = 0.0;
 
@@ -81,6 +81,8 @@ public final class Constants {
         public static final double kHoodMaxPosition = 0.8;
         public static final double kHoodPositionTolerance = 0.1;
         public static final double kHoodStowedPosition = 0.0;
+
+        public static final double kHoodPosHoldPercent = 0.04;
 
         public static final SparkFlexConfig MAIN_SHOOTER_CONFIG = new SparkFlexConfig();
         static {
