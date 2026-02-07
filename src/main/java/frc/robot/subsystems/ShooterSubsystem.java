@@ -84,7 +84,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Stops the flywheel motors. */
     public void stopShooter() {
-        shooterController.setSetpoint(0.0, ControlType.kVelocity);
         R_shooterMotor.stopMotor();
     }
 
@@ -126,7 +125,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Stops the feeder motor. */
     public void stopFeeder() {
-        feedController.setSetpoint(0.0, ControlType.kVelocity);
+        m_feedMotor.stopMotor();
     }
 
     /**
@@ -215,7 +214,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
         shooterController.setSetpoint(0.0, ControlType.kVelocity);
         feedController.setSetpoint(0.0, ControlType.kVelocity);
-        //hoodController.setSetpoint(getHoodPosition(), ControlType.kPosition);
 
         L_botShoooterMotor.stopMotor();
         L_topShoooterMotor.stopMotor();

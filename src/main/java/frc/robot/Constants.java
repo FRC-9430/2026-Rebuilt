@@ -56,8 +56,8 @@ public final class Constants {
 
         //TODO Tune PID
         
-        // Flywheel PID
-        public static final double kFlywheelP = 0.005;
+        // Shooter PID
+        public static final double kFlywheelP = 0.0001;
         public static final double kFlywheelI = 0.0;
         public static final double kFlywheelD = 0.0;
 
