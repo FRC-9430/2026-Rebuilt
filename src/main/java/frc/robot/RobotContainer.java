@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.util.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.util.ElasticDashboard;
+
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class RobotContainer {
@@ -39,7 +41,10 @@ public class RobotContainer {
 
     public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
-    public RobotContainer() {
+     public ElasticDashboard dash = new ElasticDashboard();
+
+
+  public RobotContainer() {
         configureBindings();
         drivetrain.configureAutoBuilder();
     }
