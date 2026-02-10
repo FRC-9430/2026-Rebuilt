@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
-
+import java.util.Arrays;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -27,16 +28,16 @@ public class VisionSubsystem extends SubsystemBase {
 
 
 
-    public void checkAllianceColor(){
+    public int[][] checkAllianceColor(){
         Optional<Alliance> allianceColor = DriverStation.getAlliance();
         if (allianceColor.isPresent()){
             if (allianceColor.get() == Alliance.Red){
-                //write later - assign red team tags somehow??
+                return TagConstants.redTags;
 
             }
 
             if (allianceColor.get() == Alliance.Blue){
-                //write later - same thing but blue team tags
+                return TagConstants.blueTags;
 
             }
         }
