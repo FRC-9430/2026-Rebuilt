@@ -53,8 +53,6 @@ public final class Constants {
 
     public static final class ShooterConstants {
 
-        // TODO Tune PID
-
         // Shooter PID
         public static final double kShooterP = 4.5E-4;
         public static final double kShooterI = 1E-10;
@@ -63,19 +61,19 @@ public final class Constants {
         public static final double kShooterV = 0.0024;
         public static final double kShooterA = 0.0;
 
-        // Hood PID
+        // Hood PID TODO tune hood
         public static final double kHoodP = 0.0001;
         public static final double kHoodI = 0.0;
         public static final double kHoodD = 0.0;
 
-        // Feed PID
+        // Feed PID TODO tune feeder
         public static final double kFeedP = 0.1;
         public static final double kFeedI = 0.0;
         public static final double kFeedD = 0.0;
 
-        // Setpoints - TODO: CHANGE/REPLACE BELOW AS NECESSARY
+        // Setpoints
         public static final double kShooterIdleRPM = 1000.0;
-        public static final double kShooterToleranceRPM = 100.0;
+        public static final double kShooterToleranceRPM = 200.0;
 
         // Hood limits
         public static final double kHoodMinPosition = 0.0;
