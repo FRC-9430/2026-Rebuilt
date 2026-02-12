@@ -58,51 +58,51 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * Sets the target RPM for the top and bottom flywheel motors.
+     * Sets the target RPM for the top and bottom Shooter motors.
      *
-     * @param topRPM    The target RPM for the top flywheel.
-     * @param bottomRPM The target RPM for the bottom flywheel.
+     * @param topRPM    The target RPM for the top Shooter.
+     * @param bottomRPM The target RPM for the bottom Shooter.
      */
     public void setShooterSpeedsRPM(double speed) {
         shooterController.setSetpoint(speed, ControlType.kVelocity);
     }
 
     /**
-     * Sets the target speed for the top and bottom flywheel motors.
+     * Sets the target speed for the top and bottom Shooter motors.
      *
-     * @param topRPM    The target RPM for the top flywheel.
-     * @param bottomRPM The target RPM for the bottom flywheel.
+     * @param topRPM    The target RPM for the top Shooter.
+     * @param bottomRPM The target RPM for the bottom Shooter.
      */
     public void setShooterSpeedsPercentage(double speed) {
         R_shooterMotor.set(speed);
     }
     
-    /** Sets the flywheels to a slow idle speed. */
+    /** Sets the Shooters to a slow idle speed. */
     public void idleShooter() {
         shooterController.setSetpoint(kShooterIdleRPM, ControlType.kVelocity);
     }
 
-    /** Stops the flywheel motors. */
+    /** Stops the Shooter motors. */
     public void stopShooter() {
         R_shooterMotor.stopMotor();
     }
 
     /**
-     * Gets the average RPM of the flywheels.
+     * Gets the average RPM of the Shooters.
      *
-     * @return The average flywheel RPM.
+     * @return The average Shooter RPM.
      */
     public double getShooterRPM() {
         return shooterEncoder.getVelocity();
     }
 
     /**
-     * Checks if the flywheels are at their target speed.
+     * Checks if the Shooters are at their target speed.
      *
-     * @return True if the flywheels are at speed, false otherwise.
+     * @return True if the Shooters are at speed, false otherwise.
      */
     public boolean shooterIsAtSpeed() {
-        return Math.abs(getShooterRPM() - kShooterTargetRPM) <= kFlywheelToleranceRPM;
+        return Math.abs(getShooterRPM() - shooterController.getSetpoint()) <= kShooterToleranceRPM;
     }
 
     /**
@@ -195,7 +195,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * Checks if the flywheels are at their target RPM and the hood is at its target
+     * Checks if the Shooters are at their target RPM and the hood is at its target
      * position.
      *
      * @return true if the shooter is ready to fire, false otherwise.

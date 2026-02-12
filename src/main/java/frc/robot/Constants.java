@@ -38,7 +38,6 @@ public final class Constants {
         public static final int L_TOP_SHOOTER_CAN_ID = 23;
         public static final int L_BOT_SHOOTER_CAN_ID = 24;
 
-
     }
 
     /**
@@ -54,12 +53,15 @@ public final class Constants {
 
     public static final class ShooterConstants {
 
-        //TODO Tune PID
-        
+        // TODO Tune PID
+
         // Shooter PID
-        public static final double kFlywheelP = 0.0001;
-        public static final double kFlywheelI = 0.0;
-        public static final double kFlywheelD = 0.0;
+        public static final double kShooterP = 4.5E-4;
+        public static final double kShooterI = 1E-10;
+        public static final double kShooterD = 0.0;
+        public static final double kShooterS = 0.2;
+        public static final double kShooterV = 0.0024;
+        public static final double kShooterA = 0.0;
 
         // Hood PID
         public static final double kHoodP = 0.0001;
@@ -72,9 +74,8 @@ public final class Constants {
         public static final double kFeedD = 0.0;
 
         // Setpoints - TODO: CHANGE/REPLACE BELOW AS NECESSARY
-        public static final double kShooterTargetRPM = 4000.0;
         public static final double kShooterIdleRPM = 1000.0;
-        public static final double kFlywheelToleranceRPM = 100.0;
+        public static final double kShooterToleranceRPM = 100.0;
 
         // Hood limits
         public static final double kHoodMinPosition = 0.0;
@@ -86,16 +87,17 @@ public final class Constants {
 
         public static final SparkFlexConfig MAIN_SHOOTER_CONFIG = new SparkFlexConfig();
         static {
-            MAIN_SHOOTER_CONFIG.apply(new ClosedLoopConfig().pid(kFlywheelP, kFlywheelI, kFlywheelD));
             MAIN_SHOOTER_CONFIG.idleMode(IdleMode.kCoast);
             MAIN_SHOOTER_CONFIG.inverted(false);
+            MAIN_SHOOTER_CONFIG.closedLoop.pid(kShooterP, kShooterI, kShooterD);
+            MAIN_SHOOTER_CONFIG.closedLoop.outputRange(0, 1); // No moving backwards
+            MAIN_SHOOTER_CONFIG.closedLoop.feedForward.sva(kShooterS, kShooterV, kShooterA);
         }
 
         public static final SparkFlexConfig AUX_SHOOTER_CONFIG = new SparkFlexConfig();
         static {
-            AUX_SHOOTER_CONFIG.apply(new ClosedLoopConfig().pid(kFlywheelP, kFlywheelI, kFlywheelD));
             AUX_SHOOTER_CONFIG.idleMode(IdleMode.kCoast);
-            AUX_SHOOTER_CONFIG.follow(CANConstants.R_SHOOTER_CAN_ID,true);
+            AUX_SHOOTER_CONFIG.follow(CANConstants.R_SHOOTER_CAN_ID, true);
         }
 
         public static final SparkFlexConfig HOOD_CONFIG = new SparkFlexConfig();
