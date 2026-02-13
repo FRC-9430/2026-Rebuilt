@@ -32,9 +32,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Creates a new ShooterSubsystem. */
     public ShooterSubsystem() {
-        m_RightShooterMotor = new SparkFlex(CANConstants.R_SHOOTER_CAN_ID, MotorType.kBrushless);
-        m_LeftTopShoooterMotor = new SparkFlex(CANConstants.L_TOP_SHOOTER_CAN_ID, MotorType.kBrushless);
-        m_LeftBotShoooterMotor = new SparkFlex(CANConstants.L_BOT_SHOOTER_CAN_ID, MotorType.kBrushless);
+        m_RightShooterMotor = new SparkFlex(CANConstants.RIGHT_SHOOTER_CAN_ID, MotorType.kBrushless);
+        m_LeftTopShoooterMotor = new SparkFlex(CANConstants.LEFT_TOP_SHOOTER_CAN_ID, MotorType.kBrushless);
+        m_LeftBotShoooterMotor = new SparkFlex(CANConstants.LEFT_BOTTOM_SHOOTER_CAN_ID, MotorType.kBrushless);
 
         m_hoodMotor = new SparkFlex(CANConstants.HOOD_ARTICULATE_CAN_ID, MotorType.kBrushless);
         m_feedMotor = new SparkFlex(CANConstants.FEEDER_CAN_ID, MotorType.kBrushless);

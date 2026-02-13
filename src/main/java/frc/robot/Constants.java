@@ -36,9 +36,9 @@ public final class Constants {
 
         public static final int HOOD_ARTICULATE_CAN_ID = 20;
         public static final int FEEDER_CAN_ID = 21;
-        public static final int R_SHOOTER_CAN_ID = 22;
-        public static final int L_TOP_SHOOTER_CAN_ID = 23;
-        public static final int L_BOT_SHOOTER_CAN_ID = 24;
+        public static final int RIGHT_SHOOTER_CAN_ID = 22;
+        public static final int LEFT_TOP_SHOOTER_CAN_ID = 23;
+        public static final int LEFT_BOTTOM_SHOOTER_CAN_ID = 24;
 
     }
 
@@ -97,7 +97,7 @@ public final class Constants {
         public static final SparkFlexConfig AUX_SHOOTER_CONFIG = new SparkFlexConfig();
         static {
             AUX_SHOOTER_CONFIG.idleMode(IdleMode.kCoast);
-            AUX_SHOOTER_CONFIG.follow(CANConstants.R_SHOOTER_CAN_ID, true);
+            AUX_SHOOTER_CONFIG.follow(CANConstants.RIGHT_SHOOTER_CAN_ID, true);
         }
 
         public static final SparkFlexConfig HOOD_CONFIG = new SparkFlexConfig();
