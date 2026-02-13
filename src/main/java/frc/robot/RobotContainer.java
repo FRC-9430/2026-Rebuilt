@@ -103,4 +103,9 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle)
         );
     }
+
+    public void setInitialPose() {
+        drivetrain.resetPose(dash.getInitialPose());
+    }
+
 }
