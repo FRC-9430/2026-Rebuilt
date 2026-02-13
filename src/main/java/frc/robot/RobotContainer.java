@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -18,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.util.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.ElasticDashboard;
 
 
@@ -38,6 +40,8 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+    public final VisionSubsystem vision = new VisionSubsystem();
+
 
 
   public ElasticDashboard dash = new ElasticDashboard();
@@ -46,6 +50,7 @@ public class RobotContainer {
   public RobotContainer() {
         configureBindings();
         drivetrain.configureAutoBuilder();
+        drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
     }
 
     private void configureBindings() {
@@ -106,6 +111,13 @@ public class RobotContainer {
 
     public void setInitialPose() {
         drivetrain.resetPose(dash.getInitialPose());
+    }
+
+    public void addVisionMeasurements() {
+        var poseEstimate = vision.getPoseEstimate(drivetrain.getPose().getRotation().getDegrees());
+        if (poseEstimate != null) {
+            drivetrain.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
+        }
     }
 
 }
