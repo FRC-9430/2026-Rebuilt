@@ -76,7 +76,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setShooterSpeedsPercentage(double speed) {
         R_shooterMotor.set(speed);
     }
-    
+
     /** Sets the Shooters to a slow idle speed. */
     public void idleShooter() {
         shooterController.setSetpoint(kShooterIdleRPM, ControlType.kVelocity);
@@ -157,7 +157,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param speed The speed to set the motor to.
      */
     public void manualHoodControl(double speed) {
-       m_hoodMotor.set(speed);
+        m_hoodMotor.set(speed);
     }
 
     /** Stops the hood motor. */
@@ -207,6 +207,13 @@ public class ShooterSubsystem extends SubsystemBase {
     /** This method is called once per scheduler run. */
     @Override
     public void periodic() {
+
+        // When the hood is stowed, turn the motor off
+        if ((hoodController.isAtSetpoint() || hoodEncoder.getPosition() <= kHoodStowedPosition)
+                && hoodController.getSetpoint() == kHoodStowedPosition) {
+            stopHood();
+        }
+        
     }
 
     /** Stops all motors in the subsystem. */
