@@ -220,13 +220,9 @@ public class ShooterSubsystem extends SubsystemBase {
     /** Stops all motors in the subsystem. */
     public void stopAll() {
 
-        m_shooterController.setSetpoint(0.0, ControlType.kVelocity);
-        m_feedController.setSetpoint(0.0, ControlType.kVelocity);
-
-        m_LeftBotShoooterMotor.stopMotor();
-        m_LeftTopShoooterMotor.stopMotor();
         m_RightShooterMotor.stopMotor();
         m_hoodMotor.stopMotor();
         m_feedMotor.stopMotor();
+
     }
 }
