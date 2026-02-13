@@ -22,13 +22,13 @@ public class ShooterSubsystem extends SubsystemBase {
     private final SparkFlex m_hoodMotor;
     private final SparkFlex m_feedMotor;
 
-    private final RelativeEncoder shooterEncoder;
-    private final AbsoluteEncoder hoodEncoder;
-    private final RelativeEncoder feedEncoder;
+    private final RelativeEncoder m_shooterEncoder;
+    private final AbsoluteEncoder m_hoodEncoder;
+    private final RelativeEncoder m_feedEncoder;
 
-    private final SparkClosedLoopController shooterController;
-    private final SparkClosedLoopController hoodController;
-    private final SparkClosedLoopController feedController;
+    private final SparkClosedLoopController m_shooterController;
+    private final SparkClosedLoopController m_hoodController;
+    private final SparkClosedLoopController m_feedController;
 
     /** Creates a new ShooterSubsystem. */
     public ShooterSubsystem() {
@@ -48,13 +48,13 @@ public class ShooterSubsystem extends SubsystemBase {
         m_hoodMotor.configure(HOOD_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         m_feedMotor.configure(FEED_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        shooterEncoder = m_RightShooterMotor.getEncoder();
-        hoodEncoder = m_hoodMotor.getAbsoluteEncoder();
-        feedEncoder = m_feedMotor.getEncoder();
+        m_shooterEncoder = m_RightShooterMotor.getEncoder();
+        m_hoodEncoder = m_hoodMotor.getAbsoluteEncoder();
+        m_feedEncoder = m_feedMotor.getEncoder();
 
-        shooterController = m_RightShooterMotor.getClosedLoopController();
-        hoodController = m_hoodMotor.getClosedLoopController();
-        feedController = m_feedMotor.getClosedLoopController();
+        m_shooterController = m_RightShooterMotor.getClosedLoopController();
+        m_hoodController = m_hoodMotor.getClosedLoopController();
+        m_feedController = m_feedMotor.getClosedLoopController();
     }
 
     /**
@@ -64,7 +64,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param bottomRPM The target RPM for the bottom Shooter.
      */
     public void setShooterSpeedsRPM(double speed) {
-        shooterController.setSetpoint(speed, ControlType.kVelocity);
+        m_shooterController.setSetpoint(speed, ControlType.kVelocity);
     }
 
     /**
@@ -79,7 +79,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Sets the Shooters to a slow idle speed. */
     public void idleShooter() {
-        shooterController.setSetpoint(kShooterIdleRPM, ControlType.kVelocity);
+        m_shooterController.setSetpoint(kShooterIdleRPM, ControlType.kVelocity);
     }
 
     /** Stops the Shooter motors. */
@@ -93,7 +93,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return The average Shooter RPM.
      */
     public double getShooterRPM() {
-        return shooterEncoder.getVelocity();
+        return m_shooterEncoder.getVelocity();
     }
 
     /**
@@ -102,7 +102,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return True if the Shooters are at speed, false otherwise.
      */
     public boolean shooterIsAtSpeed() {
-        return Math.abs(getShooterRPM() - shooterController.getSetpoint()) <= kShooterToleranceRPM;
+        return Math.abs(getShooterRPM() - m_shooterController.getSetpoint()) <= kShooterToleranceRPM;
     }
 
     /**
@@ -111,7 +111,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param RPM The speed to run the feeder motor at.
      */
     public void runFeederRPM(double RPM) {
-        feedController.setSetpoint(RPM, ControlType.kVelocity);
+        m_feedController.setSetpoint(RPM, ControlType.kVelocity);
     }
 
     /**
@@ -134,7 +134,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return The feeder RPM.
      */
     public double getFeederRPM() {
-        return feedEncoder.getVelocity();
+        return m_feedEncoder.getVelocity();
     }
 
     /**
@@ -143,7 +143,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param position The target hood position.
      */
     public void setShootingAngle(double position) {
-        hoodController.setSetpoint(position, ControlType.kPosition);
+        m_hoodController.setSetpoint(position, ControlType.kPosition);
     }
 
     /** Moves the hood to its stowed position. */
@@ -162,7 +162,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Stops the hood motor. */
     public void stopHood() {
-        hoodController.setSetpoint(getHoodPosition(), ControlType.kPosition);
+        m_hoodController.setSetpoint(getHoodPosition(), ControlType.kPosition);
         m_hoodMotor.stopMotor();
     }
 
@@ -191,7 +191,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return The hood position.
      */
     public double getHoodPosition() {
-        return hoodEncoder.getPosition();
+        return m_hoodEncoder.getPosition();
     }
 
     /**
@@ -201,7 +201,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return true if the shooter is ready to fire, false otherwise.
      */
     public boolean isReadyToShoot() {
-        return shooterIsAtSpeed() && hoodController.isAtSetpoint();
+        return shooterIsAtSpeed() && m_hoodController.isAtSetpoint();
     }
 
     /** This method is called once per scheduler run. */
@@ -209,8 +209,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public void periodic() {
 
         // When the hood is stowed, turn the motor off
-        if ((hoodController.isAtSetpoint() || hoodEncoder.getPosition() <= kHoodStowedPosition)
-                && hoodController.getSetpoint() == kHoodStowedPosition) {
+        if ((m_hoodController.isAtSetpoint() || m_hoodEncoder.getPosition() <= kHoodStowedPosition)
+                && m_hoodController.getSetpoint() == kHoodStowedPosition) {
             stopHood();
         }
         
@@ -219,8 +219,8 @@ public class ShooterSubsystem extends SubsystemBase {
     /** Stops all motors in the subsystem. */
     public void stopAll() {
 
-        shooterController.setSetpoint(0.0, ControlType.kVelocity);
-        feedController.setSetpoint(0.0, ControlType.kVelocity);
+        m_shooterController.setSetpoint(0.0, ControlType.kVelocity);
+        m_feedController.setSetpoint(0.0, ControlType.kVelocity);
 
         m_LeftBotShoooterMotor.stopMotor();
         m_LeftTopShoooterMotor.stopMotor();
