@@ -15,9 +15,9 @@ import static frc.robot.Constants.ShooterConstants.*;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-    private final SparkFlex R_shooterMotor;
-    private final SparkFlex L_topShoooterMotor;
-    private final SparkFlex L_botShoooterMotor;
+    private final SparkFlex m_RightShooterMotor;
+    private final SparkFlex m_LeftTopShoooterMotor;
+    private final SparkFlex m_LeftBotShoooterMotor;
 
     private final SparkFlex m_hoodMotor;
     private final SparkFlex m_feedMotor;
@@ -32,27 +32,27 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Creates a new ShooterSubsystem. */
     public ShooterSubsystem() {
-        R_shooterMotor = new SparkFlex(CANConstants.R_SHOOTER_CAN_ID, MotorType.kBrushless);
-        L_topShoooterMotor = new SparkFlex(CANConstants.L_TOP_SHOOTER_CAN_ID, MotorType.kBrushless);
-        L_botShoooterMotor = new SparkFlex(CANConstants.L_BOT_SHOOTER_CAN_ID, MotorType.kBrushless);
+        m_RightShooterMotor = new SparkFlex(CANConstants.R_SHOOTER_CAN_ID, MotorType.kBrushless);
+        m_LeftTopShoooterMotor = new SparkFlex(CANConstants.L_TOP_SHOOTER_CAN_ID, MotorType.kBrushless);
+        m_LeftBotShoooterMotor = new SparkFlex(CANConstants.L_BOT_SHOOTER_CAN_ID, MotorType.kBrushless);
 
         m_hoodMotor = new SparkFlex(CANConstants.HOOD_ARTICULATE_CAN_ID, MotorType.kBrushless);
         m_feedMotor = new SparkFlex(CANConstants.FEEDER_CAN_ID, MotorType.kBrushless);
 
-        R_shooterMotor.configure(MAIN_SHOOTER_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        L_topShoooterMotor.configure(AUX_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
+        m_RightShooterMotor.configure(MAIN_SHOOTER_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_LeftTopShoooterMotor.configure(AUX_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
-        L_botShoooterMotor.configure(AUX_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
+        m_LeftBotShoooterMotor.configure(AUX_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
 
         m_hoodMotor.configure(HOOD_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         m_feedMotor.configure(FEED_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        shooterEncoder = R_shooterMotor.getEncoder();
+        shooterEncoder = m_RightShooterMotor.getEncoder();
         hoodEncoder = m_hoodMotor.getAbsoluteEncoder();
         feedEncoder = m_feedMotor.getEncoder();
 
-        shooterController = R_shooterMotor.getClosedLoopController();
+        shooterController = m_RightShooterMotor.getClosedLoopController();
         hoodController = m_hoodMotor.getClosedLoopController();
         feedController = m_feedMotor.getClosedLoopController();
     }
@@ -74,7 +74,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param bottomRPM The target RPM for the bottom Shooter.
      */
     public void setShooterSpeedsPercentage(double speed) {
-        R_shooterMotor.set(speed);
+        m_RightShooterMotor.set(speed);
     }
 
     /** Sets the Shooters to a slow idle speed. */
@@ -84,7 +84,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Stops the Shooter motors. */
     public void stopShooter() {
-        R_shooterMotor.stopMotor();
+        m_RightShooterMotor.stopMotor();
     }
 
     /**
@@ -222,9 +222,9 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterController.setSetpoint(0.0, ControlType.kVelocity);
         feedController.setSetpoint(0.0, ControlType.kVelocity);
 
-        L_botShoooterMotor.stopMotor();
-        L_topShoooterMotor.stopMotor();
-        R_shooterMotor.stopMotor();
+        m_LeftBotShoooterMotor.stopMotor();
+        m_LeftTopShoooterMotor.stopMotor();
+        m_RightShooterMotor.stopMotor();
         m_hoodMotor.stopMotor();
         m_feedMotor.stopMotor();
     }
