@@ -1,4 +1,5 @@
 package frc.robot.subsystems;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
@@ -11,41 +12,40 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.TagConstants;
 
 public class VisionSubsystem extends SubsystemBase {
+    
     private AprilTagFieldLayout layout;
 
     public VisionSubsystem() {
         // Try & catch for loading AprilTagFieldLayout
-        try{
+        try {
             layout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
         }
 
-        catch(Exception e) {
-        System.out.println("The AprilTag field layout could not be loaded.");
+        catch (Exception e) {
+            System.out.println("The AprilTag field layout could not be loaded.");
         }
-
 
     }
 
+    
 
-
-    public int[][] checkAllianceColor(){
+    public int[][] checkAllianceColor() {
         Optional<Alliance> allianceColor = DriverStation.getAlliance();
-        if (allianceColor.isPresent()){
-            if (allianceColor.get() == Alliance.Red){
+        if (allianceColor.isPresent()) {
+            if (allianceColor.get() == Alliance.Red) {
                 return TagConstants.redTags;
 
             }
 
-            if (allianceColor.get() == Alliance.Blue){
+            if (allianceColor.get() == Alliance.Blue) {
                 return TagConstants.blueTags;
 
             }
-        }
-        else{
+        } else {
             System.out.println("No alliance color found at the time.");
-
         }
+        return null;
 
     }
 
-} 
+}
