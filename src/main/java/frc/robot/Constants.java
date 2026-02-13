@@ -1,7 +1,9 @@
 package frc.robot;
 
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 /**
@@ -100,9 +102,16 @@ public final class Constants {
 
         public static final SparkFlexConfig HOOD_CONFIG = new SparkFlexConfig();
         static {
-            HOOD_CONFIG.apply(new ClosedLoopConfig().pid(kHoodP, kHoodI, kHoodD));
             HOOD_CONFIG.idleMode(IdleMode.kBrake);
             HOOD_CONFIG.inverted(false);
+            HOOD_CONFIG.closedLoop.outputRange(-0.5, 1);
+            HOOD_CONFIG.closedLoop.pid(kHoodP, kHoodI, kHoodD);
+            HOOD_CONFIG.closedLoop.positionWrappingEnabled(false);
+            HOOD_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+            HOOD_CONFIG.closedLoop.maxMotion.allowedProfileError(kHoodPositionTolerance);
+            HOOD_CONFIG.closedLoop.maxMotion.cruiseVelocity(1000);
+            HOOD_CONFIG.closedLoop.maxMotion.maxAcceleration(1000);
+            HOOD_CONFIG.closedLoop.maxMotion.positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
         }
 
         public static final SparkFlexConfig FEED_CONFIG = new SparkFlexConfig();
