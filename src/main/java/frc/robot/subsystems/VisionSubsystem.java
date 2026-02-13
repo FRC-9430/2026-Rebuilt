@@ -1,8 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Optional;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
