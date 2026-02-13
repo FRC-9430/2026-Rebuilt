@@ -39,7 +39,8 @@ public class ShooterSubsystem extends SubsystemBase {
         m_hoodMotor = new SparkFlex(CANConstants.HOOD_ARTICULATE_CAN_ID, MotorType.kBrushless);
         m_feedMotor = new SparkFlex(CANConstants.FEEDER_CAN_ID, MotorType.kBrushless);
 
-        m_RightShooterMotor.configure(MAIN_SHOOTER_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_RightShooterMotor.configure(MAIN_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
+                PersistMode.kPersistParameters);
         m_LeftTopShoooterMotor.configure(AUX_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
         m_LeftBotShoooterMotor.configure(AUX_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
@@ -213,7 +214,7 @@ public class ShooterSubsystem extends SubsystemBase {
                 && m_hoodController.getSetpoint() == kHoodStowedPosition) {
             stopHood();
         }
-        
+
     }
 
     /** Stops all motors in the subsystem. */
