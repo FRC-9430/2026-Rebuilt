@@ -63,8 +63,8 @@ public final class Constants {
         public static final double kShooterV = 0.0024;
         public static final double kShooterA = 0.0;
 
-        // Hood PID TODO tune hood
-        public static final double kHoodP = 0.0001;
+        // Hood PID
+        public static final double kHoodP = 25.0;
         public static final double kHoodI = 0.0;
         public static final double kHoodD = 0.0;
 
@@ -78,12 +78,12 @@ public final class Constants {
         public static final double kShooterToleranceRPM = 200.0;
 
         // Hood limits
-        public static final double kHoodMinPosition = 0.0;
-        public static final double kHoodMaxPosition = 0.8;
-        public static final double kHoodPositionTolerance = 0.1;
-        public static final double kHoodStowedPosition = 0.0;
+        public static final double kHoodMinPosition = 0.175;
+        public static final double kHoodMaxPosition = 0.710;
+        public static final double kHoodPositionTolerance = 0.05;
 
-        public static final double kHoodPosHoldPercent = 0.04;
+        // Hood Setpoints
+        public static final double kHoodStowedPosition = 0.180;
 
         public static final SparkFlexConfig MAIN_SHOOTER_CONFIG = new SparkFlexConfig();
         static {
@@ -104,21 +104,21 @@ public final class Constants {
         static {
             HOOD_CONFIG.idleMode(IdleMode.kBrake);
             HOOD_CONFIG.inverted(false);
-            HOOD_CONFIG.closedLoop.outputRange(-0.5, 1);
+            HOOD_CONFIG.closedLoop.outputRange(-0.5, 1.0); // Half speed when reversed
             HOOD_CONFIG.closedLoop.pid(kHoodP, kHoodI, kHoodD);
             HOOD_CONFIG.closedLoop.positionWrappingEnabled(false);
             HOOD_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-            HOOD_CONFIG.closedLoop.maxMotion.allowedProfileError(kHoodPositionTolerance);
             HOOD_CONFIG.closedLoop.maxMotion.cruiseVelocity(1000);
             HOOD_CONFIG.closedLoop.maxMotion.maxAcceleration(1000);
+            HOOD_CONFIG.closedLoop.maxMotion.allowedProfileError(kHoodPositionTolerance);
             HOOD_CONFIG.closedLoop.maxMotion.positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
         }
 
         public static final SparkFlexConfig FEED_CONFIG = new SparkFlexConfig();
         static {
-            FEED_CONFIG.apply(new ClosedLoopConfig().pid(kFeedP, kFeedI, kFeedD));
             FEED_CONFIG.idleMode(IdleMode.kBrake);
             FEED_CONFIG.inverted(false);
+            FEED_CONFIG.closedLoop.pid(kFeedP, kFeedI, kFeedD);
         }
 
     }

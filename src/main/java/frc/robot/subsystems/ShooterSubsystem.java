@@ -143,7 +143,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param position The target hood position.
      */
     public void setShootingAngle(double position) {
-        m_hoodController.setSetpoint(position, ControlType.kPosition);
+        m_hoodController.setSetpoint(position, ControlType.kMAXMotionPositionControl);
     }
 
     /** Moves the hood to its stowed position. */
