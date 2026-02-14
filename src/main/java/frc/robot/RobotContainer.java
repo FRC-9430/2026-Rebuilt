@@ -63,6 +63,7 @@ public class RobotContainer {
     public RobotContainer() {
         configureBindings();
         drivetrain.configureAutoBuilder();
+        SmartDashboard.putNumber("kOrientationP", kOrientationP);
     }
 
     private void configureBindings() {
@@ -211,12 +212,12 @@ public class RobotContainer {
         // Normalize angle error to [-pi, pi]
         double angleError = Math.atan2(Math.sin(desiredAngle - currentAngle), Math.cos(desiredAngle - currentAngle));
 
-        double omega = kOrientationP * angleError;
+        double omega = SmartDashboard.getNumber("kOrientationP", kOrientationP) * angleError;
         // Clamp angular rate to configured maximum
         omega = Math.max(-MaxAngularRate, Math.min(MaxAngularRate, omega));
 
         // Convert field-relative velocities to robot-relative chassis speeds
-        return ChassisSpeeds.fromFieldRelativeSpeeds(vxField, vyField, omega, pose.getRotation());
+        return ChassisSpeeds.fromFieldRelativeSpeeds(vxField, vyField, -omega, pose.getRotation());
     }
 
     public void addVisionMeasurements() {
