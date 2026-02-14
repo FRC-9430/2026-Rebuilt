@@ -58,8 +58,16 @@ public class ShooterSubsystemTest {
 
     @AfterEach
     void tearDown() {
-        m_shooter.stopAll();
+        m_shooter.close();
         m_shooter = null;
+        m_mainShooterMotorSim = null;
+        m_followerShooterMotorSim1 = null;
+        m_followerShooterMotorSim2 =  null;
+        m_hoodSim = null;
+        m_feedSim = null;
+        m_shooterEncoderSim = null;
+        m_hoodEncoderSim = null;
+        m_feedEncoderSim = null;
     }
 
     private void step() {

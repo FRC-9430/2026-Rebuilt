@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANConstants;
 import static frc.robot.Constants.ShooterConstants.*;
 
-public class ShooterSubsystem extends SubsystemBase {
+public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
 
     private final SparkFlex m_RightShooterMotor;
     private final SparkFlex m_LeftTopShoooterMotor;
@@ -268,13 +268,13 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public SparkClosedLoopController getShooterPID(String pidController) {
-        if (pidController == "shoot") {
+        if (pidController.equals("shoot")) {
             return m_shooterController;
         }
-        if (pidController == "feed") {
+        if (pidController.equals("feed")) {
             return m_feedController;
         }
-        if (pidController == "hood") {
+        if (pidController.equals("hood")) {
             return m_hoodController;
         }
         Exception e = new java.lang.IllegalArgumentException("Illegal argument in getShooterPID()");
@@ -303,5 +303,14 @@ public class ShooterSubsystem extends SubsystemBase {
         m_hoodMotor.stopMotor();
         m_feedMotor.stopMotor();
 
+    }
+
+    @Override
+    public void close() {
+        m_RightShooterMotor.close();
+        m_LeftTopShoooterMotor.close();
+        m_LeftBotShoooterMotor.close();
+        m_hoodMotor.close();
+        m_feedMotor.close();
     }
 }
