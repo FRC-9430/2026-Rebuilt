@@ -20,7 +20,7 @@ class IntakeSubsystemTest {
   @AfterEach
   void tearDown() {
     // Close the subsystem to release hardware resources (SparkFlex objects)
-    subsystem.close();
+    // subsystem.close();
   }
 
   @Test
