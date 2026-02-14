@@ -1,6 +1,9 @@
 
 package frc.robot;
 
+import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 /**
  * Container class for other Constants classes
  */
@@ -25,6 +28,9 @@ public final class Constants {
         public static final int FR_SWERVE_DRIVING_CAN_ID = 15;
         public static final int BL_SWERVE_DRIVING_CAN_ID = 16;
         public static final int BR_SWERVE_DRIVING_CAN_ID = 17;
+
+        public static final int INTAKE_MOTOR_CAN_ID = 33;
+        public static final int CONVEYOR_MOTOR_CAN_ID = 34;
     }
 
     /**
@@ -36,6 +42,25 @@ public final class Constants {
 
         public static final double JOYSTICK_DEADBAND = 0.08;
         public static final double TRIGGER_DEADBAND = 0.05;
+    }
+
+    public static final class IntakeConstants {
+        public static final double kDefaultIntakeSpeed = 0.8;
+        public static final double kDefaultConveyorSpeed = 0.8;
+
+        public static final SparkFlexConfig kIntakeMotorConfig = new SparkFlexConfig();
+        static {
+            kIntakeMotorConfig.inverted(false);
+            kIntakeMotorConfig.idleMode(IdleMode.kCoast);
+        }
+
+        public static final SparkFlexConfig kConveyorMotorConfig = new SparkFlexConfig();
+        static {
+            kConveyorMotorConfig.inverted(false);
+            kConveyorMotorConfig.idleMode(IdleMode.kCoast);
+        }
+
+
     }
 
 }
