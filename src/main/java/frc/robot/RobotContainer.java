@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -60,38 +59,20 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
-        drivetrain.setDefaultCommand(
-                // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> drive.withVelocityX(-controller.getLeftY() * MaxSpeed) // Drive forward
-                                                                                                     // with negative Y
-                                                                                                     // (forward)
-                        .withVelocityY(-controller.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                        .withRotationalRate(controller.getRightX() * MaxAngularRate) // Drive counterclockwise with
-                                                                                      // negative X (left)
-                ));
 
         drivetrain.setDefaultCommand(
-                new ConditionalCommand(
-                        drivetrain.applyRequest(() -> drive.withVelocityX(-controller.getLeftY() * MaxSpeed) // Drive
-                                                                                                             // forward
-                                                                                                             // with
-                                                                                                             // negative
-                                                                                                             // Y
-                                                                                                             // (forward)
-                                .withVelocityY(-controller.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                                .withRotationalRate(-controller.getRightX() * MaxAngularRate) // Drive counterclockwise
-                                                                                              // with negative X (left)
-                        ),
-                        drivetrain.applyRequest(() -> aim.withSpeeds(getPolarDriveSpeeds())),
-                        () -> {
-                            return driveMode == DriveMode.CARTESIAN;
-                        }));
+            drivetrain.applyRequestWithCondition(
+                () -> drive.withVelocityX(-controller.getLeftY() * MaxSpeed)
+                        .withVelocityY(-controller.getLeftX() * MaxSpeed)
+                        .withRotationalRate(controller.getRightX() * MaxAngularRate), 
+                () -> aim.withSpeeds(getPolarDriveSpeeds()), 
+                ()->isCartesian()));
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
+        RobotModeTriggers.disabled().whileTrue(
+            drivetrain.applyRequest(()->idle).ignoringDisable(true));
 
         controller.a().whileTrue(drivetrain.applyRequest(() -> brake));
         controller.b().whileTrue(drivetrain.applyRequest(
@@ -109,8 +90,10 @@ public class RobotContainer {
 
         controller.rightBumper().onTrue(new InstantCommand(() -> {
             driveMode = DriveMode.POLAR;
+            SmartDashboard.putString("DriveMode", "POLAR");
         })).onFalse(new InstantCommand(() -> {
             driveMode = DriveMode.CARTESIAN;
+            SmartDashboard.putString("DriveMode", "CARTESIAN");
         }));
 
         drivetrain.registerTelemetry(logger::telemeterize);
@@ -132,10 +115,13 @@ public class RobotContainer {
                 drivetrain.applyRequest(() -> idle));
     }
 
-
     public enum DriveMode {
         CARTESIAN,
         POLAR
+    }
+
+    public boolean isCartesian() {
+        return driveMode == DriveMode.CARTESIAN;
     }
 
     public void setInitialPose() {
@@ -165,24 +151,30 @@ public class RobotContainer {
                 break;
         }
 
-
         Pose2d pose = drivetrain.getState().Pose;
 
-        // Controller mapping: forward/back controls radial motion toward/away from the point.
-        // Left stick: negative Y is forward on this controller mapping in this project, so we negate
+        // Controller mapping: forward/back controls radial motion toward/away from the
+        // point.
+        // Left stick: negative Y is forward on this controller mapping in this project,
+        // so we negate
         double radialInput = -controller.getLeftY(); // +1 => forward (towards point)
         // Left stick left/right will orbit around the point
         double orbitInput = -controller.getLeftX();
+
+        radialInput = (Math.abs(radialInput) > 0.05 ? radialInput : 0);
+        orbitInput = (Math.abs(orbitInput) > 0.05 ? orbitInput : 0);
 
         // Compute vector from robot to the target (field frame)
         double dx = targetPointX - pose.getX();
         double dy = targetPointY - pose.getY();
         double r = Math.hypot(dx, dy);
 
-        // If very close to the point, avoid divide-by-zero and simply rotate in place to face the point
+        // If very close to the point, avoid divide-by-zero and simply rotate in place
+        // to face the point
         final double kEpsilon = 1e-3;
         if (r < kEpsilon) {
-            // If we're essentially on the point, don't translate; just rotate to face the (same) point (zero)
+            // If we're essentially on the point, don't translate; just rotate to face the
+            // (same) point (zero)
             return new ChassisSpeeds();
         }
 
@@ -191,21 +183,24 @@ public class RobotContainer {
         double uy = dy / r;
         // Unit tangential vector (90 deg CCW from radial) to produce orbiting motion
         double tx = -uy; // -dy/r
-        double ty = ux;  // dx/r
+        double ty = ux; // dx/r
 
         // Map inputs to speeds. Use MaxSpeed for both radial and tangential components.
         double vRadial = radialInput * MaxSpeed; // toward/away
         double vTangential = orbitInput * MaxSpeed; // orbit speed
 
-        // Compose field-relative linear velocity: radial component + tangential component
+        // Compose field-relative linear velocity: radial component + tangential
+        // component
         double vxField = vRadial * ux + vTangential * tx;
         double vyField = vRadial * uy + vTangential * ty;
 
-        // To keep the robot pointed at the target, set angular velocity to the rate of change of the angle
-        // to the target: phi_dot = -v_tangential / r (see derivation). Use omega = phi_dot.
+        // To keep the robot pointed at the target, set angular velocity to the rate of
+        // change of the angle
+        // to the target: phi_dot = -v_tangential / r (see derivation). Use omega =
+        // phi_dot.
         double omega = 0.0;
         if (Math.abs(r) > kEpsilon) {
-            omega = -vTangential / r;
+            omega = vTangential / r;
         }
 
         // Convert field-relative velocities to robot-relative chassis speeds
