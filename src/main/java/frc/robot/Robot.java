@@ -30,6 +30,7 @@ public class Robot extends TimedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    m_robotContainer.setInitialPose();
   }
 
   /**
@@ -91,7 +92,6 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    m_robotContainer.setInitialPose();
   }
 
   /** This function is called periodically during operator control. */
