@@ -9,10 +9,12 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -23,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.util.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.util.ElasticDashboard;
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top
@@ -44,10 +48,15 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+    public final VisionSubsystem vision = new VisionSubsystem();
+
+    public ElasticDashboard dash = new ElasticDashboard();
+
     public DriveMode driveMode = DriveMode.CARTESIAN;
 
     public RobotContainer() {
         configureBindings();
+        drivetrain.configureAutoBuilder();
     }
 
     private void configureBindings() {
@@ -59,7 +68,7 @@ public class RobotContainer {
                                                                                                      // with negative Y
                                                                                                      // (forward)
                         .withVelocityY(-controller.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                        .withRotationalRate(-controller.getRightX() * MaxAngularRate) // Drive counterclockwise with
+                        .withRotationalRate(controller.getRightX() * MaxAngularRate) // Drive counterclockwise with
                                                                                       // negative X (left)
                 ));
 
@@ -83,8 +92,6 @@ public class RobotContainer {
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
-        RobotModeTriggers.disabled().whileTrue(
-                drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
         controller.a().whileTrue(drivetrain.applyRequest(() -> brake));
         controller.b().whileTrue(drivetrain.applyRequest(
@@ -125,9 +132,14 @@ public class RobotContainer {
                 drivetrain.applyRequest(() -> idle));
     }
 
+
     public enum DriveMode {
         CARTESIAN,
         POLAR
+    }
+
+    public void setInitialPose() {
+        drivetrain.resetPose(dash.getInitialPose());
     }
 
     public ChassisSpeeds getPolarDriveSpeeds() {
@@ -199,4 +211,32 @@ public class RobotContainer {
         // Convert field-relative velocities to robot-relative chassis speeds
         return ChassisSpeeds.fromFieldRelativeSpeeds(vxField, vyField, omega, pose.getRotation());
     }
+
+    public void addVisionMeasurements() {
+        var poseEstimate = vision.getPoseEstimate();
+        SmartDashboard.putNumber("Robot Pose Cam Est X", poseEstimate.pose.getX());
+        SmartDashboard.putNumber("Robot Pose Cam Est Y", poseEstimate.pose.getY());
+
+        boolean doRejectUpdate = false;
+        if (poseEstimate.tagCount == 1 && poseEstimate.rawFiducials.length == 1) {
+            if (poseEstimate.rawFiducials[0].ambiguity > .7) {
+                doRejectUpdate = true;
+            }
+            if (poseEstimate.rawFiducials[0].distToCamera > 3) {
+                doRejectUpdate = true;
+            }
+        }
+        if (poseEstimate.tagCount == 0) {
+            doRejectUpdate = true;
+        }
+
+        if (!doRejectUpdate) {
+            drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+            drivetrain.addVisionMeasurement(
+                    poseEstimate.pose,
+                    poseEstimate.timestampSeconds);
+        }
+
+    }
+
 }
