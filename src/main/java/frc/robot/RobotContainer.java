@@ -138,18 +138,18 @@ public class RobotContainer {
         double targetPointY;
         switch (DriverStation.getAlliance().get()) {
             case Red:
-                // Red alliance target (near our wall)
-                targetPointX = 4.25;
+                // Red alliance Hub
+                targetPointX = 11.9;
                 targetPointY = 4.0;
                 break;
             case Blue:
-                // Blue alliance target (other side)
-                targetPointX = 12.5;
+                // Blue alliance Hub
+                targetPointX = 4.625;
                 targetPointY = 4.0;
                 break;
             default:
                 // Fallback to a reasonable default on unknown alliance
-                targetPointX = 4.25;
+                targetPointX = 4.625;
                 targetPointY = 4.0;
                 break;
         }
