@@ -40,6 +40,9 @@ public final class Constants {
         public static final int LEFT_TOP_SHOOTER_CAN_ID = 23;
         public static final int LEFT_BOTTOM_SHOOTER_CAN_ID = 24;
 
+
+        public static final int INTAKE_MOTOR_CAN_ID = 33;
+        public static final int CONVEYOR_MOTOR_CAN_ID = 34;
     }
 
     /**
@@ -120,6 +123,25 @@ public final class Constants {
             FEED_CONFIG.inverted(false);
             FEED_CONFIG.closedLoop.pid(kFeedP, kFeedI, kFeedD);
         }
+
+    }
+
+    public static final class IntakeConstants {
+        public static final double kDefaultIntakeSpeed = 0.8;
+        public static final double kDefaultConveyorSpeed = 0.8;
+
+        public static final SparkFlexConfig kIntakeMotorConfig = new SparkFlexConfig();
+        static {
+            kIntakeMotorConfig.inverted(false);
+            kIntakeMotorConfig.idleMode(IdleMode.kCoast);
+        }
+
+        public static final SparkFlexConfig kConveyorMotorConfig = new SparkFlexConfig();
+        static {
+            kConveyorMotorConfig.inverted(false);
+            kConveyorMotorConfig.idleMode(IdleMode.kCoast);
+        }
+
 
     }
 
