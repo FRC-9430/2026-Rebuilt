@@ -82,16 +82,6 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        controller.rightTrigger(0.08).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            intake.setSpeed(controller.getRightTriggerAxis());
-        })));
-
-        
-
-        controller.leftTrigger(0.08).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            intake.setSpeed(-controller.getLeftTriggerAxis());
-        })));
-
         
     }
 
