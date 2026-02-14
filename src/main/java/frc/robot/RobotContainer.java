@@ -12,6 +12,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -20,8 +22,7 @@ import frc.robot.util.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.util.ElasticDashboard;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class RobotContainer {
@@ -43,6 +44,7 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+    public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     public final IntakeSubsystem intake = new IntakeSubsystem();
 
     public ElasticDashboard dash = new ElasticDashboard();
@@ -57,15 +59,13 @@ public class RobotContainer {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
-                // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> drive.withVelocityX(-controller.getLeftY() * MaxSpeed) // Drive forward
-                                                                                                     // with
-                                                                                                     // negative Y
-                                                                                                     // (forward)
-                        .withVelocityY(-controller.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                        .withRotationalRate(-controller.getRightX() * MaxAngularRate) // Drive counterclockwise with
-                                                                                      // negative X (left)
-                ));
+            // Drivetrain will execute this command periodically
+            drivetrain.applyRequest(() ->
+                drive.withVelocityX(-controller.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-controller.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-controller.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+            )
+        );
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
@@ -86,6 +86,21 @@ public class RobotContainer {
 
         // Reset the field-centric heading on left bumper press.
         controller.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+                drivetrain.applyRequest(() -> idle).ignoringDisable(true);
+
+        controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
+            shooterSubsystem.setShooterSpeedsRPM(3000);
+        }))).onFalse(new InstantCommand(()->{
+            shooterSubsystem.stopShooter();
+        }));
+
+        controller.leftTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
+            shooterSubsystem.runFeederPercentage(controller.getLeftTriggerAxis());
+            shooterSubsystem.setShooterSpeedsPercentage(controller.getLeftTriggerAxis());
+        }))).onFalse(new InstantCommand(()->{
+            shooterSubsystem.stopShooter();
+            shooterSubsystem.stopFeeder();
+        }));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
