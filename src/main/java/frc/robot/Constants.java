@@ -1,7 +1,15 @@
 package frc.robot;
 
+import com.revrobotics.spark.FeedbackSensor;
+import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+/**
+ * Container class for other Constants classes
+ */
 public final class Constants {
-  
+
     /**
      * CAN IDs for all CAN devices
      */
@@ -9,56 +17,37 @@ public final class Constants {
         public static final int ROBORIO_CAN_ID = 0;
         public static final int PIGEON2_CAN_ID = 1;
         public static final int REV_PDH_CAN_ID = 2;
+
         public static final int FL_SWERVE_ENCODER_CAN_ID = 6;
         public static final int FR_SWERVE_ENCODER_CAN_ID = 7;
         public static final int BL_SWERVE_ENCODER_CAN_ID = 8;
         public static final int BR_SWERVE_ENCODER_CAN_ID = 9;
+
         public static final int FL_SWERVE_TURNING_CAN_ID = 10;
         public static final int FR_SWERVE_TURNING_CAN_ID = 11;
         public static final int BL_SWERVE_TURNING_CAN_ID = 12;
         public static final int BR_SWERVE_TURNING_CAN_ID = 13;
+
         public static final int FL_SWERVE_DRIVING_CAN_ID = 14;
         public static final int FR_SWERVE_DRIVING_CAN_ID = 15;
         public static final int BL_SWERVE_DRIVING_CAN_ID = 16;
         public static final int BR_SWERVE_DRIVING_CAN_ID = 17;
+
+        public static final int HOOD_ARTICULATE_CAN_ID = 20;
+        public static final int FEEDER_CAN_ID = 21;
+        public static final int RIGHT_SHOOTER_CAN_ID = 22;
+        public static final int LEFT_TOP_SHOOTER_CAN_ID = 23;
+        public static final int LEFT_BOTTOM_SHOOTER_CAN_ID = 24;
+
+        public static final int CONVEYOR_MOTOR_CAN_ID = 26;
+        public static final int INTAKE_MOTOR_CAN_ID = 27;
+        
     }
 
     public static final class ClimbingArmConstants {
         public static final double kP = 0.001; // TODO: Dummy value
         public static final double kI = 0; // TODO: Dummy value
         public static final double kD = 0; // TODO: Dummy value
-    }
-
-      // TODO:CHANGE ALL OF BELOW
-    public static final class ShooterConstants {
-        // Motor CAN IDs - TODO: CHANGE ME
-        public static final int kShooterLeftMotorId = 0;
-        public static final int kShooterRightMotorId = 0;
-        public static final int kShooterTopMotorId = 0;
-        public static final int kShooterHoodMotorId = 0;
-        
-        // Flywheel PID
-        public static final double kFlywheelP = 0.0001;
-        public static final double kFlywheelI = 0.0;
-        public static final double kFlywheelD = 0.0;
-        public static final double kFlywheelFF = 0.0;
-
-        // Hood PID
-        public static final double kHoodP = 0.1;
-        public static final double kHoodI = 0.0;
-        public static final double kHoodD = 0.0;
-        public static final double kHoodFF = 0.0;
-
-
-        // Setpoints - TODO: CHANGE/REPLACE BELOW AS NECESSARY
-        public static final double kShooterTargetRPM = 4000.0;
-        public static final double kShooterIdleRPM = 1000.0;
-        public static final double kFlywheelToleranceRPM = 100.0;
-
-        // Hood limits
-        public static final double kHoodMinPosition = 0.0;
-        public static final double kHoodPositionTolerance = 0.1;
-        public static final double kHoodStowedPosition = 0.0;
     }
 
     /**
@@ -71,7 +60,6 @@ public final class Constants {
         public static final double JOYSTICK_DEADBAND = 0.08;
         public static final double TRIGGER_DEADBAND = 0.05;
     }
-
 
     public static final class TagConstants {
 
@@ -86,8 +74,94 @@ public final class Constants {
       public static final int[] blueHubTags = {18, 19, 20, 21, 24, 25, 26};
       public static final int[] blueLadderTags = {31, 32};
       public static final int[] blueDepotTags = {29, 30};
-      public static final int[] blueTrenchTags = {17, 22, 23,28};  
-      public static final int[][] blueTags = {blueHubTags, blueLadderTags, blueDepotTags, blueTrenchTags};  
+      public static final int[] blueTrenchTags = {17, 22, 23,28};
+      public static final int[][] blueTags = {blueHubTags, blueLadderTags, blueDepotTags, blueTrenchTags};
     }
 
+
+    public static final class ShooterConstants {
+        // Shooter PID
+        public static final double kShooterP = 4.5E-4;
+        public static final double kShooterI = 1E-10;
+        public static final double kShooterD = 0.0;
+        public static final double kShooterS = 0.2;
+        public static final double kShooterV = 0.0024;
+        public static final double kShooterA = 0.0;
+
+        // Hood PID
+        public static final double kHoodP = 25.0;
+        public static final double kHoodI = 0.0;
+        public static final double kHoodD = 0.0;
+
+        // Feed PID TODO tune feeder
+        public static final double kFeedP = 0.1;
+        public static final double kFeedI = 0.0;
+        public static final double kFeedD = 0.0;
+
+        // Setpoints
+        public static final double kShooterIdleRPM = 1000.0;
+        public static final double kShooterToleranceRPM = 200.0;
+
+        // Hood limits
+        public static final double kHoodMinPosition = 0.175;
+        public static final double kHoodMaxPosition = 0.710;
+        public static final double kHoodPositionTolerance = 0.05;
+
+        // Hood Setpoints
+        public static final double kHoodStowedPosition = 0.180;
+
+        public static final SparkFlexConfig MAIN_SHOOTER_CONFIG = new SparkFlexConfig();
+        static {
+            MAIN_SHOOTER_CONFIG.idleMode(IdleMode.kCoast);
+            MAIN_SHOOTER_CONFIG.inverted(false);
+            MAIN_SHOOTER_CONFIG.closedLoop.pid(kShooterP, kShooterI, kShooterD);
+            MAIN_SHOOTER_CONFIG.closedLoop.outputRange(0, 1); // No moving backwards
+            MAIN_SHOOTER_CONFIG.closedLoop.feedForward.sva(kShooterS, kShooterV, kShooterA);
+        }
+
+        public static final SparkFlexConfig AUX_SHOOTER_CONFIG = new SparkFlexConfig();
+        static {
+            AUX_SHOOTER_CONFIG.idleMode(IdleMode.kCoast);
+            AUX_SHOOTER_CONFIG.follow(CANConstants.RIGHT_SHOOTER_CAN_ID, true);
+        }
+
+        public static final SparkFlexConfig HOOD_CONFIG = new SparkFlexConfig();
+        static {
+            HOOD_CONFIG.idleMode(IdleMode.kBrake);
+            HOOD_CONFIG.inverted(false);
+            HOOD_CONFIG.closedLoop.outputRange(-0.5, 1.0); // Half speed when reversed
+            HOOD_CONFIG.closedLoop.pid(kHoodP, kHoodI, kHoodD);
+            HOOD_CONFIG.closedLoop.positionWrappingEnabled(false);
+            HOOD_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+            HOOD_CONFIG.closedLoop.maxMotion.cruiseVelocity(1000);
+            HOOD_CONFIG.closedLoop.maxMotion.maxAcceleration(1000);
+            HOOD_CONFIG.closedLoop.maxMotion.allowedProfileError(kHoodPositionTolerance);
+            HOOD_CONFIG.closedLoop.maxMotion.positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
+        }
+
+        public static final SparkFlexConfig FEED_CONFIG = new SparkFlexConfig();
+        static {
+            FEED_CONFIG.idleMode(IdleMode.kBrake);
+            FEED_CONFIG.inverted(false);
+            FEED_CONFIG.closedLoop.pid(kFeedP, kFeedI, kFeedD);
+        }
+
+    }
+
+    public static final class IntakeConstants {
+        public static final double kDefaultIntakeSpeed = 0.8;
+        public static final double kDefaultConveyorSpeed = 0.8;
+
+        public static final SparkFlexConfig kIntakeMotorConfig = new SparkFlexConfig();
+        static {
+            kIntakeMotorConfig.inverted(false);
+            kIntakeMotorConfig.idleMode(IdleMode.kCoast);
+        }
+
+        public static final SparkFlexConfig kConveyorMotorConfig = new SparkFlexConfig();
+        static {
+            kConveyorMotorConfig.inverted(false);
+            kConveyorMotorConfig.idleMode(IdleMode.kCoast);
+        }
+    }
 }
