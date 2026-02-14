@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -269,6 +270,25 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     public Command applyRequest(Supplier<SwerveRequest> request) {
         return run(() -> this.setControl(request.get()));
+    }
+
+    /**
+     * Returns a command that applies the specified control request to this swerve
+     * drivetrain.
+     *
+     * @param requestOnTrue Function returning the request to apply
+     * @param requestOnFalse Function returning the request to apply
+     * @param condition Boolean Supplier
+     * @return Command to run
+     */
+    public Command applyRequestWithCondition(Supplier<SwerveRequest> requestOnTrue, Supplier<SwerveRequest> requestOnFalse, BooleanSupplier condition) {
+        return run(()->{
+            if (condition.getAsBoolean()) {
+                this.setControl(requestOnTrue.get());
+            } else {
+                this.setControl(requestOnFalse.get());
+            }   
+        });
     }
 
     /**
