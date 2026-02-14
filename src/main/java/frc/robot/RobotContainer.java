@@ -124,6 +124,10 @@ public class RobotContainer {
                 drivetrain.applyRequest(() -> idle));
     }
 
+    public void setInitialPose() {
+        drivetrain.resetPose(dash.getInitialPose());
+    }
+
     public void addVisionMeasurements() {
         var poseEstimate = vision.getPoseEstimate();
         SmartDashboard.putNumber("Robot Pose Cam Est X", poseEstimate.pose.getX());
