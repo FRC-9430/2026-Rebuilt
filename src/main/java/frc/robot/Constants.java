@@ -39,10 +39,12 @@ public final class Constants {
         public static final int RIGHT_SHOOTER_CAN_ID = 22;
         public static final int LEFT_TOP_SHOOTER_CAN_ID = 23;
         public static final int LEFT_BOTTOM_SHOOTER_CAN_ID = 24;
+    }
 
-
-        public static final int INTAKE_MOTOR_CAN_ID = 33;
-        public static final int CONVEYOR_MOTOR_CAN_ID = 34;
+    public static final class ClimbingArmConstants {
+        public static final double kP = 0.001; // TODO: Dummy value
+        public static final double kI = 0; // TODO: Dummy value
+        public static final double kD = 0; // TODO: Dummy value
     }
 
     /**
@@ -56,8 +58,25 @@ public final class Constants {
         public static final double TRIGGER_DEADBAND = 0.05;
     }
 
-    public static final class ShooterConstants {
+    public static final class TagConstants {
 
+      // Red team constants
+      public static final int[] redHubTags = {2, 3, 4, 5, 8, 9, 10, 11};
+      public static final int[] redLadderTags = {15, 16};
+      public static final int[] redDepotTags = {13, 14};
+      public static final int[] redTrenchTags = {1, 6, 7, 12};
+      public static final int[][] redTags = {redHubTags, redLadderTags, redDepotTags, redTrenchTags};
+
+      // Blue team constants
+      public static final int[] blueHubTags = {18, 19, 20, 21, 24, 25, 26};
+      public static final int[] blueLadderTags = {31, 32};
+      public static final int[] blueDepotTags = {29, 30};
+      public static final int[] blueTrenchTags = {17, 22, 23,28};
+      public static final int[][] blueTags = {blueHubTags, blueLadderTags, blueDepotTags, blueTrenchTags};
+    }
+
+
+    public static final class ShooterConstants {
         // Shooter PID
         public static final double kShooterP = 4.5E-4;
         public static final double kShooterI = 1E-10;
@@ -141,8 +160,5 @@ public final class Constants {
             kConveyorMotorConfig.inverted(false);
             kConveyorMotorConfig.idleMode(IdleMode.kCoast);
         }
-
-
     }
-
 }

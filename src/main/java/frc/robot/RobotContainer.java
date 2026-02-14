@@ -9,7 +9,9 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -20,8 +22,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.util.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.ElasticDashboard;
-
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
@@ -45,12 +47,12 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
-    public final IntakeSubsystem intake = new IntakeSubsystem();
+    public final IntakeSubsystem intake = new IntakeSubsystem();    public final VisionSubsystem vision = new VisionSubsystem();
 
-    public ElasticDashboard dash = new ElasticDashboard();
+  public ElasticDashboard dash = new ElasticDashboard();
 
 
-  public RobotContainer() {
+    public RobotContainer() {
         configureBindings();
         drivetrain.configureAutoBuilder();
     }
@@ -121,4 +123,32 @@ public class RobotContainer {
                 // Finally idle for the rest of auton
                 drivetrain.applyRequest(() -> idle));
     }
+
+    public void addVisionMeasurements() {
+        var poseEstimate = vision.getPoseEstimate();
+        SmartDashboard.putNumber("Robot Pose Cam Est X", poseEstimate.pose.getX());
+        SmartDashboard.putNumber("Robot Pose Cam Est Y", poseEstimate.pose.getY());
+
+        boolean doRejectUpdate = false;
+        if (poseEstimate.tagCount == 1 && poseEstimate.rawFiducials.length == 1) {
+            if (poseEstimate.rawFiducials[0].ambiguity > .7) {
+                doRejectUpdate = true;
+            }
+            if (poseEstimate.rawFiducials[0].distToCamera > 3) {
+                doRejectUpdate = true;
+            }
+        }
+        if (poseEstimate.tagCount == 0) {
+            doRejectUpdate = true;
+        }
+
+        if (!doRejectUpdate) {
+            drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+            drivetrain.addVisionMeasurement(
+                    poseEstimate.pose,
+                    poseEstimate.timestampSeconds);
+        }
+
+    }
+
 }
