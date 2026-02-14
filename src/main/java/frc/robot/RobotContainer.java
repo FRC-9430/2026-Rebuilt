@@ -12,7 +12,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import com.ctre.phoenix6.Utils;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -154,14 +153,8 @@ public class RobotContainer {
                 break;
         }
 
-        // Read the robot pose. Use the drivetrain's samplePoseAt with current time
-        // If unavailable, stop motion (safe fallback)
-        var maybePose = drivetrain.samplePoseAt(Utils.getCurrentTimeSeconds());
-        if (maybePose.isEmpty()) {
-            return new ChassisSpeeds();
-        }
 
-        Pose2d pose = maybePose.get();
+        Pose2d pose = drivetrain.getState().Pose;
 
         // Controller mapping: forward/back controls radial motion toward/away from the point.
         // Left stick: negative Y is forward on this controller mapping in this project, so we negate
@@ -189,8 +182,8 @@ public class RobotContainer {
         double ty = ux;  // dx/r
 
         // Map inputs to speeds. Use MaxSpeed for both radial and tangential components.
-        double vRadial = Math.max(-1.0, Math.min(1.0, radialInput)) * MaxSpeed; // toward/away
-        double vTangential = Math.max(-1.0, Math.min(1.0, orbitInput)) * MaxSpeed; // orbit speed
+        double vRadial = radialInput * MaxSpeed; // toward/away
+        double vTangential = orbitInput * MaxSpeed; // orbit speed
 
         // Compose field-relative linear velocity: radial component + tangential component
         double vxField = vRadial * ux + vTangential * tx;
