@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.util.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.util.ElasticDashboard;
+
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -43,8 +45,12 @@ public class RobotContainer {
 
     public final IntakeSubsystem intake = new IntakeSubsystem();
 
-    public RobotContainer() {
+    public ElasticDashboard dash = new ElasticDashboard();
+
+
+  public RobotContainer() {
         configureBindings();
+        drivetrain.configureAutoBuilder();
     }
 
     private void configureBindings() {
@@ -52,12 +58,13 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> drive.withVelocityX(-controller.getLeftY() * MaxSpeed) // Drive forward with
-                                                                                                   // negative Y
-                                                                                                   // (forward)
+                drivetrain.applyRequest(() -> drive.withVelocityX(-controller.getLeftY() * MaxSpeed) // Drive forward
+                                                                                                     // with
+                                                                                                     // negative Y
+                                                                                                     // (forward)
                         .withVelocityY(-controller.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                         .withRotationalRate(-controller.getRightX() * MaxAngularRate) // Drive counterclockwise with
-                                                                                    // negative X (left)
+                                                                                      // negative X (left)
                 ));
 
         // Idle while the robot is disabled. This ensures the configured
@@ -82,7 +89,6 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        
     }
 
     public Command getAutonomousCommand() {
