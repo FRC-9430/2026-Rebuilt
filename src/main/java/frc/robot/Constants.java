@@ -1,7 +1,6 @@
 package frc.robot;
 
 import com.revrobotics.spark.FeedbackSensor;
-import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -39,6 +38,10 @@ public final class Constants {
         public static final int RIGHT_SHOOTER_CAN_ID = 22;
         public static final int LEFT_TOP_SHOOTER_CAN_ID = 23;
         public static final int LEFT_BOTTOM_SHOOTER_CAN_ID = 24;
+
+        public static final int CONVEYOR_MOTOR_CAN_ID = 26;
+        public static final int INTAKE_MOTOR_CAN_ID = 27;
+        
     }
 
     public static final class ClimbingArmConstants {
