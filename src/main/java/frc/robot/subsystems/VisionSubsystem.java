@@ -23,12 +23,12 @@ public class VisionSubsystem extends SubsystemBase {
             System.out.println("The AprilTag field layout could not be loaded.");
         }
 
+        
     }
 
-    public LimelightHelpers.PoseEstimate getPoseEstimate(double yaw) {
-        LimelightHelpers.SetRobotOrientation("", yaw, 0, 0, 0, 0, 0);
-        return LimelightHelpers.getBotPoseEstimate_wpiBlue("");
+    public LimelightHelpers.PoseEstimate getPoseEstimate() {
 
+        return LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
     }
 
     
