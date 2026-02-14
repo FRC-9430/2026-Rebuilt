@@ -35,6 +35,9 @@ public class RobotContainer {
                                                                                         // speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
                                                                                       // max angular velocity
+    // Proportional gain to rotate the robot to face the target while in POLAR mode.
+    // Tweak this value to change how aggressively the robot turns to face the point.
+    private double kOrientationP = 4.0;
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -199,14 +202,18 @@ public class RobotContainer {
         double vxField = vRadial * ux + vTangential * tx;
         double vyField = vRadial * uy + vTangential * ty;
 
-        // To keep the robot pointed at the target, set angular velocity to the rate of
-        // change of the angle
-        // to the target: phi_dot = -v_tangential / r (see derivation). Use omega =
-        // phi_dot.
-        double omega = 0.0;
-        if (Math.abs(r) > kEpsilon) {
-            omega = vTangential / r;
-        }
+        // To keep the robot pointed at the target, compute heading error and use a
+        // P-controller to rotate the robot to face the target. This makes the
+        // robot's orientation converge to the angle toward the target regardless
+        // of tangential motion.
+        double desiredAngle = Math.atan2(dy, dx);
+        double currentAngle = pose.getRotation().getRadians();
+        // Normalize angle error to [-pi, pi]
+        double angleError = Math.atan2(Math.sin(desiredAngle - currentAngle), Math.cos(desiredAngle - currentAngle));
+
+        double omega = kOrientationP * angleError;
+        // Clamp angular rate to configured maximum
+        omega = Math.max(-MaxAngularRate, Math.min(MaxAngularRate, omega));
 
         // Convert field-relative velocities to robot-relative chassis speeds
         return ChassisSpeeds.fromFieldRelativeSpeeds(vxField, vyField, omega, pose.getRotation());
