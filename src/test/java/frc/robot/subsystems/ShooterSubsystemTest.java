@@ -74,6 +74,10 @@ public class ShooterSubsystemTest {
         SimHooks.stepTiming(0.02);
     }
 
+    private void step(double stepSeconds) {
+        SimHooks.stepTiming(0.02);
+    }
+
     /**
      * GIVEN a new ShooterSubsystem is created.
      * WHEN the subsystem is initialized in {@code setUp()}.
@@ -298,5 +302,22 @@ public class ShooterSubsystemTest {
 
         assertEquals(m_feedController.getControlType(), ControlType.kVelocity);
         assertEquals(m_feedController.getSetpoint(), TEST_RPM, TOLERANCE);
+    }
+
+    /**
+     * GIVEN a ShooterSubsystem.
+     * WHEN the setShootingAngle method is called with a position.
+     * THEN the hood's closed-loop controller setpoint should be updated to that position.
+     */
+    @Test
+    void testSetShootingAngleUpdatesSetpoint() {
+        double targetPosition = 0.75;
+        SparkClosedLoopController hoodController = m_shooter.getShooterPID("hood");
+
+        m_shooter.setShootingAngle(targetPosition);
+        step(); // Advance simulation to process the command
+
+        assertEquals(targetPosition, hoodController.getSetpoint(), TOLERANCE);
+        assertEquals(ControlType.kMAXMotionPositionControl, hoodController.getControlType());
     }
 }
