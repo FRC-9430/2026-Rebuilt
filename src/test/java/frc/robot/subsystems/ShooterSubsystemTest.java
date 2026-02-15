@@ -114,6 +114,7 @@ public class ShooterSubsystemTest {
         // Simulate flywheels spinning up
         m_mainShooterMotorSim.setVelocity(targetRPM);
         m_followerShooterMotorSim1.setVelocity(targetRPM);
+        m_followerShooterMotorSim2.setVelocity(targetRPM);
         step();
 
         double mainVelocity = m_mainShooterMotorSim.getVelocity();
