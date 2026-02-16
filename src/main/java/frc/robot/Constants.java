@@ -81,15 +81,15 @@ public final class Constants {
 
     public static final class ShooterConstants {
         // Shooter PID
-        public static final double kShooterP = 4.5E-4;
-        public static final double kShooterI = 1E-10;
+        public static final double kShooterP = 3.0E-5;
+        public static final double kShooterI = 0.0;
         public static final double kShooterD = 0.0;
         public static final double kShooterS = 0.2;
-        public static final double kShooterV = 0.0024;
+        public static final double kShooterV = 0.00185;
         public static final double kShooterA = 0.0;
 
         // Hood PID
-        public static final double kHoodP = 25.0;
+        public static final double kHoodP = 19.0;
         public static final double kHoodI = 0.0;
         public static final double kHoodD = 0.0;
 
@@ -103,12 +103,12 @@ public final class Constants {
         public static final double kShooterToleranceRPM = 200.0;
 
         // Hood limits
-        public static final double kHoodMinPosition = 0.175;
-        public static final double kHoodMaxPosition = 0.710;
+        public static final double kHoodMinPosition = 0.350;
+        public static final double kHoodMaxPosition = 0.875;
         public static final double kHoodPositionTolerance = 0.05;
 
         // Hood Setpoints
-        public static final double kHoodStowedPosition = 0.180;
+        public static final double kHoodStowedPosition = 0.355;
 
         public static final SparkFlexConfig MAIN_SHOOTER_CONFIG = new SparkFlexConfig();
         static {
@@ -116,6 +116,7 @@ public final class Constants {
             MAIN_SHOOTER_CONFIG.inverted(false);
             MAIN_SHOOTER_CONFIG.closedLoop.pid(kShooterP, kShooterI, kShooterD);
             MAIN_SHOOTER_CONFIG.closedLoop.outputRange(0, 1); // No moving backwards
+            MAIN_SHOOTER_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
             MAIN_SHOOTER_CONFIG.closedLoop.feedForward.sva(kShooterS, kShooterV, kShooterA);
         }
 

@@ -65,7 +65,7 @@ public class RobotContainer {
             drivetrain.applyRequest(() ->
                 drive.withVelocityX(-controller.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(-controller.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-controller.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                    .withRotationalRate(controller.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -75,9 +75,6 @@ public class RobotContainer {
         RobotModeTriggers.disabled().whileTrue(
                 drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
-        controller.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        controller.b().whileTrue(drivetrain.applyRequest(
-                () -> point.withModuleDirection(new Rotation2d(-controller.getLeftY(), -controller.getLeftX()))));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -90,18 +87,31 @@ public class RobotContainer {
         controller.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
                 drivetrain.applyRequest(() -> idle).ignoringDisable(true);
 
+        SmartDashboard.putNumber("Shoot V Target", 3000);
         controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            shooterSubsystem.setShooterSpeedsRPM(3000);
+            shooterSubsystem.setShooterSpeedsRPM(SmartDashboard.getNumber("Shoot V Target", 3000));
+            // shooterSubsystem.runFeederPercentage(1);
         }))).onFalse(new InstantCommand(()->{
             shooterSubsystem.stopShooter();
+            // shooterSubsystem.stopFeeder();
         }));
 
         controller.leftTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            shooterSubsystem.runFeederPercentage(controller.getLeftTriggerAxis());
-            shooterSubsystem.setShooterSpeedsPercentage(controller.getLeftTriggerAxis());
+            intake.setSpeeds(controller.getLeftTriggerAxis(), -0.5);
         }))).onFalse(new InstantCommand(()->{
-            shooterSubsystem.stopShooter();
-            shooterSubsystem.stopFeeder();
+            intake.stopAll();
+        }));
+
+        controller.b().onTrue(new InstantCommand(()->{
+            shooterSubsystem.setShootingAngle(0.7);
+        })).onFalse(new InstantCommand(()->{
+            shooterSubsystem.stopHood();
+        }));
+        
+        controller.a().onTrue(new InstantCommand(()->{
+            shooterSubsystem.stowHood();
+        })).onFalse(new InstantCommand(()->{
+            shooterSubsystem.stopHood();
         }));
 
         drivetrain.registerTelemetry(logger::telemeterize);
