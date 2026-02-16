@@ -41,7 +41,7 @@ public final class Constants {
 
         public static final int CONVEYOR_MOTOR_CAN_ID = 26;
         public static final int INTAKE_MOTOR_CAN_ID = 27;
-        
+
     }
 
     public static final class ClimbingArmConstants {
@@ -63,33 +63,32 @@ public final class Constants {
 
     public static final class TagConstants {
 
-      // Red team constants
-      public static final int[] redHubTags = {2, 3, 4, 5, 8, 9, 10, 11};
-      public static final int[] redLadderTags = {15, 16};
-      public static final int[] redDepotTags = {13, 14};
-      public static final int[] redTrenchTags = {1, 6, 7, 12};
-      public static final int[][] redTags = {redHubTags, redLadderTags, redDepotTags, redTrenchTags};
+        // Red team constants
+        public static final int[] redHubTags = { 2, 3, 4, 5, 8, 9, 10, 11 };
+        public static final int[] redLadderTags = { 15, 16 };
+        public static final int[] redDepotTags = { 13, 14 };
+        public static final int[] redTrenchTags = { 1, 6, 7, 12 };
+        public static final int[][] redTags = { redHubTags, redLadderTags, redDepotTags, redTrenchTags };
 
-      // Blue team constants
-      public static final int[] blueHubTags = {18, 19, 20, 21, 24, 25, 26};
-      public static final int[] blueLadderTags = {31, 32};
-      public static final int[] blueDepotTags = {29, 30};
-      public static final int[] blueTrenchTags = {17, 22, 23,28};
-      public static final int[][] blueTags = {blueHubTags, blueLadderTags, blueDepotTags, blueTrenchTags};
+        // Blue team constants
+        public static final int[] blueHubTags = { 18, 19, 20, 21, 24, 25, 26 };
+        public static final int[] blueLadderTags = { 31, 32 };
+        public static final int[] blueDepotTags = { 29, 30 };
+        public static final int[] blueTrenchTags = { 17, 22, 23, 28 };
+        public static final int[][] blueTags = { blueHubTags, blueLadderTags, blueDepotTags, blueTrenchTags };
     }
-
 
     public static final class ShooterConstants {
         // Shooter PID
-        public static final double kShooterP = 4.5E-4;
-        public static final double kShooterI = 1E-10;
+        public static final double kShooterP = 4.5E-5;
+        public static final double kShooterI = 0.0;
         public static final double kShooterD = 0.0;
         public static final double kShooterS = 0.2;
-        public static final double kShooterV = 0.0024;
+        public static final double kShooterV = 0.00185;
         public static final double kShooterA = 0.0;
 
         // Hood PID
-        public static final double kHoodP = 25.0;
+        public static final double kHoodP = 19.0;
         public static final double kHoodI = 0.0;
         public static final double kHoodD = 0.0;
 
@@ -103,12 +102,12 @@ public final class Constants {
         public static final double kShooterToleranceRPM = 200.0;
 
         // Hood limits
-        public static final double kHoodMinPosition = 0.175;
-        public static final double kHoodMaxPosition = 0.710;
+        public static final double kHoodMinPosition = 0.350;
+        public static final double kHoodMaxPosition = 0.875;
         public static final double kHoodPositionTolerance = 0.05;
 
         // Hood Setpoints
-        public static final double kHoodStowedPosition = 0.180;
+        public static final double kHoodStowedPosition = 0.355;
 
         public static final SparkFlexConfig MAIN_SHOOTER_CONFIG = new SparkFlexConfig();
         static {
@@ -116,6 +115,7 @@ public final class Constants {
             MAIN_SHOOTER_CONFIG.inverted(false);
             MAIN_SHOOTER_CONFIG.closedLoop.pid(kShooterP, kShooterI, kShooterD);
             MAIN_SHOOTER_CONFIG.closedLoop.outputRange(0, 1); // No moving backwards
+            MAIN_SHOOTER_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
             MAIN_SHOOTER_CONFIG.closedLoop.feedForward.sva(kShooterS, kShooterV, kShooterA);
         }
 

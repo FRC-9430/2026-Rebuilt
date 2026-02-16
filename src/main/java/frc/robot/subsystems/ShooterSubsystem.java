@@ -5,8 +5,8 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -211,10 +211,14 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
 
+        SmartDashboard.putNumber("Hood V", m_hoodEncoder.getVelocity());
+        SmartDashboard.putNumber("Shooter V", m_shooterEncoder.getVelocity());
+
+        SmartDashboard.putNumber("Hood Pos", m_hoodEncoder.getPosition());
+
         // When the hood is stowed, turn the motor off
         if ((m_hoodController.isAtSetpoint() || m_hoodEncoder.getPosition() <= kHoodStowedPosition)
                 && m_hoodController.getSetpoint() == kHoodStowedPosition) {
-            stopHood();
         }
 
     }
