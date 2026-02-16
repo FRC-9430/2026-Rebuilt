@@ -45,10 +45,10 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
-    public final IntakeSubsystem intake = new IntakeSubsystem();    public final VisionSubsystem vision = new VisionSubsystem();
+    public final IntakeSubsystem intake = new IntakeSubsystem();
+    public final VisionSubsystem vision = new VisionSubsystem();
 
-  public ElasticDashboard dash = new ElasticDashboard();
-
+    public ElasticDashboard dash = new ElasticDashboard();
 
     public RobotContainer() {
         configureBindings();
@@ -59,20 +59,20 @@ public class RobotContainer {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
-            // Drivetrain will execute this command periodically
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(-controller.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-controller.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(controller.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            )
-        );
+                // Drivetrain will execute this command periodically
+                drivetrain.applyRequest(() -> drive.withVelocityX(-controller.getLeftY() * MaxSpeed) // Drive forward
+                                                                                                     // with negative Y
+                                                                                                     // (forward)
+                        .withVelocityY(-controller.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                        .withRotationalRate(controller.getRightX() * MaxAngularRate) // Drive counterclockwise with
+                                                                                     // negative X (left)
+                ));
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
                 drivetrain.applyRequest(() -> idle).ignoringDisable(true));
-
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -83,31 +83,31 @@ public class RobotContainer {
 
         // Reset the field-centric heading on left bumper press.
         controller.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-                drivetrain.applyRequest(() -> idle).ignoringDisable(true);
+        drivetrain.applyRequest(() -> idle).ignoringDisable(true);
 
         controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
             shooterSubsystem.setShooterSpeedsRPM(3000);
             shooterSubsystem.runFeederPercentage(controller.getRightTriggerAxis());
-        }))).onFalse(new InstantCommand(()->{
+        }))).onFalse(new InstantCommand(() -> {
             shooterSubsystem.stopShooter();
             shooterSubsystem.stopFeeder();
         }));
 
         controller.leftTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
             intake.setSpeeds(controller.getLeftTriggerAxis(), -0.5);
-        }))).onFalse(new InstantCommand(()->{
+        }))).onFalse(new InstantCommand(() -> {
             intake.stopAll();
         }));
 
-        controller.b().onTrue(new InstantCommand(()->{
+        controller.b().onTrue(new InstantCommand(() -> {
             shooterSubsystem.setShootingAngle(0.7);
-        })).onFalse(new InstantCommand(()->{
+        })).onFalse(new InstantCommand(() -> {
             shooterSubsystem.stopHood();
         }));
-        
-        controller.a().onTrue(new InstantCommand(()->{
+
+        controller.a().onTrue(new InstantCommand(() -> {
             shooterSubsystem.stowHood();
-        })).onFalse(new InstantCommand(()->{
+        })).onFalse(new InstantCommand(() -> {
             shooterSubsystem.stopHood();
         }));
 
