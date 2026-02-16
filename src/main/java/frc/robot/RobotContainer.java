@@ -46,7 +46,7 @@ public class RobotContainer {
 
     public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     public final IntakeSubsystem intake = new IntakeSubsystem();
-    public final VisionSubsystem vision = new VisionSubsystem();
+    public final VisionSubsystem vision = new VisionSubsystem(drivetrain);
 
     public ElasticDashboard dash = new ElasticDashboard();
 
@@ -136,30 +136,7 @@ public class RobotContainer {
     }
 
     public void addVisionMeasurements() {
-        var poseEstimate = vision.getPoseEstimate();
-        SmartDashboard.putNumber("Robot Pose Cam Est X", poseEstimate.pose.getX());
-        SmartDashboard.putNumber("Robot Pose Cam Est Y", poseEstimate.pose.getY());
-
-        boolean doRejectUpdate = false;
-        if (poseEstimate.tagCount == 1 && poseEstimate.rawFiducials.length == 1) {
-            if (poseEstimate.rawFiducials[0].ambiguity > .7) {
-                doRejectUpdate = true;
-            }
-            if (poseEstimate.rawFiducials[0].distToCamera > 3) {
-                doRejectUpdate = true;
-            }
-        }
-        if (poseEstimate.tagCount == 0) {
-            doRejectUpdate = true;
-        }
-
-        if (!doRejectUpdate) {
-            drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
-            drivetrain.addVisionMeasurement(
-                    poseEstimate.pose,
-                    poseEstimate.timestampSeconds);
-        }
-
+        vision.addVisionMeasurements();
     }
 
 }
