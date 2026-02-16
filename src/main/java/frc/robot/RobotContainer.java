@@ -85,22 +85,28 @@ public class RobotContainer {
         controller.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         drivetrain.applyRequest(() -> idle).ignoringDisable(true);
 
+        SmartDashboard.putNumber("Shooter V", 3000);
+        SmartDashboard.putNumber("Feeder %", 0.5);
+        SmartDashboard.putNumber("Conveyor %", -0.5);
         controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            shooterSubsystem.setShooterSpeedsRPM(3000);
-            shooterSubsystem.runFeederPercentage(controller.getRightTriggerAxis());
+            shooterSubsystem.setShooterSpeedsRPM(SmartDashboard.getNumber("Shooter V", 3000));
+            shooterSubsystem.runFeederPercentage(SmartDashboard.getNumber("Feeder %", 0.5));
+            intake.runConveyor(SmartDashboard.getNumber("Conveyor %", -0.5));
         }))).onFalse(new InstantCommand(() -> {
             shooterSubsystem.stopShooter();
             shooterSubsystem.stopFeeder();
+            intake.stopConveyor();
         }));
 
         controller.leftTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            intake.setSpeeds(controller.getLeftTriggerAxis(), -0.5);
+            intake.runIntake(controller.getLeftTriggerAxis());
         }))).onFalse(new InstantCommand(() -> {
             intake.stopAll();
         }));
 
+        SmartDashboard.putNumber("Hood Pos", 0.5);
         controller.b().onTrue(new InstantCommand(() -> {
-            shooterSubsystem.setShootingAngle(0.7);
+            shooterSubsystem.setShootingAngle(SmartDashboard.getNumber("Hood Pos", 0.5));
         })).onFalse(new InstantCommand(() -> {
             shooterSubsystem.stopHood();
         }));
