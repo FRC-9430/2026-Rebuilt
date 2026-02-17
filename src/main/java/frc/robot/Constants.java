@@ -104,7 +104,7 @@ public final class Constants {
         // Hood limits
         public static final double kHoodMinPosition = 0.350;
         public static final double kHoodMaxPosition = 0.875;
-        public static final double kHoodPositionTolerance = 0.05;
+        public static final double kHoodPositionTolerance = 0.025;
 
         // Hood Setpoints
         public static final double kHoodStowedPosition = 0.355;
