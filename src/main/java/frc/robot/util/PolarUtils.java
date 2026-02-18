@@ -45,8 +45,8 @@ public class PolarUtils {
         // Left stick left/right will orbit around the point
         double orbitInput = -orbitalIn;
 
-        radialInput = (Math.abs(radialInput) > 0.05 ? radialInput : 0);
-        orbitInput = (Math.abs(orbitInput) > 0.05 ? orbitInput : 0);
+        radialInput = (Math.abs(radialInput) > 0.06 ? radialInput : 0);
+        orbitInput = (Math.abs(orbitInput) > 0.06 ? orbitInput : 0);
 
         // Compute vector from robot to the target (field frame)
         double dx = targetPointX - pose.getX();
@@ -98,7 +98,7 @@ public class PolarUtils {
     }
 
     public static double getEstHoodFrmR(double r){
-        double pos = 0.0800597 * r + 0.305799;
+        double pos = 0.0800597 * r + 0.300;
         SmartDashboard.putNumber("Calc Hood Pos", pos);
         return pos;
     }
