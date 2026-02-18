@@ -219,7 +219,6 @@ public class ShooterSubsystem extends SubsystemBase {
         // When the hood is stowed, turn the motor off
         if ((m_hoodController.isAtSetpoint() || m_hoodEncoder.getPosition() <= kHoodStowedPosition)
                 && m_hoodController.getSetpoint() == kHoodStowedPosition) {
-            // stopHood();
         }
 
     }
