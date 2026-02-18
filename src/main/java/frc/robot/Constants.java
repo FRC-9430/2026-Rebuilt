@@ -164,5 +164,12 @@ public final class Constants {
             kConveyorMotorConfig.inverted(true);
             kConveyorMotorConfig.idleMode(IdleMode.kCoast);
         }
+
+        public static final SparkFlexConfig kBasketMotorConfig = new SparkFlexConfig();
+        static {
+            kConveyorMotorConfig.inverted(false);
+            kConveyorMotorConfig.idleMode(IdleMode.kBrake);
+        }
+
     }
 }
