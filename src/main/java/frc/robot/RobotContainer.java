@@ -35,10 +35,6 @@ public class RobotContainer {
                                                                                         // speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
                                                                                       // max angular velocity
-    // Proportional gain to rotate the robot to face the target while in POLAR mode.
-    // Tweak this value to change how aggressively the robot turns to face the
-    // point.
-    private double kOrientationP = 4.0;
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -63,7 +59,6 @@ public class RobotContainer {
     public RobotContainer() {
         configureBindings();
         drivetrain.configureAutoBuilder();
-        SmartDashboard.putNumber("kOrientationP", kOrientationP);
     }
 
     private void configureBindings() {
@@ -90,7 +85,10 @@ public class RobotContainer {
         controller.start().and(controller.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading on left bumper press.
-        controller.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        // controller.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        controller.leftBumper().onTrue(new InstantCommand(()->{
+            drivetrain.resetPose(vision.getPoseEstimateMT1().pose);
+        }));
         drivetrain.applyRequest(() -> idle).ignoringDisable(true);
 
         controller.rightBumper().onTrue(new InstantCommand(() -> {
@@ -103,12 +101,12 @@ public class RobotContainer {
 
         SmartDashboard.putNumber("Shooter V Target", 3000);
         SmartDashboard.putNumber("Feeder %", 0.5);
-        SmartDashboard.putNumber("Conveyor %", -0.5);
+        SmartDashboard.putNumber("Conveyor %", 0.5);
         controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
             shooterSubsystem.setShooterSpeedsRPM(SmartDashboard.getNumber("Shooter V Target", 3000));
             if(shooterSubsystem.shooterIsAtSpeed()){
                 shooterSubsystem.runFeederPercentage(SmartDashboard.getNumber("Feeder %", 0.5));
-                intake.runConveyor(SmartDashboard.getNumber("Conveyor %", -0.5));
+                intake.runConveyor(SmartDashboard.getNumber("Conveyor %", 0.5));
             }
         }))).onFalse(new InstantCommand(() -> {
             shooterSubsystem.stopShooter();
@@ -142,7 +140,8 @@ public class RobotContainer {
         }));
 
         controller.x().whileTrue(new RepeatCommand(new InstantCommand(()->{
-            shooterSubsystem.setShootingAngle(PolarUtils.getEstHoodFrmR(SmartDashboard.getNumber("Dist From Hub", 0.5)));
+            shooterSubsystem.setShootingAngle(
+                Math.floor(10000.0*PolarUtils.getEstHoodFrmR(SmartDashboard.getNumber("Dist From Hub", 0.5)))/10000.0);
         }))).onFalse(new InstantCommand(()->{
             shooterSubsystem.stopHood();
         }));
