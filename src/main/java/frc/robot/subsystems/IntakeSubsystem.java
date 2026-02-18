@@ -18,11 +18,13 @@ public class IntakeSubsystem extends SubsystemBase {
 
   SparkFlex conveyorMotor = new SparkFlex(CANConstants.CONVEYOR_MOTOR_CAN_ID, MotorType.kBrushless);
   SparkFlex intakeMotor = new SparkFlex(CANConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless);
+  SparkFlex basketMotor = new SparkFlex(CANConstants.BASKET_CAN_ID, MotorType.kBrushless);
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
     intakeMotor.configure(kIntakeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     conveyorMotor.configure(kConveyorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    basketMotor.configure(kBasketMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   /**
@@ -71,6 +73,14 @@ public class IntakeSubsystem extends SubsystemBase {
     conveyorMotor.stopMotor();
   }
 
+  public void setBasket(double speed) {
+    basketMotor.set(speed);
+  }
+
+  public void stopBasket() {
+    basketMotor.stopMotor();
+  }
+
   /**
    * Runs both the intake and conveyor at specified speeds
    * 
@@ -88,6 +98,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public void stopAll() {
     intakeMotor.stopMotor();
     conveyorMotor.stopMotor();
+    basketMotor.stopMotor();
   }
 
   @Override
