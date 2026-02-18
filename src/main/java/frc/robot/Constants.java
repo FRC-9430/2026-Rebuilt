@@ -41,6 +41,7 @@ public final class Constants {
 
         public static final int CONVEYOR_MOTOR_CAN_ID = 26;
         public static final int INTAKE_MOTOR_CAN_ID = 27;
+        public static final int BASKET_CAN_ID = 28;
 
     }
 
