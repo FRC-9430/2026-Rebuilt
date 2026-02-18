@@ -160,7 +160,7 @@ public final class Constants {
 
         public static final SparkFlexConfig kConveyorMotorConfig = new SparkFlexConfig();
         static {
-            kConveyorMotorConfig.inverted(false);
+            kConveyorMotorConfig.inverted(true);
             kConveyorMotorConfig.idleMode(IdleMode.kCoast);
         }
     }
