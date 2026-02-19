@@ -5,9 +5,11 @@
 package frc.robot.util;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import static frc.robot.Constants.FieldConstants.*;
 
 /** Add your docs here. */
 public class PolarUtils {
@@ -15,48 +17,43 @@ public class PolarUtils {
     public static ChassisSpeeds getPolarDriveSpeeds(Pose2d estPose, double radialIn, double orbitalIn, double MaxSpeed, double MaxAngularRate) {
 
         // Determine target point depending on alliance
-        double targetPointX;
-        double targetPointY;
+        Translation2d target;
         switch (DriverStation.getAlliance().get()) {
             case Red:
                 // Red alliance Hub
-                targetPointX = 11.9;
-                targetPointY = 4.0;
+                target = RED_HUB_LOC;
                 break;
             case Blue:
                 // Blue alliance Hub
-                targetPointX = 4.65;
-                targetPointY = 4.034;
+                target = BLUE_HUB_LOC;
                 break;
             default:
                 // Fallback to a reasonable default on unknown alliance
-                targetPointX = 4.625;
-                targetPointY = 4.0;
+                target = BLUE_HUB_LOC;
                 break;
         }
 
-        Pose2d pose = estPose;
-
-        // Controller mapping: forward/back controls radial motion toward/away from the
-        // point.
-        // Left stick: negative Y is forward on this controller mapping in this project,
-        // so we negate
-        double radialInput = -radialIn; // +1 => forward (towards point)
-        // Left stick left/right will orbit around the point
+        Translation2d pose = estPose.getTranslation();
+        
+        double radialInput = -radialIn; 
         double orbitInput = -orbitalIn;
 
-        radialInput = (Math.abs(radialInput) > 0.06 ? radialInput : 0);
-        orbitInput = (Math.abs(orbitInput) > 0.06 ? orbitInput : 0);
+        // Clamp Input
+        radialInput = (Math.abs(radialInput) > 0.06 ? radialInput : 0.0);
+        orbitInput = (Math.abs(orbitInput) > 0.06 ? orbitInput : 0.0);
 
         // Compute vector from robot to the target (field frame)
-        double dx = targetPointX - pose.getX();
-        double dy = targetPointY - pose.getY();
+        double dx = target.getX() - pose.getX();
+        double dy = target.getY() - pose.getY();
         double r = Math.hypot(dx, dy);
+
+        r = getRadiusFrom(pose, target);
 
         SmartDashboard.putNumber("Dist From Hub", r);
 
         // If very close to the point, avoid divide-by-zero and simply rotate in place
         // to face the point
+        // Not likely to come up in practice, just a fail safe
         final double kEpsilon = 1e-3;
         if (r < kEpsilon) {
             // If we're essentially on the point, don't translate; just rotate to face the
@@ -85,16 +82,22 @@ public class PolarUtils {
         // robot's orientation converge to the angle toward the target regardless
         // of tangential motion.
         double desiredAngle = Math.atan2(dy, dx);
-        double currentAngle = pose.getRotation().getRadians();
+        double currentAngle = estPose.getRotation().getRadians();
         // Normalize angle error to [-pi, pi]
         double angleError = Math.atan2(Math.sin(desiredAngle - currentAngle), Math.cos(desiredAngle - currentAngle));
 
-        double omega = 6.0 * angleError;
+        // P = 25
+        double omega = 25.0 * angleError;
+
         // Clamp angular rate to configured maximum
         omega = Math.max(-MaxAngularRate, Math.min(MaxAngularRate, omega));
 
         // Convert field-relative velocities to robot-relative chassis speeds
-        return ChassisSpeeds.fromFieldRelativeSpeeds(vxField, vyField, -omega, pose.getRotation());
+        return ChassisSpeeds.fromFieldRelativeSpeeds(vxField, vyField, -omega, estPose.getRotation());
+    }
+
+    public static double getRadiusFrom(Translation2d pose, Translation2d target) {
+        return pose.getDistance(target);
     }
 
     public static double getEstHoodFrmR(double r){

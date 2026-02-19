@@ -5,6 +5,8 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.math.geometry.Translation2d;
+
 /**
  * Container class for other Constants classes
  */
@@ -183,4 +185,11 @@ public final class Constants {
         }
 
     }
+
+    public static final class FieldConstants {
+        public static final Translation2d BLUE_HUB_LOC = new Translation2d(4.6525, 4.034);
+        public static final Translation2d RED_HUB_LOC = new Translation2d(11.915, 4.034);
+    }
+
+
 }

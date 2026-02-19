@@ -144,7 +144,7 @@ public class RobotContainer {
 
         controller.x().whileTrue(new RepeatCommand(new InstantCommand(()->{
             shooterSubsystem.setShootingAngle(
-                Math.floor(1000.0*PolarUtils.getEstHoodFrmR(SmartDashboard.getNumber("Dist From Hub", 0.5)))/1000.0);
+                Math.floor(1000.0*PolarUtils.getEstHoodFrmR(PolarUtils.getRadiusFrom(drivetrain.getPose().getTranslation(), Constants.FieldConstants.BLUE_HUB_LOC)))/1000.0);
         }))).onFalse(new InstantCommand(()->{
             shooterSubsystem.stopHood();
         }));
