@@ -24,7 +24,7 @@ public class BumpBasketCommand extends Command {
   @Override
   public void initialize() {
     intake.setBasket(0.15);
-    intake.runIntake(1);
+    intake.setIntake(1);
     startTime = Timer.getFPGATimestamp();
   }
 

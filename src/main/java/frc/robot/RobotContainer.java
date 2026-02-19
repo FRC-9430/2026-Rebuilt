@@ -109,7 +109,7 @@ public class RobotContainer {
             shooterSubsystem.setShooterSpeedsRPM(SmartDashboard.getNumber("Shooter V Target", 3000));
             if(shooterSubsystem.shooterIsAtSpeed()){
                 shooterSubsystem.runFeederPercentage(SmartDashboard.getNumber("Feeder %", 0.5));
-                intake.runConveyor(SmartDashboard.getNumber("Conveyor %", -0.5));
+                intake.setConveyor(SmartDashboard.getNumber("Conveyor %", -0.5));
             }
         }))).onFalse(new InstantCommand(() -> {
             shooterSubsystem.stopShooter();
@@ -124,7 +124,7 @@ public class RobotContainer {
         }));
 
         controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            intake.runIntake(0.45);
+            intake.setIntake(0.45);
         }))).onFalse(new InstantCommand(() -> {
             intake.stopAll();
         }));

@@ -30,7 +30,7 @@ public class IntakeSubsystem extends SubsystemBase {
   /**
    * Runs the intake at the default speed
    */
-  public void runIntake() {
+  public void setIntake() {
     intakeMotor.set(kDefaultIntakeSpeed);
   }
 
@@ -39,7 +39,7 @@ public class IntakeSubsystem extends SubsystemBase {
    * 
    * @param speed The speed to run the intake at
    */
-  public void runIntake(double speed) {
+  public void setIntake(double speed) {
     intakeMotor.set(speed);
   }
 
@@ -53,7 +53,7 @@ public class IntakeSubsystem extends SubsystemBase {
   /**
    * Runs the conveyor at the default speed
    */
-  public void runConveyor() {
+  public void setConveyor() {
     conveyorMotor.set(kDefaultConveyorSpeed);
   }
 
@@ -62,7 +62,7 @@ public class IntakeSubsystem extends SubsystemBase {
    * 
    * @param speed The speed to run the conveyor at
    */
-  public void runConveyor(double speed) {
+  public void setConveyor(double speed) {
     conveyorMotor.set(speed);
   }
 
@@ -79,17 +79,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void stopBasket() {
     basketMotor.stopMotor();
-  }
-
-  /**
-   * Runs both the intake and conveyor at specified speeds
-   * 
-   * @param intakeSpeed
-   * @param conveyorSpeed
-   */
-  public void setSpeeds(double intakeSpeed, double conveyorSpeed) {
-    intakeMotor.set(intakeSpeed);
-    conveyorMotor.set(conveyorSpeed);
   }
 
   /**
