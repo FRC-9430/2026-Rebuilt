@@ -45,19 +45,22 @@ public class VisionSubsystem extends SubsystemBase {
 
         boolean doRejectUpdate = false;
         if (poseEstimateMT1.tagCount == 1 && poseEstimateMT1.rawFiducials.length == 1) {
-            if (poseEstimateMT1.rawFiducials[0].ambiguity > .7) {
+            if (poseEstimateMT1.rawFiducials[0].ambiguity > .5) {
                 doRejectUpdate = true;
             }
             if (poseEstimateMT1.rawFiducials[0].distToCamera > 3) {
                 doRejectUpdate = true;
             }
+                
+            // if (poseEstimateMT1.rawFiducials[0].ambiguity < 0.05) {
+            //     drivetrain.resetPose(poseEstimateMT1.pose); // If very confident with pose: set estimated position
+            // }
         }
         if (poseEstimateMT1.tagCount == 0) {
             doRejectUpdate = true;
         }
 
-        Pose2d combPose = new Pose2d(poseEstimateMT1.pose.getTranslation(), poseEstimateMT2.pose.getRotation());
-
+        
 
         if (!doRejectUpdate) {
             drivetrain.addVisionMeasurement(
