@@ -24,14 +24,14 @@ public class BumpBasketCommand extends Command {
   @Override
   public void initialize() {
     intake.setBasket(0.15);
-    intake.setIntake(1);
+    intake.setIntakeRPM(1000);
     startTime = Timer.getFPGATimestamp();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (Timer.getFPGATimestamp() > startTime + 0.5) {
+    if (Timer.getFPGATimestamp() > startTime + 0.3) {
       intake.setBasket(-0.08);
     }
   }
@@ -47,6 +47,6 @@ public class BumpBasketCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (Timer.getFPGATimestamp() > (startTime + 1));
+    return (Timer.getFPGATimestamp() > (startTime + 6));
   }
 }
