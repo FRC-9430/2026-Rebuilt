@@ -124,7 +124,7 @@ public class RobotContainer {
         }));
 
         controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            intake.setIntake(0.45);
+            intake.setIntakeRPM(2500);
         }))).onFalse(new InstantCommand(() -> {
             intake.stopAll();
         }));
