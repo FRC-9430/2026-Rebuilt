@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LimelightHelpers;
@@ -37,7 +36,6 @@ public class VisionSubsystem extends SubsystemBase {
             0, 0, 0, 0, 0);
 
         LimelightHelpers.PoseEstimate poseEstimateMT1 = getPoseEstimateMT1();
-        LimelightHelpers.PoseEstimate poseEstimateMT2 = getPoseEstimateMT2();
 
         SmartDashboard.putNumber("Robot Pose Cam Est X", poseEstimateMT1.pose.getX());
         SmartDashboard.putNumber("Robot Pose Cam Est Y", poseEstimateMT1.pose.getY());
