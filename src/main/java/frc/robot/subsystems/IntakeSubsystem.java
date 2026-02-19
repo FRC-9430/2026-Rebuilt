@@ -5,10 +5,14 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANConstants;
 
@@ -20,11 +24,17 @@ public class IntakeSubsystem extends SubsystemBase {
   SparkFlex intakeMotor = new SparkFlex(CANConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless);
   SparkFlex basketMotor = new SparkFlex(CANConstants.BASKET_CAN_ID, MotorType.kBrushless);
 
+  SparkClosedLoopController intakeController;
+  RelativeEncoder intakEncoder;
+
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
     intakeMotor.configure(kIntakeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     conveyorMotor.configure(kConveyorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     basketMotor.configure(kBasketMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    intakeController = intakeMotor.getClosedLoopController();
+    intakEncoder = intakeMotor.getEncoder();
   }
 
   /**
@@ -41,6 +51,15 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public void setIntake(double speed) {
     intakeMotor.set(speed);
+  }
+
+  /**
+   * Target the intake at a specified RPM
+   * 
+   * @param RPM The RPM to run the intake at
+   */
+  public void setIntakeRPM(double RPM) {
+    intakeController.setSetpoint(RPM, ControlType.kVelocity);
   }
 
   /**
@@ -93,6 +112,7 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Intake V", intakEncoder.getVelocity());
   }
 
 }

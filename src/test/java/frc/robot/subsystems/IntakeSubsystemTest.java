@@ -27,7 +27,7 @@ class IntakeSubsystemTest {
   @Test
   void testIntakeAndConveyorRunTogether() {
     // Engage the intake
-    subsystem.setSpeeds(0.5, 0.5);
+    // subsystem.setSpeeds(0.5, 0.5);
 
     // Verify both motors are set to the same speed
     assertEquals(0.5, subsystem.intakeMotor.get(), 0.001, "Intake motor should be at 0.5 speed");

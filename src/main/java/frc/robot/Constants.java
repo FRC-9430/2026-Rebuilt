@@ -152,11 +152,22 @@ public final class Constants {
     public static final class IntakeConstants {
         public static final double kDefaultIntakeSpeed = 0.8;
         public static final double kDefaultConveyorSpeed = 0.8;
+        
+        public static final double kIntakeP = 0.00006;
+        public static final double kIntakeI = 0.0;
+        public static final double kIntakeD = 0.0;
+        public static final double kIntakeS = 0.2;
+        public static final double kIntakeV = 0.00178;
+        public static final double kIntakeA = 0.0;
 
         public static final SparkFlexConfig kIntakeMotorConfig = new SparkFlexConfig();
         static {
             kIntakeMotorConfig.inverted(false);
             kIntakeMotorConfig.idleMode(IdleMode.kCoast);
+            kIntakeMotorConfig.closedLoop.pid(kIntakeP, kIntakeI, kIntakeD);
+            kIntakeMotorConfig.closedLoop.outputRange(0, 1); // No moving backwards
+            kIntakeMotorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+            kIntakeMotorConfig.closedLoop.feedForward.sva(kIntakeS, kIntakeV, kIntakeA);
         }
 
         public static final SparkFlexConfig kConveyorMotorConfig = new SparkFlexConfig();
