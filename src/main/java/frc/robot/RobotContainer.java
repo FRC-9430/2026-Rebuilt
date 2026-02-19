@@ -9,10 +9,8 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -23,6 +21,9 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.util.TunerConstants;
+import frc.robot.commands.BumpBasketCommand;
+import frc.robot.commands.EjectBasketCommand;
+import frc.robot.commands.RetractBasketCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.ElasticDashboard;
@@ -86,27 +87,29 @@ public class RobotContainer {
 
         // Reset the field-centric heading on left bumper press.
         // controller.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-        controller.leftBumper().onTrue(new InstantCommand(()->{
+        controller.povDown().onTrue(new InstantCommand(()->{
             drivetrain.resetPose(vision.getPoseEstimateMT1().pose);
         }));
         drivetrain.applyRequest(() -> idle).ignoringDisable(true);
 
-        controller.rightBumper().onTrue(new InstantCommand(() -> {
-            driveMode = DriveMode.POLAR;
+        controller.leftBumper().onTrue(new InstantCommand(() -> {
+            if (isCartesian())
+                driveMode = DriveMode.POLAR;
+            else
+                driveMode = DriveMode.CARTESIAN;
             SmartDashboard.putString("DriveMode", "POLAR");
         })).onFalse(new InstantCommand(() -> {
-            driveMode = DriveMode.CARTESIAN;
             SmartDashboard.putString("DriveMode", "CARTESIAN");
         }));
 
         SmartDashboard.putNumber("Shooter V Target", 3000);
         SmartDashboard.putNumber("Feeder %", 0.5);
-        SmartDashboard.putNumber("Conveyor %", 0.5);
-        controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
+        SmartDashboard.putNumber("Conveyor %", -0.5);
+        controller.leftTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
             shooterSubsystem.setShooterSpeedsRPM(SmartDashboard.getNumber("Shooter V Target", 3000));
             if(shooterSubsystem.shooterIsAtSpeed()){
                 shooterSubsystem.runFeederPercentage(SmartDashboard.getNumber("Feeder %", 0.5));
-                intake.runConveyor(SmartDashboard.getNumber("Conveyor %", 0.5));
+                intake.runConveyor(SmartDashboard.getNumber("Conveyor %", -0.5));
             }
         }))).onFalse(new InstantCommand(() -> {
             shooterSubsystem.stopShooter();
@@ -120,8 +123,8 @@ public class RobotContainer {
             shooterSubsystem.stopShooter();
         }));
 
-        controller.leftTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            intake.runIntake(controller.getLeftTriggerAxis());
+        controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
+            intake.runIntake(0.45);
         }))).onFalse(new InstantCommand(() -> {
             intake.stopAll();
         }));
@@ -141,10 +144,16 @@ public class RobotContainer {
 
         controller.x().whileTrue(new RepeatCommand(new InstantCommand(()->{
             shooterSubsystem.setShootingAngle(
-                Math.floor(10000.0*PolarUtils.getEstHoodFrmR(SmartDashboard.getNumber("Dist From Hub", 0.5)))/10000.0);
+                Math.floor(1000.0*PolarUtils.getEstHoodFrmR(SmartDashboard.getNumber("Dist From Hub", 0.5)))/1000.0);
         }))).onFalse(new InstantCommand(()->{
             shooterSubsystem.stopHood();
         }));
+
+        controller.y().onTrue(new BumpBasketCommand(intake));
+
+        controller.back().onTrue(new EjectBasketCommand(intake));
+
+        controller.start().onTrue(new RetractBasketCommand(intake));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
