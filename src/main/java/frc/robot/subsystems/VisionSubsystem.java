@@ -6,6 +6,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LimelightHelpers;
+import frc.robot.util.LimelightHelpers.RawFiducial;
 
 public class VisionSubsystem extends SubsystemBase {
 
@@ -56,6 +57,20 @@ public class VisionSubsystem extends SubsystemBase {
         }
         if (poseEstimateMT1.tagCount == 0) {
             doRejectUpdate = true;
+        }
+
+        if (poseEstimateMT1.tagCount >= 2) {
+            if (poseEstimateMT1.avgTagDist > 1.5 &&
+                poseEstimateMT1.avgTagDist < 3) {
+                
+                for (RawFiducial fiducial : poseEstimateMT1.rawFiducials) {
+                    if (fiducial.ambiguity < 0.05) {
+                        // If very confident with pose: set estimated position
+                        drivetrain.resetPose(poseEstimateMT1.pose); 
+                    }
+                }    
+                
+            }
         }
 
         
