@@ -7,6 +7,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -57,17 +58,9 @@ public class RobotContainer {
 
     public DriveMode driveMode = DriveMode.CARTESIAN;
 
-    public enum DriveMode {
-        CARTESIAN,
-        POLAR
-    }
-
-    public boolean isCartesian() {
-        return driveMode == DriveMode.CARTESIAN;
-    }
-
     public RobotContainer() {
         configureBindings();
+        configureNamedCommands();
         drivetrain.configureAutoBuilder();
     }
 
@@ -162,6 +155,54 @@ public class RobotContainer {
 
     public void setInitialPose() {
         drivetrain.resetPose(dash.getInitialPose());
+    }
+
+    public enum DriveMode {
+        CARTESIAN,
+        POLAR
+    }
+
+    public boolean isCartesian() {
+        return driveMode == DriveMode.CARTESIAN;
+    }
+
+    public boolean isPolar() {
+        return driveMode == DriveMode.POLAR;
+    }
+
+    public void setCartesian() {
+        driveMode = DriveMode.CARTESIAN;
+    }
+
+    public void setPolar() {
+        driveMode = DriveMode.POLAR;
+    }
+
+    public void configureNamedCommands() {
+        NamedCommands.registerCommand("Eject Basket", new EjectBasketCommand(intake));
+        NamedCommands.registerCommand("Retract Basket", new RetractBasketCommand(intake));
+        NamedCommands.registerCommand("Bump Basket", new BumpBasketCommand(intake));
+
+        NamedCommands.registerCommand("Start Intake", new InstantCommand(()->intake.setIntake()));
+        NamedCommands.registerCommand("Stop Intake", new InstantCommand(()->intake.stopIntake()));
+
+        NamedCommands.registerCommand("Engage Polar", new InstantCommand(()->setPolar()));
+        NamedCommands.registerCommand("Engage Cartesian", new InstantCommand(()->setCartesian()));
+
+        NamedCommands.registerCommand("Begin Shoot Procedure", 
+            new RepeatCommand(new InstantCommand(() -> {
+                shooter.setShooterSpeedsRPM(polar.getShootVelocity());
+                shooter.setShootingAngle(polar.getHoodPosition());
+                if (shooter.isReadyToShoot()) {
+                    shooter.setFeeder();
+                    shooter.setConveyor();
+                }
+            })));
+        
+        NamedCommands.registerCommand("Stop Shooting", new InstantCommand(()->shooter.stopAll()));
+
+        NamedCommands.registerCommand("Stow Hood", new InstantCommand(()->shooter.stowHood()));
+
     }
 
     public Command getAutonomousCommand() {
