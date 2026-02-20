@@ -20,7 +20,6 @@ import static frc.robot.Constants.IntakeConstants.*;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-  SparkFlex conveyorMotor = new SparkFlex(CANConstants.CONVEYOR_MOTOR_CAN_ID, MotorType.kBrushless);
   SparkFlex intakeMotor = new SparkFlex(CANConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless);
   SparkFlex basketMotor = new SparkFlex(CANConstants.BASKET_CAN_ID, MotorType.kBrushless);
 
@@ -30,7 +29,6 @@ public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
     intakeMotor.configure(kIntakeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    conveyorMotor.configure(kConveyorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     basketMotor.configure(kBasketMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     intakeController = intakeMotor.getClosedLoopController();
@@ -69,29 +67,6 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor.stopMotor();
   }
 
-  /**
-   * Runs the conveyor at the default speed
-   */
-  public void setConveyor() {
-    conveyorMotor.set(kDefaultConveyorSpeed);
-  }
-
-  /**
-   * Runs the conveyor at a specified speed
-   * 
-   * @param speed The speed to run the conveyor at
-   */
-  public void setConveyor(double speed) {
-    conveyorMotor.set(speed);
-  }
-
-  /**
-   * Stops the conveyor
-   */
-  public void stopConveyor() {
-    conveyorMotor.stopMotor();
-  }
-
   public void setBasket(double speed) {
     basketMotor.set(speed);
   }
@@ -105,7 +80,6 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public void stopAll() {
     intakeMotor.stopMotor();
-    conveyorMotor.stopMotor();
     basketMotor.stopMotor();
   }
 
