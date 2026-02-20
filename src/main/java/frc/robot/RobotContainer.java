@@ -18,8 +18,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
 import frc.robot.util.TunerConstants;
 import frc.robot.commands.BumpBasketCommand;
 import frc.robot.commands.EjectBasketCommand;
@@ -98,8 +96,7 @@ public class RobotContainer {
         // controller.start().and(controller.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         // controller.start().and(controller.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        // Reset the field-centric heading on left bumper press.
-        // controller.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        // Reset the field-centric heading on left bumper press
         controller.povDown().onTrue(new InstantCommand(() -> {
             var seenPose = vision.getPoseEstimateMT1().pose;
             if (!seenPose.equals(new Pose2d())) {
@@ -107,10 +104,10 @@ public class RobotContainer {
             } else {
                 drivetrain.seedFieldCentric();
             }
-            
-        }));
-        drivetrain.applyRequest(() -> idle).ignoringDisable(true);
 
+        }));
+
+        // Toggle Polar mode
         controller.leftBumper().onTrue(new InstantCommand(() -> {
             if (isCartesian()) {
                 driveMode = DriveMode.POLAR;
@@ -121,6 +118,7 @@ public class RobotContainer {
             }
         }));
 
+        // Shoot
         controller.leftTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
 
             shooter.setShooterSpeedsRPM(polar.getShootVelocity());
@@ -135,22 +133,27 @@ public class RobotContainer {
             shooter.stopAll();
         }));
 
+        // Intake
         controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
             intake.setIntake();
         }))).onFalse(new InstantCommand(() -> {
             intake.stopAll();
         }));
 
+        // Force Stow Hood
         controller.a().onTrue(new InstantCommand(() -> {
             shooter.stowHood();
         })).onFalse(new InstantCommand(() -> {
             shooter.stopHood();
         }));
 
+        // Bump the Basket
         controller.y().onTrue(new BumpBasketCommand(intake));
 
+        // Eject Basket
         controller.back().onTrue(new EjectBasketCommand(intake));
 
+        // Retract Basket
         controller.start().onTrue(new RetractBasketCommand(intake));
 
         drivetrain.registerTelemetry(logger::telemeterize);
