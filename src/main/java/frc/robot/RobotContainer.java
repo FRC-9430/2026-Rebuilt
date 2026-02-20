@@ -27,9 +27,9 @@ import frc.robot.commands.RetractBasketCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.ElasticDashboard;
-import frc.robot.util.PolarUtils;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.PolarSubsystem;
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top
@@ -49,9 +49,11 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+    public final ShooterSubsystem shooter = new ShooterSubsystem();
     public final IntakeSubsystem intake = new IntakeSubsystem();
+
     public final VisionSubsystem vision = new VisionSubsystem(drivetrain);
+    public final PolarSubsystem polar = new PolarSubsystem(drivetrain);
 
     public ElasticDashboard dash = new ElasticDashboard();
 
@@ -87,40 +89,33 @@ public class RobotContainer {
 
         // Reset the field-centric heading on left bumper press.
         // controller.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-        controller.povDown().onTrue(new InstantCommand(()->{
+        controller.povDown().onTrue(new InstantCommand(() -> {
             drivetrain.resetPose(vision.getPoseEstimateMT1().pose);
         }));
         drivetrain.applyRequest(() -> idle).ignoringDisable(true);
 
         controller.leftBumper().onTrue(new InstantCommand(() -> {
-            if (isCartesian())
+            if (isCartesian()) {
                 driveMode = DriveMode.POLAR;
-            else
+                SmartDashboard.putString("DriveMode", "POLAR");
+            } else {
                 driveMode = DriveMode.CARTESIAN;
-            SmartDashboard.putString("DriveMode", "POLAR");
-        })).onFalse(new InstantCommand(() -> {
-            SmartDashboard.putString("DriveMode", "CARTESIAN");
-        }));
-
-        SmartDashboard.putNumber("Shooter V Target", 3000);
-        SmartDashboard.putNumber("Feeder %", 0.5);
-        SmartDashboard.putNumber("Conveyor %", -0.5);
-        controller.leftTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            shooterSubsystem.setShooterSpeedsRPM(SmartDashboard.getNumber("Shooter V Target", 3000));
-            if(shooterSubsystem.shooterIsAtSpeed()){
-                shooterSubsystem.runFeederPercentage(SmartDashboard.getNumber("Feeder %", 0.5));
-                intake.setConveyor(SmartDashboard.getNumber("Conveyor %", -0.5));
+                SmartDashboard.putString("DriveMode", "CARTESIAN");
             }
-        }))).onFalse(new InstantCommand(() -> {
-            shooterSubsystem.stopShooter();
-            shooterSubsystem.stopFeeder();
-            intake.stopConveyor();
         }));
 
-        controller.povRight().onTrue(new InstantCommand(() -> {
-            shooterSubsystem.setShooterSpeedsRPM(SmartDashboard.getNumber("Shooter V Target", 3000));
-        })).onFalse(new InstantCommand(() -> {
-            shooterSubsystem.stopShooter();
+        controller.leftTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
+
+            shooter.setShooterSpeedsRPM(polar.getShootVelocity());
+            shooter.setShootingAngle(polar.getHoodPosition());
+
+            if (shooter.isReadyToShoot()) {
+                shooter.runFeederPercentage(0.5);
+                shooter.setConveyor(0.3);
+            }
+
+        }))).onFalse(new InstantCommand(() -> {
+            shooter.stopAll();
         }));
 
         controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
@@ -129,24 +124,10 @@ public class RobotContainer {
             intake.stopAll();
         }));
 
-        SmartDashboard.putNumber("Hood Pos Target", 0.5);
-        controller.b().onTrue(new InstantCommand(() -> {
-            shooterSubsystem.setShootingAngle(SmartDashboard.getNumber("Hood Pos Target", 0.5));
-        })).onFalse(new InstantCommand(() -> {
-            shooterSubsystem.stopHood();
-        }));
-
         controller.a().onTrue(new InstantCommand(() -> {
-            shooterSubsystem.stowHood();
+            shooter.stowHood();
         })).onFalse(new InstantCommand(() -> {
-            shooterSubsystem.stopHood();
-        }));
-
-        controller.x().whileTrue(new RepeatCommand(new InstantCommand(()->{
-            shooterSubsystem.setShootingAngle(
-                Math.floor(1000.0*PolarUtils.getEstHoodFrmR(PolarUtils.getRadiusFrom(drivetrain.getPose().getTranslation(), Constants.FieldConstants.BLUE_HUB_LOC)))/1000.0);
-        }))).onFalse(new InstantCommand(()->{
-            shooterSubsystem.stopHood();
+            shooter.stopHood();
         }));
 
         controller.y().onTrue(new BumpBasketCommand(intake));
@@ -189,7 +170,7 @@ public class RobotContainer {
     }
 
     public ChassisSpeeds getPolarDriveSpeeds() {
-        return PolarUtils.getPolarDriveSpeeds(drivetrain.getState().Pose, 
+        return polar.getPolarDriveSpeeds(drivetrain.getState().Pose,
                 controller.getLeftY(), controller.getLeftX(),
                 MaxSpeed, MaxAngularRate);
     }
