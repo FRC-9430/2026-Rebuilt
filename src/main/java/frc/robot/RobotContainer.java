@@ -59,6 +59,15 @@ public class RobotContainer {
 
     public DriveMode driveMode = DriveMode.CARTESIAN;
 
+    public enum DriveMode {
+        CARTESIAN,
+        POLAR
+    }
+
+    public boolean isCartesian() {
+        return driveMode == DriveMode.CARTESIAN;
+    }
+
     public RobotContainer() {
         configureBindings();
         drivetrain.configureAutoBuilder();
@@ -71,7 +80,9 @@ public class RobotContainer {
                         () -> drive.withVelocityX(-controller.getLeftY() * MaxSpeed)
                                 .withVelocityY(-controller.getLeftX() * MaxSpeed)
                                 .withRotationalRate(controller.getRightX() * MaxAngularRate),
-                        () -> aim.withSpeeds(getPolarDriveSpeeds()),
+                        () -> aim.withSpeeds(polar.getPolarDriveSpeeds(drivetrain.getState().Pose,
+                                controller.getLeftY(), controller.getLeftX(),
+                                MaxSpeed, MaxAngularRate)),
                         () -> isCartesian()));
 
         // Idle while the robot is disabled. This ensures the configured
@@ -140,6 +151,10 @@ public class RobotContainer {
 
     }
 
+    public void setInitialPose() {
+        drivetrain.resetPose(dash.getInitialPose());
+    }
+
     public Command getAutonomousCommand() {
         // Simple drive forward auton
         final var idle = new SwerveRequest.Idle();
@@ -154,25 +169,6 @@ public class RobotContainer {
                         .withTimeout(5.0),
                 // Finally idle for the rest of auton
                 drivetrain.applyRequest(() -> idle));
-    }
-
-    public enum DriveMode {
-        CARTESIAN,
-        POLAR
-    }
-
-    public boolean isCartesian() {
-        return driveMode == DriveMode.CARTESIAN;
-    }
-
-    public void setInitialPose() {
-        drivetrain.resetPose(dash.getInitialPose());
-    }
-
-    public ChassisSpeeds getPolarDriveSpeeds() {
-        return polar.getPolarDriveSpeeds(drivetrain.getState().Pose,
-                controller.getLeftY(), controller.getLeftX(),
-                MaxSpeed, MaxAngularRate);
     }
 
 }
