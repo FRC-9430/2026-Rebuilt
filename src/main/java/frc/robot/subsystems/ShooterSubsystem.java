@@ -116,7 +116,7 @@ public class ShooterSubsystem extends SubsystemBase {
      *
      * @param RPM The speed to run the feeder motor at.
      */
-    public void runFeederRPM(double RPM) {
+    public void setFeederRPM(double RPM) {
         m_feedController.setSetpoint(RPM, ControlType.kVelocity);
     }
 
@@ -125,7 +125,7 @@ public class ShooterSubsystem extends SubsystemBase {
      *
      * @param speed The speed to run the feeder motor at.
      */
-    public void runFeederPercentage(double speed) {
+    public void setFeederPercentage(double speed) {
         m_feedMotor.set(speed);
     }
 
