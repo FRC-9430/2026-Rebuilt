@@ -158,7 +158,7 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        public static final double kDefaultIntakeSpeed = 0.8;
+        public static final double kDefaultIntakeSpeed = 2500;
 
         public static final double kIntakeP = 0.00006;
         public static final double kIntakeI = 0.0;

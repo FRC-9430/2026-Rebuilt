@@ -39,7 +39,7 @@ public class IntakeSubsystem extends SubsystemBase {
    * Runs the intake at the default speed
    */
   public void setIntake() {
-    intakeMotor.set(kDefaultIntakeSpeed);
+    intakeController.setSetpoint(kDefaultIntakeSpeed, ControlType.kVelocity);
   }
 
   /**
