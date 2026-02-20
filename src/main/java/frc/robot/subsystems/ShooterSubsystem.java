@@ -23,6 +23,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private final SparkFlex m_hoodMotor;
     private final SparkFlex m_feedMotor;
+    private final SparkFlex m_conveyorMotor;
 
     private final RelativeEncoder m_shooterEncoder;
     private final AbsoluteEncoder m_hoodEncoder;
@@ -40,6 +41,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         m_hoodMotor = new SparkFlex(CANConstants.HOOD_ARTICULATE_CAN_ID, MotorType.kBrushless);
         m_feedMotor = new SparkFlex(CANConstants.FEEDER_CAN_ID, MotorType.kBrushless);
+        m_conveyorMotor = new SparkFlex(CANConstants.CONVEYOR_MOTOR_CAN_ID, MotorType.kBrushless);
 
         m_RightShooterMotor.configure(MAIN_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
@@ -50,6 +52,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         m_hoodMotor.configure(HOOD_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         m_feedMotor.configure(FEED_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_conveyorMotor.configure(CONVEYOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         m_shooterEncoder = m_RightShooterMotor.getEncoder();
         m_hoodEncoder = m_hoodMotor.getAbsoluteEncoder();
@@ -141,6 +144,22 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
+     * Runs the conveyor at a specified speed
+     * 
+     * @param speed The speed to run the conveyor at
+     */
+    public void setConveyor(double speed) {
+        m_conveyorMotor.set(speed);
+    }
+
+    /**
+     * Stops the conveyor
+     */
+    public void stopConveyor() {
+        m_conveyorMotor.stopMotor();
+    }
+
+    /**
      * Sets the position of the shooter hood.
      *
      * @param position The target hood position.
@@ -204,7 +223,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return true if the shooter is ready to fire, false otherwise.
      */
     public boolean isReadyToShoot() {
-        return shooterIsAtSpeed() && m_hoodController.isAtSetpoint();
+        return shooterIsAtSpeed() && hoodAtPosition(m_hoodController.getSetpoint());
     }
 
     /** This method is called once per scheduler run. */

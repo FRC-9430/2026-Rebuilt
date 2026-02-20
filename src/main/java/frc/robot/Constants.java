@@ -103,14 +103,14 @@ public final class Constants {
         // Setpoints
         public static final double kShooterIdleRPM = 1000.0;
         public static final double kShooterToleranceRPM = 200.0;
+        public static final double kDefaultConveyorSpeed = 0.8;
+        public static final double kHoodStowedPosition = 0.355;
 
         // Hood limits
-        public static final double kHoodMinPosition = 0.350;
-        public static final double kHoodMaxPosition = 0.875;
+        public static final double kHoodMinPosition = 0.3433;
+        public static final double kHoodMinSafePosition = 0.350;
+        public static final double kHoodMaxSafePosition = 0.875;
         public static final double kHoodPositionTolerance = 0.025;
-
-        // Hood Setpoints
-        public static final double kHoodStowedPosition = 0.355;
 
         public static final SparkFlexConfig MAIN_SHOOTER_CONFIG = new SparkFlexConfig();
         static {
@@ -149,12 +149,17 @@ public final class Constants {
             FEED_CONFIG.closedLoop.pid(kFeedP, kFeedI, kFeedD);
         }
 
+        public static final SparkFlexConfig CONVEYOR_CONFIG = new SparkFlexConfig();
+        static {
+            CONVEYOR_CONFIG.inverted(false);
+            CONVEYOR_CONFIG.idleMode(IdleMode.kCoast);
+        }
+
     }
 
     public static final class IntakeConstants {
         public static final double kDefaultIntakeSpeed = 0.8;
-        public static final double kDefaultConveyorSpeed = 0.8;
-        
+
         public static final double kIntakeP = 0.00006;
         public static final double kIntakeI = 0.0;
         public static final double kIntakeD = 0.0;
@@ -172,16 +177,10 @@ public final class Constants {
             kIntakeMotorConfig.closedLoop.feedForward.sva(kIntakeS, kIntakeV, kIntakeA);
         }
 
-        public static final SparkFlexConfig kConveyorMotorConfig = new SparkFlexConfig();
-        static {
-            kConveyorMotorConfig.inverted(true);
-            kConveyorMotorConfig.idleMode(IdleMode.kCoast);
-        }
-
         public static final SparkFlexConfig kBasketMotorConfig = new SparkFlexConfig();
         static {
-            kConveyorMotorConfig.inverted(false);
-            kConveyorMotorConfig.idleMode(IdleMode.kBrake);
+            kBasketMotorConfig.inverted(false);
+            kBasketMotorConfig.idleMode(IdleMode.kBrake);
         }
 
     }
@@ -190,6 +189,5 @@ public final class Constants {
         public static final Translation2d BLUE_HUB_LOC = new Translation2d(4.6525, 4.034);
         public static final Translation2d RED_HUB_LOC = new Translation2d(11.915, 4.034);
     }
-
 
 }
