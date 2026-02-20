@@ -110,8 +110,8 @@ public class RobotContainer {
             shooter.setShootingAngle(polar.getHoodPosition());
 
             if (shooter.isReadyToShoot()) {
-                shooter.setFeederPercentage(0.5);
-                shooter.setConveyor(0.3);
+                shooter.setFeeder();
+                shooter.setConveyor();
             }
 
         }))).onFalse(new InstantCommand(() -> {

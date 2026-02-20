@@ -103,8 +103,12 @@ public final class Constants {
         // Setpoints
         public static final double kShooterIdleRPM = 1000.0;
         public static final double kShooterToleranceRPM = 200.0;
-        public static final double kDefaultConveyorSpeed = 0.8;
+
+        public static final double kDefaultConveyorSpeed = 0.3;
+
         public static final double kHoodStowedPosition = 0.355;
+        
+        public static final double kDefaultFeederSpeed = 0.5;
 
         // Hood limits
         public static final double kHoodMinPosition = 0.3433;

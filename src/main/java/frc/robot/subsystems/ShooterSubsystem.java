@@ -112,6 +112,13 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
+     * Runs the feeder motor at the default speed
+     */
+    public void setFeeder() {
+        m_feedMotor.set(kDefaultFeederSpeed);
+    }
+
+    /**
      * Runs the feeder motor at the specified RPM.
      *
      * @param RPM The speed to run the feeder motor at.
@@ -141,6 +148,15 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public double getFeederRPM() {
         return m_feedEncoder.getVelocity();
+    }
+
+    /**
+     * Runs the conveyor at default speed
+     * 
+     * @param speed The speed to run the conveyor at
+     */
+    public void setConveyor() {
+        m_conveyorMotor.set(kDefaultFeederSpeed);
     }
 
     /**
