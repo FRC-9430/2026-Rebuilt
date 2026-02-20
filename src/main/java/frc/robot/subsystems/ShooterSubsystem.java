@@ -264,6 +264,7 @@ public class ShooterSubsystem extends SubsystemBase {
         m_RightShooterMotor.stopMotor();
         m_hoodMotor.stopMotor();
         m_feedMotor.stopMotor();
+        m_conveyorMotor.stopMotor();
 
     }
 }
