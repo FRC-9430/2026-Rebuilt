@@ -59,9 +59,9 @@ public class VisionSubsystem extends SubsystemBase {
             doRejectUpdate = true;
         }
 
-        if (poseEstimateMT1.tagCount >= 2) {
+        if (poseEstimateMT1.tagCount >= 1) {
             if (poseEstimateMT1.avgTagDist > 1.5 &&
-                poseEstimateMT1.avgTagDist < 3) {
+                poseEstimateMT1.avgTagDist < 4.5) {
                 
                 for (RawFiducial fiducial : poseEstimateMT1.rawFiducials) {
                     if (fiducial.ambiguity < 0.05) {
