@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ElasticDashboard extends SubsystemBase {
 
     SendableChooser<Pose2d> initialPoseChooser = new SendableChooser<Pose2d>();
-    SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser();
+    SendableChooser<Command> autoChooser;
 
     public ElasticDashboard() {
 
@@ -24,8 +24,11 @@ public class ElasticDashboard extends SubsystemBase {
 
         SmartDashboard.putData("InitialPose", initialPoseChooser);
 
-        SmartDashboard.putData("Auto Chooser", autoChooser);
+    }
 
+    public void initAutoChooser() {
+        autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
     public Pose2d getInitialPose() {
