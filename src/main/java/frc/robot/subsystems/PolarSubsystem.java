@@ -53,7 +53,7 @@ public class PolarSubsystem extends SubsystemBase {
   }
 
   public double getHoodPosition() {
-    return Math.floor(1000.0*PolarUtils.getEstShootVelFrmR(radiusToTarget))/1000.0;
+    return Math.floor(1000.0*PolarUtils.getEstHoodPosFrmR(radiusToTarget))/1000.0;
   }
 
   public void calculateRadius() {
@@ -144,7 +144,7 @@ public class PolarSubsystem extends SubsystemBase {
       return pose.getDistance(target);
     }
 
-    public static double getEstHoodFrmR(double r) {
+    public static double getEstHoodPosFrmR(double r) {
       double pos = -0.0200985 * Math.pow(r, 2)
           + 0.168875 * r
           + (-0.099575 + Constants.ShooterConstants.kHoodMinPosition);

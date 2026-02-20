@@ -155,7 +155,7 @@ public final class Constants {
 
         public static final SparkFlexConfig CONVEYOR_CONFIG = new SparkFlexConfig();
         static {
-            CONVEYOR_CONFIG.inverted(false);
+            CONVEYOR_CONFIG.inverted(true);
             CONVEYOR_CONFIG.idleMode(IdleMode.kCoast);
         }
 
