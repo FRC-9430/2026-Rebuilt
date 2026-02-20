@@ -175,8 +175,4 @@ public class RobotContainer {
                 MaxSpeed, MaxAngularRate);
     }
 
-    public void addVisionMeasurements() {
-        vision.addVisionMeasurements();
-    }
-
 }

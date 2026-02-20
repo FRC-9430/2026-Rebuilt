@@ -28,6 +28,11 @@ public class VisionSubsystem extends SubsystemBase {
         return LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
     }
 
+    @Override
+    public void periodic() {
+        addVisionMeasurements();
+    }
+
     public void addVisionMeasurements() {
         SwerveDriveState driveState = drivetrain.getState();
 
