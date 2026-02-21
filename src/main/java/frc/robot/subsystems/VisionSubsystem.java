@@ -4,7 +4,6 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LimelightHelpers;
@@ -23,14 +22,12 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     // State for smoothing / gating
-    private Pose2d m_lastOdometryPose = new Pose2d();
-    private double m_lastOdometryTimestamp = Timer.getFPGATimestamp();
     private double m_lastVisionTimestamp = 0.0;
     // minimum time between processing vision updates (seconds)
     private static final double kMinVisionInterval = 0.08;
     // thresholds
     private static final double kMaxAngularRateReject = 1.5; // rad/s (existing)
-    private static final double kMaxLinearSpeedReject = 0.25; // m/s
+    private static final double kMaxLinearSpeedReject = 1.0; // m/s (use drivetrain-reported speed)
     private static final double kMaxOutlierDistWhenStopped = 1.0; // meters
 
     public LimelightHelpers.PoseEstimate getPoseEstimateMT2() {
@@ -49,15 +46,9 @@ public class VisionSubsystem extends SubsystemBase {
     public void addVisionMeasurements() {
         SwerveDriveState driveState = drivetrain.getState();
 
-        // compute approximate linear speed from odometry to determine stationary
-        Pose2d currentOdometryPose = drivetrain.getPose();
-        double now = Timer.getFPGATimestamp();
-        double dt = Math.max(1e-6, now - m_lastOdometryTimestamp);
-        double dx = currentOdometryPose.getX() - m_lastOdometryPose.getX();
-        double dy = currentOdometryPose.getY() - m_lastOdometryPose.getY();
-        double linearSpeed = Math.hypot(dx, dy) / dt;
-        m_lastOdometryPose = currentOdometryPose;
-        m_lastOdometryTimestamp = now;
+    // compute approximate linear speed from drivetrain reported speeds (more stable)
+    double linearSpeed = Math.hypot(driveState.Speeds.vxMetersPerSecond, driveState.Speeds.vyMetersPerSecond);
+    Pose2d currentOdometryPose = drivetrain.getPose();
 
         LimelightHelpers.SetRobotOrientation(
                 "limelight",
