@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.PolarSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -32,7 +33,7 @@ public class ShootCommand extends Command {
   public void execute() {
     shoot.setShooterSpeedsRPM(polar.getShootVelocity());
     shoot.setShootingAngle(polar.getHoodPosition());
-    if (shoot.isReadyToShoot()) {
+    if (shoot.isReadyToShoot() && polar.Angled()) {
       shoot.setFeeder();
       shoot.setConveyor();
     }

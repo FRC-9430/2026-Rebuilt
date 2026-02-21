@@ -44,6 +44,10 @@ public class PolarSubsystem extends SubsystemBase {
     target = newTarget;
   }
 
+  public boolean Angled() {
+    return Math.abs(driveTrain.getState().Speeds.omegaRadiansPerSecond) < 0.1;
+  }
+
   public double getShootVelocity() {
     return Math.floor(PolarUtils.getEstShootVelFrmR(radiusToTarget));
   }
@@ -141,19 +145,17 @@ public class PolarSubsystem extends SubsystemBase {
     }
 
     public static double getEstHoodPosFrmR(double r) {
-      double pos = -0.0200985 * Math.pow(r, 2)
-          + 0.168875 * r
-          + (-0.099575 + Constants.ShooterConstants.kHoodMinPosition);
+      double pos = -0.00447476 * Math.pow(r, 2)
+          + 0.102495 * r
+          + (-0.080651 + Constants.ShooterConstants.kHoodMinPosition);
       SmartDashboard.putNumber("Calc Hood Pos", pos);
       return pos;
     }
 
     public static double getEstShootVelFrmR(double r) {
-      double rpm = -2.10158 * Math.pow(r, 4)
-          + 24.78781 * Math.pow(r, 3)
-          + -79.29767 * Math.pow(r, 2)
-          + 213.13977 * r
-          + 2440.02268;
+      double rpm = 20.00902 * Math.pow(r, 2)
+          + -2.92682 * r
+          + 2575.2891;
       SmartDashboard.putNumber("Calc Shoot V", rpm);
       return rpm;
     }
