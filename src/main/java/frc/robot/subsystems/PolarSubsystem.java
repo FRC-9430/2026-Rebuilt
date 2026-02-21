@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -26,20 +27,15 @@ public class PolarSubsystem extends SubsystemBase {
 
     this.driveTrain = drivetrain;
 
-    // Determine target point depending on alliance
-    switch (DriverStation.getAlliance().get()) {
-      case Red:
-        // Red alliance Hub
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+      if (alliance.get() == Alliance.Blue) {
+        target = BLUE_HUB_LOC;
+      } else {
         target = RED_HUB_LOC;
-        break;
-      case Blue:
-        // Blue alliance Hub
-        target = BLUE_HUB_LOC;
-        break;
-      default:
-        // Fallback to a reasonable default on unknown alliance
-        target = BLUE_HUB_LOC;
-        break;
+      }
+    } else {
+      target = BLUE_HUB_LOC;
     }
 
   }
@@ -130,7 +126,7 @@ public class PolarSubsystem extends SubsystemBase {
       // Normalize angle error to [-pi, pi]
       double angleError = Math.atan2(Math.sin(desiredAngle - currentAngle), Math.cos(desiredAngle - currentAngle));
 
-      // P = 20
+      // P = 15
       double omega = 15 * angleError;
 
       // Clamp angular rate to configured maximum
