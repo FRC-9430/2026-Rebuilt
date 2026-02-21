@@ -11,13 +11,16 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.util.TunerConstants;
+import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.BumpBasketCommand;
 import frc.robot.commands.EjectBasketCommand;
 import frc.robot.commands.RetractBasketCommand;
@@ -55,6 +58,8 @@ public class RobotContainer {
     public ElasticDashboard dash = new ElasticDashboard();
 
     public DriveMode driveMode = DriveMode.CARTESIAN;
+    
+    public AimAndShootCommand aimAndShootCommand = new AimAndShootCommand(drivetrain, shooter, intake, polar, aim, MaxSpeed, MaxAngularRate);
 
     public RobotContainer() {
         drivetrain.configureAutoBuilder();
@@ -188,17 +193,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("Engage Polar", new InstantCommand(()->setPolar()));
         NamedCommands.registerCommand("Engage Cartesian", new InstantCommand(()->setCartesian()));
 
-        NamedCommands.registerCommand("Begin Shoot Procedure", 
-            new RepeatCommand(new InstantCommand(() -> {
-                shooter.setShooterSpeedsRPM(polar.getShootVelocity());
-                shooter.setShootingAngle(polar.getHoodPosition());
-                if (shooter.isReadyToShoot()) {
-                    shooter.setFeeder();
-                    shooter.setConveyor();
-                }
-            })));
-        
-        NamedCommands.registerCommand("Stop Shooting", new InstantCommand(()->shooter.stopAll()));
+        NamedCommands.registerCommand("Start Aim and Shoot", new InstantCommand(()->startAimAndShootAutonCommand()));
+
+        NamedCommands.registerCommand("Stop Aim and Shoot", new InstantCommand(()->aimAndShootCommand.cancel()));
 
         NamedCommands.registerCommand("Stow Hood", new InstantCommand(()->shooter.stowHood()));
 
@@ -206,6 +203,12 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         return dash.getAutoChooser();
+    }
+
+    public void startAimAndShootAutonCommand() {
+        if (driveMode == DriveMode.POLAR && DriverStation.isAutonomous()) {
+            CommandScheduler.getInstance().schedule(aimAndShootCommand);
+        }
     }
 
 }
