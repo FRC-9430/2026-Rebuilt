@@ -137,7 +137,7 @@ public class PolarSubsystem extends SubsystemBase {
       omega = Math.max(-MaxAngularRate, Math.min(MaxAngularRate, omega));
 
       // Convert field-relative velocities to robot-relative chassis speeds
-      return ChassisSpeeds.fromFieldRelativeSpeeds(vxField, vyField, -omega, estPose.getRotation());
+      return ChassisSpeeds.fromFieldRelativeSpeeds(vxField, vyField, omega, estPose.getRotation());
     }
 
     public static double getRadiusFrom(Translation2d pose, Translation2d target) {

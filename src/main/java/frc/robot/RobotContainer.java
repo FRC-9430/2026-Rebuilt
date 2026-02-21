@@ -69,7 +69,7 @@ public class RobotContainer {
                 drivetrain.applyRequestWithCondition(
                         () -> drive.withVelocityX(-controller.getLeftY() * MaxSpeed)
                                 .withVelocityY(-controller.getLeftX() * MaxSpeed)
-                                .withRotationalRate(controller.getRightX() * MaxAngularRate),
+                                .withRotationalRate(-controller.getRightX() * MaxAngularRate),
                         () -> aim.withSpeeds(polar.getPolarDriveSpeeds(drivetrain.getState().Pose,
                                 controller.getLeftY(), controller.getLeftX(),
                                 MaxSpeed, MaxAngularRate)),
