@@ -52,9 +52,10 @@ public class VisionSubsystem extends SubsystemBase {
     public void addVisionMeasurements() {
         SwerveDriveState driveState = drivetrain.getState();
 
-    // compute approximate linear speed from drivetrain reported speeds (more stable)
-    double linearSpeed = Math.hypot(driveState.Speeds.vxMetersPerSecond, driveState.Speeds.vyMetersPerSecond);
-    Pose2d currentOdometryPose = drivetrain.getPose();
+        // compute approximate linear speed from drivetrain reported speeds (more
+        // stable)
+        double linearSpeed = Math.hypot(driveState.Speeds.vxMetersPerSecond, driveState.Speeds.vyMetersPerSecond);
+        Pose2d currentOdometryPose = drivetrain.getPose();
 
         LimelightHelpers.SetRobotOrientation(
                 "limelight",
@@ -145,7 +146,8 @@ public class VisionSubsystem extends SubsystemBase {
             SmartDashboard.putNumber("Vision/sigmaXY", sigmaXY);
             SmartDashboard.putNumber("Vision/sigmaTheta", sigmaTheta);
 
-            // If far away, require several consecutive good frames within a window before applying
+            // If far away, require several consecutive good frames within a window before
+            // applying
             double now = poseEstimateMT1.timestampSeconds;
             boolean allowApply = true;
             if (isFar) {
