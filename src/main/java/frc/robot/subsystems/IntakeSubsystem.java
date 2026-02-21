@@ -21,7 +21,7 @@ import static frc.robot.Constants.IntakeConstants.*;
 public class IntakeSubsystem extends SubsystemBase {
 
   SparkFlex intakeMotor = new SparkFlex(CANConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless);
-  SparkFlex basketMotor = new SparkFlex(CANConstants.BASKET_CAN_ID, MotorType.kBrushless);
+  SparkFlex basketMotor = new SparkFlex(CANConstants.BASKET_MOTOR_CAN_ID, MotorType.kBrushless);
 
   SparkClosedLoopController intakeController;
   RelativeEncoder intakEncoder;
