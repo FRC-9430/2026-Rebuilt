@@ -9,6 +9,54 @@
           "data": {
             "pathName": "B-SPL-IFL"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Eject Basket"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Start Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B-IFL-HFL"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B-HFL-SZL"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Engage Polar"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Bump Basket"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Start Aim and Shoot"
+          }
         }
       ]
     }
