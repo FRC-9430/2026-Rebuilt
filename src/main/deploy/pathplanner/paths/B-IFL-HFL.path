@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.83618962432916,
-        "y": 7.4828980322003575
+        "x": 7.734561717352415,
+        "y": 7.369320214669052
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.1991234347048305,
-        "y": 7.85608228980322
+        "x": 7.734561717352415,
+        "y": 6.817656529516994
       },
       "isLocked": false,
       "linkedName": "B-IFL"
@@ -17,11 +17,11 @@
     {
       "anchor": {
         "x": 7.734561717352415,
-        "y": 5.487173524150268
+        "y": 5.130214669051878
       },
       "prevControl": {
         "x": 7.750787119856888,
-        "y": 5.844132379248658
+        "y": 5.8116815742397145
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }
