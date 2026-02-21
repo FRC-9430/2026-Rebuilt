@@ -53,11 +53,13 @@ public class PolarSubsystem extends SubsystemBase {
   }
 
   public double getHoodPosition() {
-    return Math.floor(1000.0*PolarUtils.getEstHoodPosFrmR(radiusToTarget))/1000.0;
+    return Math.floor(1000.0 * PolarUtils.getEstHoodPosFrmR(radiusToTarget)) / 1000.0;
   }
 
   public void calculateRadius() {
     radiusToTarget = driveTrain.getPose().getTranslation().getDistance(target);
+
+    SmartDashboard.putNumber("Dist From Hub", radiusToTarget);
   }
 
   public ChassisSpeeds getPolarDriveSpeeds(Pose2d estPose, double radialIn, double orbitalIn, double MaxSpeed,
@@ -92,8 +94,6 @@ public class PolarSubsystem extends SubsystemBase {
       double r = Math.hypot(dx, dy);
 
       r = getRadiusFrom(pose, target);
-
-      SmartDashboard.putNumber("Dist From Hub", r);
 
       // If very close to the point, avoid divide-by-zero and simply rotate in place
       // to face the point
