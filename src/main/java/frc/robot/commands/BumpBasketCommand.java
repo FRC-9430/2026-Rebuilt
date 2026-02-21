@@ -37,13 +37,13 @@ public class BumpBasketCommand extends Command {
   @Override
   public void execute() {
     if (Timer.getFPGATimestamp() > startTime + 0.2) {
-      intake.setBasket(-0.08);
+      intake.setBasket(-0.12);
     }
     if (Timer.getFPGATimestamp() > startTime + 0.4) {
       bumps++;
       System.out.println("Bump: " + bumps);
       startTime = Timer.getFPGATimestamp();
-      intake.setBasket(0.08);
+      intake.setBasket(0.12);
     }
   }
 

@@ -16,7 +16,7 @@ public class ShootCommand extends Command {
 
   /** Creates a new ShootCommand. */
   public ShootCommand(ShooterSubsystem shoot, PolarSubsystem polar) {
-    addRequirements(shoot, polar);
+    addRequirements(shoot);
     this.shoot = shoot;
     this.polar = polar;
   }

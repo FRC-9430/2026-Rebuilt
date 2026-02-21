@@ -141,7 +141,7 @@ public class RobotContainer {
         // Retract Basket
         controller.start().onTrue(new RetractBasketCommand(intake));
 
-        controller.x().onTrue(aimAndShootCommand).onFalse(new InstantCommand(()->{}));
+        controller.x().onTrue(aimAndShootCommand).onFalse(new InstantCommand(()->aimAndShootCommand.cancel()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 

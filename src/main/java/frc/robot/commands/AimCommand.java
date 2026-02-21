@@ -22,7 +22,7 @@ public class AimCommand extends Command {
 
   /** Creates a new AimAndShootCommand. */
   public AimCommand(CommandSwerveDrivetrain drive, PolarSubsystem polar) {
-    addRequirements(drive, polar);
+    addRequirements(drive);
     this.drive = drive;
     this.polar = polar;
     this.aim = DriveConstants.aim;
@@ -40,9 +40,9 @@ public class AimCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drive.applyRequest(() -> aim.withSpeeds(polar.getPolarDriveSpeeds(drive.getState().Pose,
+    drive.driveRobotRelative(polar.getPolarDriveSpeeds(drive.getState().Pose,
         0, 0,
-        MaxSpeed, MaxAngularRate)));
+        MaxSpeed, MaxAngularRate));
   }
 
   // Called once the command ends or is interrupted.
