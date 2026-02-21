@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.122271914132379,
-        "y": 7.515348837209303
+        "x": 4.414973166367307,
+        "y": 7.4991242118412025
       },
       "isLocked": false,
       "linkedName": "B-SPL"
     },
     {
       "anchor": {
-        "x": 6.436529516994633,
-        "y": 7.4991234347048294
+        "x": 7.215348837209302,
+        "y": 7.14216457960644
       },
       "prevControl": {
-        "x": 5.62525939177102,
-        "y": 7.515348837209303
+        "x": 6.761037567084079,
+        "y": 7.466672629695886
       },
       "nextControl": null,
       "isLocked": false,
@@ -36,13 +36,13 @@
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularAcceleration": 740.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 122.0053832080836
   },
   "reversed": false,
   "folder": null,

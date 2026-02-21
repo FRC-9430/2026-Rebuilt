@@ -57,8 +57,8 @@ public class RobotContainer {
     public DriveMode driveMode = DriveMode.CARTESIAN;
 
     public RobotContainer() {
-        configureNamedCommands();
         drivetrain.configureAutoBuilder();
+        configureNamedCommands();
         dash.initAutoChooser();
         configureBindings();
     }
