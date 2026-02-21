@@ -25,7 +25,7 @@ public class EjectBasketCommand extends Command {
   public void initialize() {
     startTime = Timer.getFPGATimestamp();
 
-    intake.setBasket(-0.15);
+    intake.setBasket(-0.35);
     
   }
 
@@ -42,6 +42,6 @@ public class EjectBasketCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (Timer.getFPGATimestamp() > (startTime + 0.8)); // Run 0.8 second
+    return (Timer.getFPGATimestamp() > (startTime + 0.3)); // Run 0.8 second
   }
 }

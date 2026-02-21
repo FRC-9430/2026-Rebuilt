@@ -36,14 +36,14 @@ public class BumpBasketCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (Timer.getFPGATimestamp() > startTime + 0.2) {
-      intake.setBasket(-0.12);
+    if (Timer.getFPGATimestamp() > startTime + 0.25) {
+      intake.setBasket(-0.15);
     }
-    if (Timer.getFPGATimestamp() > startTime + 0.4) {
+    if (Timer.getFPGATimestamp() > startTime + 0.5) {
       bumps++;
       System.out.println("Bump: " + bumps);
       startTime = Timer.getFPGATimestamp();
-      intake.setBasket(0.12);
+      intake.setBasket(0.15);
     }
   }
 

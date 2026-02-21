@@ -174,6 +174,7 @@ public class RobotContainer {
 
     public void configureNamedCommands() {
         NamedCommands.registerCommand("Eject Basket", new EjectBasketCommand(intake));
+
         NamedCommands.registerCommand("Retract Basket", new RetractBasketCommand(intake));
         NamedCommands.registerCommand("Bump Basket", new BumpBasketCommand(intake, 1));
 

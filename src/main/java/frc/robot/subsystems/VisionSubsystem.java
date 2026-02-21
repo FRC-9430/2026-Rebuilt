@@ -55,23 +55,24 @@ public class VisionSubsystem extends SubsystemBase {
             if (poseEstimateMT1.rawFiducials[0].distToCamera > 3) {
                 doRejectUpdate = true;
             }
-                
-            // if (poseEstimateMT1.rawFiducials[0].ambiguity < 0.05) {
-            //     drivetrain.resetPose(poseEstimateMT1.pose); // If very confident with pose: set estimated position
-            // }
         }
         if (poseEstimateMT1.tagCount == 0) {
             doRejectUpdate = true;
         }
 
+        if (driveState.Speeds.omegaRadiansPerSecond > 1.5) {
+            doRejectUpdate = true;
+        }
+
         if (poseEstimateMT1.tagCount >= 1) {
             if (poseEstimateMT1.avgTagDist > 1.5 &&
-                poseEstimateMT1.avgTagDist < 4.5) {
+                poseEstimateMT1.avgTagDist < 4.5 &&
+                !doRejectUpdate) {
                 
                 for (RawFiducial fiducial : poseEstimateMT1.rawFiducials) {
                     if (fiducial.ambiguity < 0.05) {
                         // If very confident with pose: set estimated position
-                        drivetrain.resetPose(poseEstimateMT1.pose); 
+                        // drivetrain.resetPose(poseEstimateMT1.pose); 
                     }
                 }    
                 
