@@ -46,7 +46,7 @@ public class RobotContainer {
     public ElasticDashboard dash = new ElasticDashboard();
 
     public DriveMode driveMode = DriveMode.CARTESIAN;
-    
+
     public AimAndShootCommand aimAndShootCommand = new AimAndShootCommand(drivetrain, shooter, intake, polar);
 
     public RobotContainer() {
@@ -104,19 +104,8 @@ public class RobotContainer {
         }));
 
         // Shoot
-        controller.leftTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-
-            shooter.setShooterSpeedsRPM(polar.getShootVelocity());
-            shooter.setShootingAngle(polar.getHoodPosition());
-
-            if (shooter.isReadyToShoot()) {
-                shooter.setFeeder();
-                shooter.setConveyor();
-            }
-
-        }))).onFalse(new InstantCommand(() -> {
-            shooter.stopAll();
-        }));
+        controller.leftTrigger(0.05).onTrue(aimAndShootCommand)
+                .onFalse(new InstantCommand(() -> aimAndShootCommand.cancel()));
 
         // Intake
         controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
@@ -140,8 +129,6 @@ public class RobotContainer {
 
         // Retract Basket
         controller.start().onTrue(new RetractBasketCommand(intake));
-
-        controller.x().onTrue(aimAndShootCommand).onFalse(new InstantCommand(()->aimAndShootCommand.cancel()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -178,17 +165,17 @@ public class RobotContainer {
         NamedCommands.registerCommand("Retract Basket", new RetractBasketCommand(intake));
         NamedCommands.registerCommand("Bump Basket", new BumpBasketCommand(intake, 1));
 
-        NamedCommands.registerCommand("Start Intake", new InstantCommand(()->intake.setIntake()));
-        NamedCommands.registerCommand("Stop Intake", new InstantCommand(()->intake.stopIntake()));
+        NamedCommands.registerCommand("Start Intake", new InstantCommand(() -> intake.setIntake()));
+        NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> intake.stopIntake()));
 
-        NamedCommands.registerCommand("Engage Polar", new InstantCommand(()->setPolar()));
-        NamedCommands.registerCommand("Engage Cartesian", new InstantCommand(()->setCartesian()));
+        NamedCommands.registerCommand("Engage Polar", new InstantCommand(() -> setPolar()));
+        NamedCommands.registerCommand("Engage Cartesian", new InstantCommand(() -> setCartesian()));
 
-        NamedCommands.registerCommand("Start Aim and Shoot", new InstantCommand(()->startAimAndShootAutonCommand()));
+        NamedCommands.registerCommand("Start Aim and Shoot", new InstantCommand(() -> startAimAndShootAutonCommand()));
 
-        NamedCommands.registerCommand("Stop Aim and Shoot", new InstantCommand(()->aimAndShootCommand.cancel()));
+        NamedCommands.registerCommand("Stop Aim and Shoot", new InstantCommand(() -> aimAndShootCommand.cancel()));
 
-        NamedCommands.registerCommand("Stow Hood", new InstantCommand(()->shooter.stowHood()));
+        NamedCommands.registerCommand("Stow Hood", new InstantCommand(() -> shooter.stowHood()));
 
     }
 
