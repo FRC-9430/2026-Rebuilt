@@ -1,7 +1,7 @@
 # 2026-Rebuilt
 CTEC Robotics Program code for 2026
 
-## Driver-Controls
+## Driver Controls
 move - left analog stick
 rotate - right analog stick
 shooter/conveyor - right trigger
