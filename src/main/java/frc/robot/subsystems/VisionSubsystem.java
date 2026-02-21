@@ -29,6 +29,12 @@ public class VisionSubsystem extends SubsystemBase {
     private static final double kMaxAngularRateReject = 1.5; // rad/s (existing)
     private static final double kMaxLinearSpeedReject = 1.0; // m/s (use drivetrain-reported speed)
     private static final double kMaxOutlierDistWhenStopped = 1.0; // meters
+    // Handling for distant tags
+    private static final double kFarTagDistance = 4.0; // meters
+    private static final int kFarTagRequiredConsecutive = 3;
+    private static final double kFarTagConsecutiveWindow = 0.6; // seconds
+    private int m_farTagConsecutiveCount = 0;
+    private double m_firstFarTagTime = 0.0;
 
     public LimelightHelpers.PoseEstimate getPoseEstimateMT2() {
         return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
@@ -126,19 +132,54 @@ public class VisionSubsystem extends SubsystemBase {
                     + sigmaAmbigFactor * avgAmbiguity;
             sigmaXY = Math.min(Math.max(sigmaXY, 0.03), 2.0);
 
+            // If tags are far away, increase covariance and require consecutive good frames
+            boolean isFar = poseEstimateMT1.avgTagDist >= kFarTagDistance;
+            if (isFar) {
+                // increase sigma to downweight far-away vision measurements
+                sigmaXY = Math.max(sigmaXY, 1.0);
+            }
+
             double sigmaTheta = 0.5 * (0.5 + avgAmbiguity); // radians
             sigmaTheta = Math.min(Math.max(sigmaTheta, 0.05), 3.14);
 
             SmartDashboard.putNumber("Vision/sigmaXY", sigmaXY);
             SmartDashboard.putNumber("Vision/sigmaTheta", sigmaTheta);
 
-            // Build matrix and send measurement with per-measurement std devs
-            drivetrain.addVisionMeasurement(
-                    poseEstimateMT1.pose,
-                    poseEstimateMT1.timestampSeconds,
-                    VecBuilder.fill(sigmaXY, sigmaXY, sigmaTheta));
+            // If far away, require several consecutive good frames within a window before applying
+            double now = poseEstimateMT1.timestampSeconds;
+            boolean allowApply = true;
+            if (isFar) {
+                if (m_farTagConsecutiveCount == 0) {
+                    m_firstFarTagTime = now;
+                }
+                m_farTagConsecutiveCount++;
 
-            m_lastVisionTimestamp = poseEstimateMT1.timestampSeconds;
+                // reset if outside time window
+                if (now - m_firstFarTagTime > kFarTagConsecutiveWindow) {
+                    m_farTagConsecutiveCount = 1;
+                    m_firstFarTagTime = now;
+                }
+
+                if (m_farTagConsecutiveCount < kFarTagRequiredConsecutive) {
+                    allowApply = false;
+                }
+            } else {
+                // reset counter when not far
+                m_farTagConsecutiveCount = 0;
+                m_firstFarTagTime = 0.0;
+            }
+
+            if (allowApply) {
+                // Build matrix and send measurement with per-measurement std devs
+                drivetrain.addVisionMeasurement(
+                        poseEstimateMT1.pose,
+                        poseEstimateMT1.timestampSeconds,
+                        VecBuilder.fill(sigmaXY, sigmaXY, sigmaTheta));
+
+                m_lastVisionTimestamp = poseEstimateMT1.timestampSeconds;
+            } else {
+                SmartDashboard.putString("Vision/lastRejectReason", "far-consecutive");
+            }
         }
 
     }
