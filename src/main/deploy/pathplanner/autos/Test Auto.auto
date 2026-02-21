@@ -49,12 +49,6 @@
         {
           "type": "named",
           "data": {
-            "name": "Bump Basket"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "Start Aim and Shoot"
           }
         }

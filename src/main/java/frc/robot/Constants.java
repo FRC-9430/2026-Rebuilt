@@ -1,11 +1,16 @@
 package frc.robot;
 
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import frc.robot.util.TunerConstants;
+
+import static edu.wpi.first.units.Units.*;
 
 /**
  * Container class for other Constants classes
@@ -45,6 +50,25 @@ public final class Constants {
         public static final int INTAKE_MOTOR_CAN_ID = 27;
         public static final int BASKET_CAN_ID = 28;
 
+    }
+
+    public static final class DriveConstants {
+        // Port 0 - default port
+        public static final int kControllerPort = 0;
+
+        // kSpeedAt12Volts desired top speed
+        public static final double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); 
+        
+        // 3/4 of a rotation per second max angular velocity
+        public static final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); 
+        
+        /* Setting up bindings for necessary control of the swerve drive platform */
+        public static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+                .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+                .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+
+        public static final SwerveRequest.ApplyRobotSpeeds aim = new SwerveRequest.ApplyRobotSpeeds();
+                                                                                        
     }
 
     public static final class ClimbingArmConstants {

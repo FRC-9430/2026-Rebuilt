@@ -13,19 +13,24 @@ public class BumpBasketCommand extends Command {
 
   final IntakeSubsystem intake;
   double startTime;
+  double totalTimes;
+  double bumps;
 
   /** Creates a new BumpBasketCommand. */
-  public BumpBasketCommand(IntakeSubsystem intake) {
+  public BumpBasketCommand(IntakeSubsystem intake, int times) {
     addRequirements(intake);
     this.intake = intake;
+    this.totalTimes = times;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.setBasket(0.15);
+    intake.setBasket(0.08);
     intake.setIntakeRPM(1000);
     startTime = Timer.getFPGATimestamp();
+    bumps = 0;
+    System.out.println("Bump Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -34,6 +39,12 @@ public class BumpBasketCommand extends Command {
     if (Timer.getFPGATimestamp() > startTime + 0.2) {
       intake.setBasket(-0.08);
     }
+    if (Timer.getFPGATimestamp() > startTime + 0.4) {
+      bumps++;
+      System.out.println("Bump: " + bumps);
+      startTime = Timer.getFPGATimestamp();
+      intake.setBasket(0.08);
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -41,12 +52,12 @@ public class BumpBasketCommand extends Command {
   public void end(boolean interrupted) {
     intake.stopBasket();
     intake.stopIntake();
-    System.out.println("Bump Basket Ended");
+    System.out.println("Bump Basket Ended: " + interrupted);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (Timer.getFPGATimestamp() > (startTime + 0.4));
+    return totalTimes <= bumps;
   }
 }
