@@ -14,7 +14,9 @@ public class RetractBasketCommand extends Command {
   final IntakeSubsystem intake;
   double startTime;
 
-  /** Creates a new RetractBasketCommand. */
+  /** Creates a new RetractBasketCommand. 
+   * Retracts the basket, takes 0.8 seconds to run
+  */
   public RetractBasketCommand(IntakeSubsystem intake) {
     addRequirements(intake);
     this.intake = intake;

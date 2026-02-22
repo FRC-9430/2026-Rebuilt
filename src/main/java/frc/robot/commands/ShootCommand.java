@@ -14,7 +14,12 @@ public class ShootCommand extends Command {
   final ShooterSubsystem shoot;
   final PolarSubsystem polar;
 
-  /** Creates a new ShootCommand. */
+  /**
+   * Creates a new ShootCommand.
+   * Sets the shooter speeds and hood angle based on the polar subsystem's
+   * calculations. If the shooter is up to speed and the hood is in position, runs
+   * the feeder and conveyor to shoot.
+   */
   public ShootCommand(ShooterSubsystem shoot, PolarSubsystem polar) {
     addRequirements(shoot);
     this.shoot = shoot;

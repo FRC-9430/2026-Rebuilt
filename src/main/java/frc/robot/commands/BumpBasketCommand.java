@@ -16,7 +16,10 @@ public class BumpBasketCommand extends Command {
   double totalTimes;
   double bumps;
 
-  /** Creates a new BumpBasketCommand. */
+  /** Creates a new BumpBasketCommand. 
+   * Bumps the basket back and forth push balls into the shooter.
+   * @param times The number of times to bump the basket.
+  */
   public BumpBasketCommand(IntakeSubsystem intake, int times) {
     addRequirements(intake);
     this.intake = intake;
