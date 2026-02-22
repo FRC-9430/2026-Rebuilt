@@ -23,8 +23,8 @@ public class IntakeSubsystem extends SubsystemBase {
   final SparkFlex intakeMotor;
   final SparkFlex basketMotor;
 
-  SparkClosedLoopController intakeController;
-  RelativeEncoder intakEncoder;
+  final SparkClosedLoopController intakeController;
+  final RelativeEncoder intakEncoder;
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
