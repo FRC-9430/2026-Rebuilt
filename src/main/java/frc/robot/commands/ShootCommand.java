@@ -35,11 +35,11 @@ public class ShootCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shoot.setShooterSpeedsRPM(polar.getShootVelocity());
-    shoot.setShootingAngle(polar.getHoodPosition());
-    if (shoot.isReadyToShoot() && polar.Angled()) {
-      shoot.setFeeder();
-      shoot.setConveyor();
+    shoot.setShooterRPM(polar.getShootVelocity());
+    shoot.setHoodPosition(polar.getHoodPosition());
+    if (shoot.isShooterReady() && polar.Angled()) {
+      shoot.startFeeder();
+      shoot.startConveyorDefault();
     }
   }
 
