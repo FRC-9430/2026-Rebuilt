@@ -29,6 +29,10 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PolarSubsystem;
 import static frc.robot.Constants.DriveConstants.*;
 
+/**
+ * Central robot container that creates subsystems, binds controls to commands,
+ * and exposes autonomous routines.
+ */
 public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
@@ -49,6 +53,10 @@ public class RobotContainer {
 
     public AimAndShootCommand aimAndShootCommand = new AimAndShootCommand(drivetrain, shooter, intake, polar);
 
+    /**
+     * Construct and configure the robot: set up the drivetrain, dashboard,
+     * named commands, and button bindings.
+     */
     public RobotContainer() {
         drivetrain.configureAutoBuilder();
         configureNamedCommands();
@@ -56,6 +64,11 @@ public class RobotContainer {
         configureBindings();
     }
 
+    /**
+     * Configure controller bindings and the drivetrain default command.
+     * This sets up button handlers for intake, shooting, mode toggles, and
+     * other operator controls.
+     */
     private void configureBindings() {
 
         drivetrain.setDefaultCommand(
@@ -134,31 +147,48 @@ public class RobotContainer {
 
     }
 
+    /**
+     * Reset the drivetrain pose using the initial pose supplied on the dashboard.
+     */
     public void setInitialPose() {
         drivetrain.resetPose(dash.getInitialPose());
     }
 
+    /** Drive mode for the operator controls: Cartesian or Polar. */
     public enum DriveMode {
         CARTESIAN,
         POLAR
     }
 
+    /**
+     * Returns true when the current drive mode is Cartesian.
+     * @return true if Cartesian drive mode is active
+     */
     public boolean isCartesian() {
         return driveMode == DriveMode.CARTESIAN;
     }
 
+    /**
+     * Returns true when the current drive mode is Polar.
+     * @return true if Polar drive mode is active
+     */
     public boolean isPolar() {
         return driveMode == DriveMode.POLAR;
     }
 
+    /** Set the drive mode to Cartesian. */
     public void setCartesian() {
         driveMode = DriveMode.CARTESIAN;
     }
 
+    /** Set the drive mode to Polar. */
     public void setPolar() {
         driveMode = DriveMode.POLAR;
     }
 
+    /**
+     * Register named commands for PathPlanner
+     */
     public void configureNamedCommands() {
         NamedCommands.registerCommand("Eject Basket", new EjectBasketCommand(intake));
 
@@ -179,10 +209,19 @@ public class RobotContainer {
 
     }
 
+    /**
+     * Returns the currently selected autonomous command from the dashboard
+     * chooser.
+     * @return the selected autonomous Command
+     */
     public Command getAutonomousCommand() {
         return dash.getAutoChooser();
     }
 
+    /**
+     * Schedule the aim-and-shoot autonomous command when in Polar mode
+     * during the autonomous period.
+     */
     public void startAimAndShootAutonCommand() {
         if (driveMode == DriveMode.POLAR && DriverStation.isAutonomous()) {
             CommandScheduler.getInstance().schedule(aimAndShootCommand);
