@@ -9,9 +9,9 @@ import frc.robot.Constants.CANConstants;
 import static frc.robot.Constants.ClimberArmConstants.*;
 
 /**
- * Climbing Arm Subsystem
+ * Subsytem for controlling the climbing arms
  */
-public class Climber extends SubsystemBase {
+public class ClimbingArmSubsystem extends SubsystemBase {
 
     private final SparkFlex leftClimberMotor;
     private final SparkFlex rightClimberMotor;
@@ -21,7 +21,7 @@ public class Climber extends SubsystemBase {
      * 
      * @author Amaya Lewis
      */
-    public Climber() {
+    public ClimbingArmSubsystem() {
         // Declare motors
         leftClimberMotor = new SparkFlex(CANConstants.LEFT_CLIMB_MOTOR_CAN_ID, SparkFlex.MotorType.kBrushless);
         rightClimberMotor = new SparkFlex(CANConstants.RIGHT_CLIMB_MOTOR_CAN_ID, SparkFlex.MotorType.kBrushless);
