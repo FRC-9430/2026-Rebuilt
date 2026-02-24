@@ -1,32 +1,36 @@
 package frc.robot.subsystems;
 
-//Import packages (thumbs up)
-import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
-import frc.robot.Constants.ClimberArmConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANConstants;
 
-// create climber
+import static frc.robot.Constants.ClimberArmConstants.*;
+
+/**
+ * Climbing Arm Subsystem
+ */
 public class Climber extends SubsystemBase {
 
-    private SparkFlex climberMotor1;
-    private SparkFlex climberMotor2;
-    private AbsoluteEncoder climberEncoder1;
-    private AbsoluteEncoder climberEncoder2;
+    private SparkFlex leftClimberMotor;
+    private SparkFlex rightClimberMotor;
 
      /**
-     * Constructs the climber with its motors, encoderes, and classes.
+     * Constructs the climber with its motors
      * 
      * @author Amaya Lewis
      *  * @return returns a climber object.
      */
     public Climber() {
-        // Declare motors and their encoders
-        climberMotor1 = new SparkFlex(CANConstants.climberMotor1CanID, SparkFlex.MotorType.kBrushless);
-        climberMotor2 = new SparkFlex(CANConstants.climberMotor2CanID, SparkFlex.MotorType.kBrushless);
-        climberEncoder1 = climberMotor1.getAbsoluteEncoder();
-        climberEncoder2 = climberMotor2.getAbsoluteEncoder();
+        // Declare motors
+        leftClimberMotor = new SparkFlex(CANConstants.LEFT_CLIMB_MOTOR_CAN_ID, SparkFlex.MotorType.kBrushless);
+        rightClimberMotor = new SparkFlex(CANConstants.RIGHT_CLIMB_MOTOR_CAN_ID, SparkFlex.MotorType.kBrushless);
+
+        //Configure Motors
+        leftClimberMotor.configure(kLeftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        rightClimberMotor.configure(kRightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
     }
 
     /**
@@ -36,36 +40,20 @@ public class Climber extends SubsystemBase {
      *  * @return void
      */
     public void stopClimber() {
-        climberMotor1.stopMotor();
-        climberMotor2.stopMotor();
-    }
-     /**
-     * Checks if motors are above or below their limits using encoders.
-     * 
-     * @author Amaya Lewis
-     *  * @returns boolean.
-     */
-    public boolean isClimberMotorsValid() {
-        if (climberEncoder1.getPosition() > ClimberArmConstants.kClimberMax
-                && climberEncoder1.getPosition() < ClimberArmConstants.kClimberMin
-                && climberEncoder2.getPosition() > ClimberArmConstants.kClimberMax
-                && climberEncoder2.getPosition() < ClimberArmConstants.kClimberMin)
-            ;
-        return true;
+        leftClimberMotor.stopMotor();
+        rightClimberMotor.stopMotor();
     }
 
     
      /**
-     * Runs motors if climber motors are valid.
+     * Sets the climbing motor speeds
      * 
      * @author Amaya Lewis
      *  * @return void.
      */
     public void setClimberMotors(double speed) {
-        if (isClimberMotorsValid() == true) {
-            climberMotor1.set(speed);
-            climberMotor2.set(speed);
-        }else{ stopClimber();}
+        leftClimberMotor.set(speed);
+        rightClimberMotor.set(speed);
     
     }
     @Override

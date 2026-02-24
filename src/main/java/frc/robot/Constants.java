@@ -81,12 +81,6 @@ public final class Constants {
 
     }
 
-    public static final class ClimbingArmConstants {
-        public static final double kP = 0.001; // TODO: Dummy value
-        public static final double kI = 0; // TODO: Dummy value
-        public static final double kD = 0; // TODO: Dummy value
-    }
-
     /**
      * Controller related constants
      */
@@ -232,9 +226,35 @@ public final class Constants {
     * Constants for the Climbing Arm Subsystem
     */
     public static final class ClimberArmConstants {
+        
+        // TODO: Tune Values
+        public static final double kLeftP = 0.001;
+        public static final double kLeftI = 0;
+        public static final double kLeftD = 0;
+        public static final double kLeftS = 0;
+        public static final double kLeftV = 0;
+        public static final double kLeftA = 0;
+        
+        public static final double kRightP = 0.001;
+        public static final double kRightI = 0;
+        public static final double kRightD = 0;
+        public static final double kRightS = 0;
+        public static final double kRightV = 0;
+        public static final double kRightA = 0;
 
-        public static final double kClimberMax = .48; //TODO: DummyValue
-        public static final double kClimberMin = .090;//TODO: DummyValue
+
+        public static final SparkFlexConfig kLeftMotorConfig = new SparkFlexConfig();
+        static {
+            kLeftMotorConfig.inverted(false);
+            kLeftMotorConfig.idleMode(IdleMode.kBrake);
+        }
+        
+        public static final SparkFlexConfig kRightMotorConfig = new SparkFlexConfig();
+        static {
+            kRightMotorConfig.inverted(false);
+            kRightMotorConfig.idleMode(IdleMode.kBrake);
+        }
+
     }
 
 }
