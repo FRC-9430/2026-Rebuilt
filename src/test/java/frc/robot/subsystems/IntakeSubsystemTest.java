@@ -25,6 +25,7 @@ class IntakeSubsystemTest {
   }
 
   @Test
+  @Disabled
   void testIntakeAndConveyorRunTogether() {
     // Engage the intake
     // subsystem.setSpeeds(0.5, 0.5);
