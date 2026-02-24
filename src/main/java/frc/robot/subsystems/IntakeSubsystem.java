@@ -20,14 +20,18 @@ import static frc.robot.Constants.IntakeConstants.*;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-  SparkFlex intakeMotor = new SparkFlex(CANConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless);
-  SparkFlex basketMotor = new SparkFlex(CANConstants.BASKET_MOTOR_CAN_ID, MotorType.kBrushless);
+  final SparkFlex intakeMotor;
+  final SparkFlex basketMotor;
 
-  SparkClosedLoopController intakeController;
-  RelativeEncoder intakEncoder;
+  final SparkClosedLoopController intakeController;
+  final RelativeEncoder intakEncoder;
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
+
+    intakeMotor = new SparkFlex(CANConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless);
+    basketMotor = new SparkFlex(CANConstants.BASKET_MOTOR_CAN_ID, MotorType.kBrushless);
+
     intakeMotor.configure(kIntakeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     basketMotor.configure(kBasketMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -67,10 +71,17 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor.stopMotor();
   }
 
+  /**
+   * Runs the basket at a specified speed
+   * @param speed The speed to run the basket at
+   */
   public void setBasket(double speed) {
     basketMotor.set(speed);
   }
 
+  /**
+   * Stops the basket
+   */
   public void stopBasket() {
     basketMotor.stopMotor();
   }
