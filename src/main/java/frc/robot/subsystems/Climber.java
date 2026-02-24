@@ -52,18 +52,34 @@ public class Climber extends SubsystemBase {
         rightClimberMotor.set(rightSpeed);
     }
 
+    /**
+     * Sets the left climber to specified speed
+     * 
+     * @param speed
+     */
     public void setLeft(double speed) {
         leftClimberMotor.set(speed);
     }
 
+    /**
+     * Stops the left climber
+     */
     public void stopLeft() {
         leftClimberMotor.stopMotor();
     }
-    
+
+    /**
+     * Sets the right climber to specified speed
+     * 
+     * @param speed
+     */
     public void setRight(double speed) {
         rightClimberMotor.set(speed);
     }
 
+    /**
+     * Stops the right climber
+     */
     public void stopRight() {
         rightClimberMotor.stopMotor();
     }
