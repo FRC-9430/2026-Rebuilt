@@ -16,7 +16,7 @@ public class Climber extends SubsystemBase {
     private final SparkFlex leftClimberMotor;
     private final SparkFlex rightClimberMotor;
 
-     /**
+    /**
      * Constructs the climber with its motors
      * 
      * @author Amaya Lewis
@@ -26,7 +26,7 @@ public class Climber extends SubsystemBase {
         leftClimberMotor = new SparkFlex(CANConstants.LEFT_CLIMB_MOTOR_CAN_ID, SparkFlex.MotorType.kBrushless);
         rightClimberMotor = new SparkFlex(CANConstants.RIGHT_CLIMB_MOTOR_CAN_ID, SparkFlex.MotorType.kBrushless);
 
-        //Configure Motors
+        // Configure Motors
         leftClimberMotor.configure(kLeftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         rightClimberMotor.configure(kRightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -37,22 +37,37 @@ public class Climber extends SubsystemBase {
      * 
      * @author Amaya Lewis
      */
-    public void stopClimber() {
+    public void stopClimbers() {
         leftClimberMotor.stopMotor();
         rightClimberMotor.stopMotor();
     }
 
-    
-     /**
+    /**
      * Sets the climbing motor speeds
      * 
      * @author Amaya Lewis
      */
-    public void setClimberMotors(double speed) {
-        leftClimberMotor.set(speed);
-        rightClimberMotor.set(speed);
-    
+    public void setClimberMotors(double leftSpeed, double rightSpeed) {
+        leftClimberMotor.set(leftSpeed);
+        rightClimberMotor.set(rightSpeed);
     }
+
+    public void setLeft(double speed) {
+        leftClimberMotor.set(speed);
+    }
+
+    public void stopLeft() {
+        leftClimberMotor.stopMotor();
+    }
+    
+    public void setRight(double speed) {
+        rightClimberMotor.set(speed);
+    }
+
+    public void stopRight() {
+        rightClimberMotor.stopMotor();
+    }
+
     @Override
     public void periodic() {
     }
