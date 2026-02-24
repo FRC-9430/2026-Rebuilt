@@ -13,14 +13,13 @@ import static frc.robot.Constants.ClimberArmConstants.*;
  */
 public class Climber extends SubsystemBase {
 
-    private SparkFlex leftClimberMotor;
-    private SparkFlex rightClimberMotor;
+    private final SparkFlex leftClimberMotor;
+    private final SparkFlex rightClimberMotor;
 
      /**
      * Constructs the climber with its motors
      * 
      * @author Amaya Lewis
-     *  * @return returns a climber object.
      */
     public Climber() {
         // Declare motors
@@ -37,7 +36,6 @@ public class Climber extends SubsystemBase {
      * Stops both climber motors simultaneously.
      * 
      * @author Amaya Lewis
-     *  * @return void
      */
     public void stopClimber() {
         leftClimberMotor.stopMotor();
@@ -49,7 +47,6 @@ public class Climber extends SubsystemBase {
      * Sets the climbing motor speeds
      * 
      * @author Amaya Lewis
-     *  * @return void.
      */
     public void setClimberMotors(double speed) {
         leftClimberMotor.set(speed);
