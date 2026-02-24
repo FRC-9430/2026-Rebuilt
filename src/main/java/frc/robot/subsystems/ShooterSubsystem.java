@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANConstants;
 import static frc.robot.Constants.ShooterConstants.*;
 
-public class ShooterSubsystem extends SubsystemBase {
+public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
 
     private final SparkFlex m_RightShooterMotor;
     private final SparkFlex m_LeftTopShoooterMotor;
@@ -207,6 +207,83 @@ public class ShooterSubsystem extends SubsystemBase {
         return shooterIsAtSpeed() && m_hoodController.isAtSetpoint();
     }
 
+    /**
+     * Get primary shooter motor with main shooter configurations.
+     *
+     * @author Brady Bontrager, bbontrager
+     *  * @return SparkFlex Returns main shooter motor in Shooter subsystem
+     */
+    public SparkFlex getMainShooterMotor() {
+        return this.m_RightShooterMotor;
+    }
+
+    /**
+     * Get secondary shooter motor with auxillary shooter configurations
+     * There are two secondary motors, and a parameter is required.
+     *
+     *
+     * @author Brady Bontrager, bbontrager
+     *  * @param followerMotorType Specify which follower motor to get.
+     *  *   * 1 = Get Left-Top shooter motor
+     *  *   * 2 = Get Left-Bottom shooter motor
+     *  * @return SparkFlex Gets the first follower shooter motor with aux config.
+     */
+    public SparkFlex getFollowerShooterMotor(int followerMotorType) {
+
+        try {
+            if (followerMotorType == 1) {
+                return this.m_LeftTopShoooterMotor;
+            } else if (followerMotorType == 2) {
+                return this.m_LeftBotShoooterMotor;
+            }
+            else {
+                throw new java.lang.IllegalArgumentException("Invalid parameter passed for shooter follower motor get function");
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            System.err.println(e.getCause());
+            System.err.println(e.getStackTrace());
+            return null;
+        }
+    }
+
+    /**
+     * Get hood motor from shooter subsystem
+     *
+     * @author Brady Bontrager, bbontrager
+     *  * @return SparkFlex hood motor from shooter subsystem.
+     */
+    public SparkFlex getHoodMotor() {
+        return this.m_hoodMotor;
+    }
+
+    /**
+     * Get feed motor from shooter subsystem
+     *
+     * @author Brady Bontrager, bbontrager
+     *         * @return SparkFlex feed motor from shooter subsystem.
+     */
+    public SparkFlex getFeedMotor() {
+        return this.m_feedMotor;
+    }
+
+    public SparkClosedLoopController getShooterPID(String pidController) {
+        if (pidController.equals("shoot")) {
+            return m_shooterController;
+        }
+        if (pidController.equals("feed")) {
+            return m_feedController;
+        }
+        if (pidController.equals("hood")) {
+            return m_hoodController;
+        }
+        Exception e = new java.lang.IllegalArgumentException("Illegal argument in getShooterPID()");
+        System.err.println(e.getMessage());
+        System.err.println(e.getStackTrace());
+        System.err.println("Using null instead");
+        return null;
+    }
+
     /** This method is called once per scheduler run. */
     @Override
     public void periodic() {
@@ -230,5 +307,14 @@ public class ShooterSubsystem extends SubsystemBase {
         m_hoodMotor.stopMotor();
         m_feedMotor.stopMotor();
 
+    }
+
+    @Override
+    public void close() {
+        m_RightShooterMotor.close();
+        m_LeftTopShoooterMotor.close();
+        m_LeftBotShoooterMotor.close();
+        m_hoodMotor.close();
+        m_feedMotor.close();
     }
 }
