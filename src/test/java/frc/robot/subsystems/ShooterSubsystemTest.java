@@ -208,7 +208,7 @@ public class ShooterSubsystemTest {
      * FIXME 20260224.1415 bbontrager, Disabled for AssertionFailedError.
      */
     @Test
-    @Disabled
+
     void testisShooterAtSpeed() {
         m_shooter = new ShooterSubsystem();
 
@@ -250,7 +250,7 @@ public class ShooterSubsystemTest {
      * FIXME 20260224.1423 bbontrager,  Disabled for AssertionFailedError.
      */
     @Test
-    @Disabled
+
     void testHoodStow() {
         m_shooter = new ShooterSubsystem();
         SparkAbsoluteEncoderSim m_hoodEncoderSim = new SparkAbsoluteEncoderSim(m_shooter.getHoodMotor());
@@ -273,7 +273,7 @@ public class ShooterSubsystemTest {
      * FIXME 20260224.1424 bbontrager, Disabled for AssertionFailedError.
      */
     @Test
-    @Disabled
+
     void testisHoodAtPosition() {
         m_shooter = new ShooterSubsystem();
         SparkAbsoluteEncoderSim m_hoodEncoderSim = new SparkAbsoluteEncoderSim(m_shooter.getHoodMotor());
@@ -317,7 +317,7 @@ public class ShooterSubsystemTest {
      *FIXME 20260224.1422 bbontrager, Disabled for AssertionFailedError.
      */
     @Test
-    @Disabled
+
     void testGetHoodPosition() {
         m_shooter = new ShooterSubsystem();
         SparkAbsoluteEncoderSim m_hoodEncoderSim = new SparkAbsoluteEncoderSim(m_shooter.getHoodMotor());
