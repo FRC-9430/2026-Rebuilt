@@ -4,117 +4,228 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
-
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
 import frc.robot.util.TunerConstants;
-import frc.robot.subsystems.Climber;
+import frc.robot.autos.AimAndShootCommand;
+import frc.robot.commands.BumpBasketCommand;
+import frc.robot.commands.EjectBasketCommand;
+import frc.robot.commands.RetractBasketCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.util.ElasticDashboard;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.PolarSubsystem;
+import static frc.robot.Constants.DriveConstants.*;
 
+/**
+ * Central robot container that creates subsystems, binds controls to commands,
+ * and exposes autonomous routines.
+ */
 public class RobotContainer {
-  private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top
-                                                                                      // speed
-  private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max
-                                                                                    // angular velocity
-
-  /* Setting up bindings for necessary control of the swerve drive platform */
-  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-  private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
-  private final CommandXboxController controller = new CommandXboxController(0);
+    private final CommandXboxController controller = new CommandXboxController(kControllerPort);
 
-  public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-  private Climber robotClimber = new Climber();
+    public final ShooterSubsystem shooter = new ShooterSubsystem();
+    public final IntakeSubsystem intake = new IntakeSubsystem();
 
-    public RobotContainer() {
-        configureBindings();
-        drivetrain.configureAutoBuilder();
-    }
+    public final VisionSubsystem vision = new VisionSubsystem(drivetrain);
+    public final PolarSubsystem polar = new PolarSubsystem(drivetrain);
 
-  private void configureBindings() {
-    // Note that X is defined as forward according to WPILib convention,
-    // and Y is defined as to the left according to WPILib convention.
-    drivetrain.setDefaultCommand(
-        // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(-controller.getLeftY() * MaxSpeed) // Drive forward with
-                                                                                           // negative Y (forward)
-            .withVelocityY(-controller.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(-controller.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-        ));
+    public ElasticDashboard dash = new ElasticDashboard();
 
-    // Idle while the robot is disabled. This ensures the configured
-    // neutral mode is applied to the drive motors while disabled.
-    final var idle = new SwerveRequest.Idle();
-    RobotModeTriggers.disabled().whileTrue(
-        drivetrain.applyRequest(() -> idle).ignoringDisable(true));
+    public DriveMode driveMode = DriveMode.CARTESIAN;
 
-    controller.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    controller.b().whileTrue(drivetrain
-        .applyRequest(() -> point.withModuleDirection(new Rotation2d(-controller.getLeftY(), -controller.getLeftX()))));
-
-    // Run SysId routines when holding back/start and X/Y.
-    // Note that each routine should be run exactly once in a single log.
-    controller.back().and(controller.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    controller.back().and(controller.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    controller.start().and(controller.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    controller.start().and(controller.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
-    // Reset the field-centric heading on left bumper press.
-    controller.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-
-    drivetrain.registerTelemetry(logger::telemeterize);
+    public AimAndShootCommand aimAndShootCommand = new AimAndShootCommand(drivetrain, shooter, intake, polar);
 
     /**
-     * When a or b is pressed motor spin. when a or b released motor stop.
-     *
-     * @author Daniel
-     *         * @return void.
+     * Construct and configure the robot: set up the drivetrain, dashboard,
+     * named commands, and button bindings.
      */
-    controller.x()
-        .whileTrue(new RepeatCommand(new InstantCommand(() -> {
-          robotClimber.setClimberMotors(0.2);
-        }))).onFalse(new InstantCommand(() -> {
-          robotClimber.stopClimber();
+    public RobotContainer() {
+        drivetrain.configureAutoBuilder();
+        configureNamedCommands();
+        dash.initAutoChooser();
+        configureBindings();
+    }
+
+    /**
+     * Configure controller bindings and the drivetrain default command.
+     * This sets up button handlers for intake, shooting, mode toggles, and
+     * other operator controls.
+     */
+    private void configureBindings() {
+
+        drivetrain.setDefaultCommand(
+                drivetrain.applyRequestWithCondition(
+                        () -> drive.withVelocityX(-controller.getLeftY() * MaxSpeed)
+                                .withVelocityY(-controller.getLeftX() * MaxSpeed)
+                                .withRotationalRate(-controller.getRightX() * MaxAngularRate),
+                        () -> aim.withSpeeds(polar.getPolarDriveSpeeds(drivetrain.getState().Pose,
+                                controller.getLeftY(), controller.getLeftX(),
+                                MaxSpeed, MaxAngularRate)),
+                        () -> isCartesian()));
+
+        // Idle while the robot is disabled. This ensures the configured
+        // neutral mode is applied to the drive motors while disabled.
+        final var idle = new SwerveRequest.Idle();
+        RobotModeTriggers.disabled().whileTrue(
+                drivetrain.applyRequest(() -> idle).ignoringDisable(true));
+
+        // Run SysId routines when holding back/start and X/Y.
+        // Note that each routine should be run exactly once in a single log.
+        // controller.back().and(controller.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        // controller.back().and(controller.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        // controller.start().and(controller.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        // controller.start().and(controller.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+
+        // Reset the field-centric heading on left bumper press
+        controller.povDown().onTrue(new InstantCommand(() -> {
+            var seenPose = vision.getPoseEstimateMT1().pose;
+            if (!seenPose.equals(new Pose2d())) {
+                drivetrain.resetPose(vision.getPoseEstimateMT1().pose);
+            } else {
+                drivetrain.seedFieldCentric();
+            }
+
         }));
 
-    controller.y()
-        .whileTrue(new RepeatCommand(new InstantCommand(() -> {
-          robotClimber.setClimberMotors(-0.2);
-        }))).onFalse(new InstantCommand(() -> {
-          robotClimber.stopClimber();
+        // Toggle Polar mode
+        controller.leftBumper().onTrue(new InstantCommand(() -> {
+            if (isCartesian()) {
+                driveMode = DriveMode.POLAR;
+                SmartDashboard.putString("DriveMode", "POLAR");
+            } else {
+                driveMode = DriveMode.CARTESIAN;
+                SmartDashboard.putString("DriveMode", "CARTESIAN");
+            }
         }));
-  }
 
-  public Command getAutonomousCommand() {
-    // Simple drive forward auton
-    final var idle = new SwerveRequest.Idle();
-    return Commands.sequence(
-        // Reset our field centric heading to match the robot
-        // facing away from our alliance station wall (0 deg).
-        drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-        // Then slowly drive forward (away from us) for 5 seconds.
-        drivetrain.applyRequest(() -> drive.withVelocityX(0.5)
-            .withVelocityY(0)
-            .withRotationalRate(0))
-            .withTimeout(5.0),
-        // Finally idle for the rest of auton
-        drivetrain.applyRequest(() -> idle));
-  }
+        // Shoot
+        controller.leftTrigger(0.05).onTrue(aimAndShootCommand)
+                .onFalse(new InstantCommand(() -> aimAndShootCommand.cancel()));
+
+        // Intake
+        controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
+            intake.setIntake();
+        }))).onFalse(new InstantCommand(() -> {
+            intake.stopAll();
+        }));
+
+        // Force Stow Hood
+        controller.a().onTrue(new InstantCommand(() -> {
+            shooter.stowHood();
+        })).onFalse(new InstantCommand(() -> {
+            shooter.stopHood();
+        }));
+
+        // Bump the Basket
+        controller.y().onTrue(new BumpBasketCommand(intake, 1));
+
+        // Eject Basket
+        controller.back().onTrue(new EjectBasketCommand(intake));
+
+        // Retract Basket
+        controller.start().onTrue(new RetractBasketCommand(intake));
+
+        drivetrain.registerTelemetry(logger::telemeterize);
+
+    }
+
+    /**
+     * Reset the drivetrain pose using the initial pose supplied on the dashboard.
+     */
+    public void setInitialPose() {
+        drivetrain.resetPose(dash.getInitialPose());
+    }
+
+    /** Drive mode for the operator controls: Cartesian or Polar. */
+    public enum DriveMode {
+        CARTESIAN,
+        POLAR
+    }
+
+    /**
+     * Returns true when the current drive mode is Cartesian.
+     * @return true if Cartesian drive mode is active
+     */
+    public boolean isCartesian() {
+        return driveMode == DriveMode.CARTESIAN;
+    }
+
+    /**
+     * Returns true when the current drive mode is Polar.
+     * @return true if Polar drive mode is active
+     */
+    public boolean isPolar() {
+        return driveMode == DriveMode.POLAR;
+    }
+
+    /** Set the drive mode to Cartesian. */
+    public void setCartesian() {
+        driveMode = DriveMode.CARTESIAN;
+    }
+
+    /** Set the drive mode to Polar. */
+    public void setPolar() {
+        driveMode = DriveMode.POLAR;
+    }
+
+    /**
+     * Register named commands for PathPlanner
+     */
+    public void configureNamedCommands() {
+        NamedCommands.registerCommand("Eject Basket", new EjectBasketCommand(intake));
+
+        NamedCommands.registerCommand("Retract Basket", new RetractBasketCommand(intake));
+        NamedCommands.registerCommand("Bump Basket", new BumpBasketCommand(intake, 1));
+
+        NamedCommands.registerCommand("Start Intake", new InstantCommand(() -> intake.setIntake()));
+        NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> intake.stopIntake()));
+
+        NamedCommands.registerCommand("Engage Polar", new InstantCommand(() -> setPolar()));
+        NamedCommands.registerCommand("Engage Cartesian", new InstantCommand(() -> setCartesian()));
+
+        NamedCommands.registerCommand("Start Aim and Shoot", new InstantCommand(() -> startAimAndShootAutonCommand()));
+
+        NamedCommands.registerCommand("Stop Aim and Shoot", new InstantCommand(() -> aimAndShootCommand.cancel()));
+
+        NamedCommands.registerCommand("Stow Hood", new InstantCommand(() -> shooter.stowHood()));
+
+    }
+
+    /**
+     * Returns the currently selected autonomous command from the dashboard
+     * chooser.
+     * @return the selected autonomous Command
+     */
+    public Command getAutonomousCommand() {
+        return dash.getAutoChooser();
+    }
+
+    /**
+     * Schedule the aim-and-shoot autonomous command when in Polar mode
+     * during the autonomous period.
+     */
+    public void startAimAndShootAutonCommand() {
+        if (driveMode == DriveMode.POLAR && DriverStation.isAutonomous()) {
+            CommandScheduler.getInstance().schedule(aimAndShootCommand);
+        }
+    }
+
 }
