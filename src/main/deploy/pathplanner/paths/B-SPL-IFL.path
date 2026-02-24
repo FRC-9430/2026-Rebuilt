@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 4.164973166368515,
+        "y": 7.4991234347048294
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0,
-        "y": 7.0
+        "x": 4.414973166367307,
+        "y": 7.4991242118412025
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "B-SPL"
     },
     {
       "anchor": {
-        "x": 4.0,
-        "y": 6.0
+        "x": 7.734561717352415,
+        "y": 7.369320214669052
       },
       "prevControl": {
-        "x": 3.0,
-        "y": 6.0
+        "x": 7.247799642218246,
+        "y": 7.434221824686941
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "B-IFL"
     }
   ],
   "rotationTargets": [],
@@ -36,19 +36,19 @@
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularAcceleration": 740.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 90.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

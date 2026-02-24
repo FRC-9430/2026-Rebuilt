@@ -113,7 +113,7 @@ public class ShooterSubsystemTest {
     @Test
     void testFlywheelsSpinUp() {
         double targetRPM = TEST_RPM;
-        m_shooter.setShooterSpeedsRPM(targetRPM);
+        m_shooter.setShooterRPM(targetRPM);
         step();
 
         // Simulate flywheels spinning up
@@ -138,7 +138,7 @@ public class ShooterSubsystemTest {
      */
     @Test
     void testFlywheelsStop() {
-        m_shooter.setShooterSpeedsRPM(TEST_RPM);
+        m_shooter.setShooterRPM(TEST_RPM);
         step();
 
         m_shooter.stopAll();
@@ -159,15 +159,15 @@ public class ShooterSubsystemTest {
      */
     @Test
     @Disabled
-    void testShooterIsAtSpeed() {
+    void testisShooterAtSpeed() {
         double targetRPM = TEST_RPM;
-        m_shooter.setShooterSpeedsRPM(targetRPM);
+        m_shooter.setShooterRPM(targetRPM);
 
         m_mainShooterMotorSim.setVelocity(targetRPM);
         m_followerShooterMotorSim1.setVelocity(targetRPM);
         step();
 
-        assertTrue(m_shooter.shooterIsAtSpeed());
+        assertTrue(m_shooter.isShooterAtSpeed());
     }
 
     /**
@@ -177,14 +177,14 @@ public class ShooterSubsystemTest {
      */
     @Test
     void testFlywheelsNotAtSpeed() {
-        m_shooter.setShooterSpeedsRPM(TEST_RPM);
+        m_shooter.setShooterRPM(TEST_RPM);
 
         m_mainShooterMotorSim.setVelocity(ShooterConstants.kShooterIdleRPM);
         m_followerShooterMotorSim1.setVelocity(ShooterConstants.kShooterIdleRPM);
         m_followerShooterMotorSim2.setVelocity(ShooterConstants.kShooterIdleRPM);
         step();
 
-        assertFalse(m_shooter.shooterIsAtSpeed());
+        assertFalse(m_shooter.isShooterAtSpeed());
     }
 
     /**
@@ -227,35 +227,35 @@ public class ShooterSubsystemTest {
     /**
      * GIVEN a ShooterSubsystem.
      * WHEN the hood is commanded to a target position and the simulation is updated to match that position.
-     * THEN the {@code hoodAtPosition()} method should return true for that position.
+     * THEN the {@code isHoodAtPosition()} method should return true for that position.
      *
      * DISABLED - AssertionFailedError unclear
      */
     @Test
     @Disabled
-    void testHoodAtPosition() {
-        m_shooter.setShootingAngle(TARGET_HOOD_POSITION);
+    void testisHoodAtPosition() {
+        m_shooter.setHoodPosition(TARGET_HOOD_POSITION);
         m_hoodEncoderSim.setPosition(TARGET_HOOD_POSITION);
         step();
 
-        assertTrue(m_shooter.hoodAtPosition(TARGET_HOOD_POSITION));
+        assertTrue(m_shooter.isHoodAtPosition(TARGET_HOOD_POSITION));
     }
 
     /**
      * GIVEN a ShooterSubsystem.
      * WHEN the hood is commanded to a target position but the simulation is at a different position.
-     * THEN the {@code hoodAtPosition()} method should return false for the target position.
+     * THEN the {@code isHoodAtPosition()} method should return false for the target position.
      *
      * DISABLED - Test passes, but associated function fails other tests. Test not isolated.
      */
     @Test
     @Disabled
     void testHoodNotAtPosition() {
-        m_shooter.setShootingAngle(TARGET_HOOD_POSITION);
+        m_shooter.setHoodPosition(TARGET_HOOD_POSITION);
         m_hoodEncoderSim.setPosition(CURRENT_HOOD_POSITION);
         step();
 
-        assertFalse(m_shooter.hoodAtPosition(TARGET_HOOD_POSITION));
+        assertFalse(m_shooter.isHoodAtPosition(TARGET_HOOD_POSITION));
     }
 
     /**
@@ -281,7 +281,7 @@ public class ShooterSubsystemTest {
      */
     @Test
     void testStopHood() {
-        m_shooter.manualHoodControl(MANUAL_HOOD_CONTROL_SPEED);
+        m_shooter.manualHood(MANUAL_HOOD_CONTROL_SPEED);
         step();
 
         m_shooter.stopHood();
@@ -297,8 +297,8 @@ public class ShooterSubsystemTest {
      */
     @Test
     void testStopAll() {
-        m_shooter.setShooterSpeedsRPM(TEST_RPM);
-        m_shooter.manualHoodControl(MANUAL_HOOD_CONTROL_SPEED);
+        m_shooter.setShooterRPM(TEST_RPM);
+        m_shooter.manualHood(MANUAL_HOOD_CONTROL_SPEED);
         step();
 
         m_shooter.stopAll();
@@ -315,9 +315,9 @@ public class ShooterSubsystemTest {
      * THEN feed controller should be set to the PID velocity
      * */
     @Test
-    void testRunFeederRPM() {
+    void testsetFeederRPM() {
         SparkClosedLoopController m_feedController = m_shooter.getShooterPID("feed");
-        m_shooter.runFeederRPM(TEST_RPM);
+        m_shooter.setFeederRPM(TEST_RPM);
         step();
 
         assertEquals(m_feedController.getControlType(), ControlType.kVelocity);
@@ -326,15 +326,15 @@ public class ShooterSubsystemTest {
 
     /**
      * GIVEN a ShooterSubsystem.
-     * WHEN the setShootingAngle method is called with a position.
+     * WHEN the setHoodPosition method is called with a position.
      * THEN the hood's closed-loop controller setpoint should be updated to that position.
      */
     @Test
-    void testSetShootingAngleUpdatesSetpoint() {
+    void testsetHoodPositionUpdatesSetpoint() {
         double targetPosition = 0.75;
         SparkClosedLoopController hoodController = m_shooter.getShooterPID("hood");
 
-        m_shooter.setShootingAngle(targetPosition);
+        m_shooter.setHoodPosition(targetPosition);
         step(); // Advance simulation to process the command
 
         assertEquals(targetPosition, hoodController.getSetpoint(), TOLERANCE);
