@@ -119,14 +119,26 @@ public class RobotContainer {
         }));
 
         // Shoot
-        controller.leftTrigger(0.05).onTrue(aimAndShootCommand)
-                .onFalse(new InstantCommand(() -> aimAndShootCommand.cancel()));
+        // controller.leftTrigger(0.05).onTrue(aimAndShootCommand)
+        //         .onFalse(new InstantCommand(() -> aimAndShootCommand.cancel()));
 
         // Intake
-        controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            intake.setIntake();
+        // controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
+        //     intake.setIntake();
+        // }))).onFalse(new InstantCommand(() -> {
+        //     intake.stopAll();
+        // }));
+
+        controller.leftTrigger(0.5).whileTrue(new RepeatCommand(new InstantCommand(() -> {
+            climber.setLeft(controller.getLeftTriggerAxis() * (controller.getHID().getXButton()? -1.0 : 1.0));
         }))).onFalse(new InstantCommand(() -> {
-            intake.stopAll();
+            climber.stopLeft();
+        }));
+
+        controller.rightTrigger(0.5).whileTrue(new RepeatCommand(new InstantCommand(() -> {
+            climber.setRight(controller.getRightTriggerAxis() * (controller.getHID().getXButton()? -1.0 : 1.0));
+        }))).onFalse(new InstantCommand(() -> {
+            climber.stopRight();
         }));
 
         // Force Stow Hood
