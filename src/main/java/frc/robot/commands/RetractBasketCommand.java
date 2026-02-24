@@ -25,7 +25,7 @@ public class RetractBasketCommand extends Command {
   public void initialize() {
     startTime = Timer.getFPGATimestamp();
 
-    intake.setBasket(0.2);
+    intake.setBasket(0.4);
     
   }
 
@@ -37,11 +37,12 @@ public class RetractBasketCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     intake.stopBasket();
+    System.out.println("Basket Retracted");
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (Timer.getFPGATimestamp() > (startTime + 0.8)); // Run 0.8 second
+    return (Timer.getFPGATimestamp() > (startTime + 0.35)); // Run 0.35 second
   }
 }
