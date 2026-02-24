@@ -248,12 +248,16 @@ public final class Constants {
         static {
             kLeftMotorConfig.inverted(false);
             kLeftMotorConfig.idleMode(IdleMode.kBrake);
+            kLeftMotorConfig.closedLoop.pid(kLeftP, kLeftI, kLeftD);
+            kLeftMotorConfig.closedLoop.feedForward.sva(kLeftS, kLeftV, kLeftA);
         }
         
         public static final SparkFlexConfig kRightMotorConfig = new SparkFlexConfig();
         static {
             kRightMotorConfig.inverted(false);
             kRightMotorConfig.idleMode(IdleMode.kBrake);
+            kRightMotorConfig.closedLoop.pid(kRightP, kRightI, kRightD);
+            kRightMotorConfig.closedLoop.feedForward.sva(kRightS, kRightV, kRightA);
         }
 
     }

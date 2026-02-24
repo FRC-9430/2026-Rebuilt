@@ -21,6 +21,7 @@ import frc.robot.autos.AimAndShootCommand;
 import frc.robot.commands.BumpBasketCommand;
 import frc.robot.commands.EjectBasketCommand;
 import frc.robot.commands.RetractBasketCommand;
+import frc.robot.subsystems.ClimbingArmSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.ElasticDashboard;
@@ -43,6 +44,7 @@ public class RobotContainer {
 
     public final ShooterSubsystem shooter = new ShooterSubsystem();
     public final IntakeSubsystem intake = new IntakeSubsystem();
+    public final ClimbingArmSubsystem climber = new ClimbingArmSubsystem();
 
     public final VisionSubsystem vision = new VisionSubsystem(drivetrain);
     public final PolarSubsystem polar = new PolarSubsystem(drivetrain);
