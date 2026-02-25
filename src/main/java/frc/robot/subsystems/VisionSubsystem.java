@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.util.LimelightHelpers.RawFiducial;
 
-public class VisionSubsystem extends SubsystemBase {
+public class VisionSubsystem extends SubsystemBase implements AutoCloseable{
 
     public final CommandSwerveDrivetrain drivetrain;
 
@@ -184,6 +184,10 @@ public class VisionSubsystem extends SubsystemBase {
             }
         }
 
+    }
+
+    public void close() {
+        drivetrain.close();
     }
 
 }
