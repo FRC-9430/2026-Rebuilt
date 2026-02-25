@@ -190,7 +190,7 @@ public class ShooterSubsystemTest {
     @Test
     void testIsShooterAtSpeed() {
         m_shooter = new ShooterSubsystem();
-        SparkFlexSim m_mainShooterMotorSim = new SparkFlexSim(m_shooter.getMainShooterMotor(), null);
+        SparkFlexSim m_mainShooterMotorSim = new SparkFlexSim(m_shooter.getMainShooterMotor(), DCMotor.getNeoVortex(3).withReduction(0.67));
 
         // Define and convert inputs
         // Convert kV from Volts/RPM to Volts/(rad/s)
@@ -204,7 +204,7 @@ public class ShooterSubsystemTest {
         // Feed inputs to a generic simulated flywheel system
         FlywheelSim flywheelSim = new FlywheelSim(
                 LinearSystemId.identifyVelocitySystem(kV_SI, kA_SI),
-                DCMotor.getNeoVortex(3),
+                DCMotor.getNeoVortex(3).withReduction(0.67),
                 1.0);
 
         double targetRPM = TEST_RPM;
