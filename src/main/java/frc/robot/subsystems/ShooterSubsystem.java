@@ -112,6 +112,10 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable{
         return Math.abs(getShooterRPM() - m_shooterController.getSetpoint()) <= kShooterToleranceRPM;
     }
 
+    public boolean isShooterAtSpeed(double rpm, double setpoint) {
+        return Math.abs(rpm - setpoint) <= kShooterToleranceRPM;
+    }
+
     /**
      * Start the feeder motor at the default configured speed.
      */

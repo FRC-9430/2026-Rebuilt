@@ -16,6 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 import org.mockito.Mockito;
 
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.sim.SparkAbsoluteEncoderSim;
 import com.revrobotics.sim.SparkFlexSim;
@@ -182,30 +185,58 @@ public class ShooterSubsystemTest {
      * GIVEN a ShooterSubsystem.
      * WHEN the flywheels are commanded to a target RPM and the simulation is
      * updated to match that RPM.
-     * THEN the {@code flywheelsAtSpeed()} method should return true.
+     * THEN the {@code isShooterAtSpeed()} method should return true.
      */
     @Test
     void testIsShooterAtSpeed() {
-        // Mock the hardware construction to validate logic without simulation
-        try (MockedConstruction<SparkFlex> mockedSparkFlex = Mockito.mockConstruction(SparkFlex.class,
-                (mock, context) -> {
-                    // Configure encoder to return target RPM
-                    RelativeEncoder mockEncoder = mock(RelativeEncoder.class);
-                    when(mockEncoder.getVelocity()).thenReturn(TEST_RPM);
-                    when(mock.getEncoder()).thenReturn(mockEncoder);
+        m_shooter = new ShooterSubsystem();
+        SparkFlexSim m_mainShooterMotorSim = new SparkFlexSim(m_shooter.getMainShooterMotor(), null);
 
-                    // Configure PID controller to return target setpoint
-                    SparkClosedLoopController mockPid = mock(SparkClosedLoopController.class);
-                    when(mockPid.getSetpoint()).thenReturn(TEST_RPM);
-                    when(mock.getClosedLoopController()).thenReturn(mockPid);
+        // Define and convert inputs
+        // Convert kV from Volts/RPM to Volts/(rad/s)
+        // 1 RPM = 0.10472 rad/s = V*60 / (2pi)
+        double kV_SI = ShooterConstants.kShooterV * 60 / (2 * Math.PI);
+        // Convert kV from Amps/RPM to Amps/(rad/s)
+        // A*60 / (2pi)
+        // Use a default kA if constant is 0 to prevent simulation errors
+        double kA_SI = ShooterConstants.kShooterA == 0 ? 0.005 : ShooterConstants.kShooterA * 60 / (2 * Math.PI);
 
-                    // Prevent NPEs
-                    when(mock.getAbsoluteEncoder()).thenReturn(mock(SparkAbsoluteEncoder.class));
-                })) {
-            m_shooter = new ShooterSubsystem();
-            m_shooter.setShooterRPM(TEST_RPM);
-            assertTrue(m_shooter.isShooterAtSpeed());
+        // Feed inputs to a generic simulated flywheel system
+        FlywheelSim flywheelSim = new FlywheelSim(
+                LinearSystemId.identifyVelocitySystem(kV_SI, kA_SI),
+                DCMotor.getNeoVortex(3),
+                1.0);
+
+        double targetRPM = TEST_RPM;
+        m_shooter.setShooterRPM(targetRPM);
+
+        // Simulation Loop: Run for 2 seconds
+        for (int i = 0; i < 100; i++) {
+            double currentRPM = flywheelSim.getAngularVelocityRPM();
+            m_mainShooterMotorSim.setVelocity(currentRPM);
+
+            // Simulate SparkFlex PID + FeedForward
+            double error = targetRPM - currentRPM;
+            double ffVolts = (ShooterConstants.kShooterS * Math.signum(targetRPM))
+                    + (ShooterConstants.kShooterV * targetRPM);
+            double pidOutput = error * ShooterConstants.kShooterP;
+            double appliedVoltage = ffVolts + (pidOutput * 12.0);
+
+            // Apply to Plant
+            flywheelSim.setInputVoltage(appliedVoltage);
+            flywheelSim.update(0.02);
+            step(0.02);
         }
+
+        // Finally, capture ending values and pass into overloaded validation method
+        double endRPM = m_mainShooterMotorSim.getVelocity();
+        double endSetpoint = m_mainShooterMotorSim.getSetpoint();
+        double target = Math.abs(m_mainShooterMotorSim.getVelocity() - m_mainShooterMotorSim.getSetpoint());
+
+        assertTrue(m_shooter.isShooterAtSpeed(endRPM, endSetpoint),
+                "Shooter should be at speed. Current velocity: " + m_mainShooterMotorSim.getVelocity()  +
+                "\nTarget velocity: " +  targetRPM +
+                "\nWithin Tolerance: " + (target <= 200));
     }
 
     /**
