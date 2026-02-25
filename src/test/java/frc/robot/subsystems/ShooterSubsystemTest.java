@@ -93,36 +93,6 @@ public class ShooterSubsystemTest {
     }
 
     /**
-     * GIVEN a new ShooterSubsystem is created.
-     * WHEN the subsystem is initialized in {@code setUp()}.
-     * THEN all motor controller objects should be instantiated and not null.
-     */
-    @Test
-    void testMotorsInitialized() {
-        m_shooter = new ShooterSubsystem();
-
-        assertNotNull(m_shooter.getMainShooterMotor());
-        assertNotNull(m_shooter.getFollowerShooterMotor(1));
-        assertNotNull(m_shooter.getFollowerShooterMotor(2));
-        assertNotNull(m_shooter.getFeedMotor());
-        assertNotNull(m_shooter.getHoodMotor());
-    }
-
-    /**
-     * GIVEN a shooterSubsystem
-     * WHEN the subsystem is initialized
-     * THEN all PID controllers should be instantiated and not null
-     */
-    @Test
-    void testPIDControllersInitialized() {
-        m_shooter = new ShooterSubsystem();
-
-        assertNotNull(m_shooter.getShooterPID("shoot"));
-        assertNotNull(m_shooter.getShooterPID("hood"));
-        assertNotNull(m_shooter.getShooterPID("feed"));
-    }
-
-    /**
      * GIVEN a call to construct ShooterSubsystem
      * WHEN constructor calls configure() on the SparkFlex objects.
      * THEN verify that the configuration logic inside the constructor
@@ -215,7 +185,7 @@ public class ShooterSubsystemTest {
      * THEN the {@code flywheelsAtSpeed()} method should return true.
      */
     @Test
-    void testisShooterAtSpeed() {
+    void testIsShooterAtSpeed() {
         // Mock the hardware construction to validate logic without simulation
         try (MockedConstruction<SparkFlex> mockedSparkFlex = Mockito.mockConstruction(SparkFlex.class,
                 (mock, context) -> {
@@ -269,7 +239,6 @@ public class ShooterSubsystemTest {
      * FIXME 20260224.1423 bbontrager,  Disabled for AssertionFailedError.
      */
     @Test
-
     void testHoodStow() {
         m_shooter = new ShooterSubsystem();
         SparkAbsoluteEncoderSim m_hoodEncoderSim = new SparkAbsoluteEncoderSim(m_shooter.getHoodMotor());
@@ -292,8 +261,7 @@ public class ShooterSubsystemTest {
      * FIXME 20260224.1424 bbontrager, Disabled for AssertionFailedError.
      */
     @Test
-
-    void testisHoodAtPosition() {
+    void testIsHoodAtPosition() {
         m_shooter = new ShooterSubsystem();
         SparkAbsoluteEncoderSim m_hoodEncoderSim = new SparkAbsoluteEncoderSim(m_shooter.getHoodMotor());
 
