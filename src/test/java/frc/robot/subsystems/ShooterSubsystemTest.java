@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +20,8 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.sim.SparkAbsoluteEncoderSim;
 import com.revrobotics.sim.SparkFlexSim;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
@@ -122,31 +125,44 @@ public class ShooterSubsystemTest {
     /**
      * GIVEN a call to construct ShooterSubsystem
      * WHEN constructor calls configure() on the SparkFlex objects.
-     * THEN verify that the configuration logic inside the constructor is actually executed.
-     * NOTE 20260224.1429 bbontrager, Technically, this test can't validate construction logic
-     * exactly because mockito can't moc final methods. Needs mockito-inline extension to work
-     * properly.
+     * THEN verify that the configuration logic inside the constructor
+     *      is actually executed. This ensures the correct configs are passed to
+     *      each SparkFlex motor in the ShooterSubsystem.
      */
     @Test
     void testConstructorConfiguration() {
-        // Mock the construction of SparkFlex to verify configuration calls
+        // Mock construction to verify configuration calls on the SparkFlex objects
         try (MockedConstruction<SparkFlex> mockedSparkFlex = Mockito.mockConstruction(SparkFlex.class,
                 (mock, context) -> {
-                    // Stub methods called in constructor to point to instances of objects the
-                    // methods expect (ie. an encoder, an abs encoder, and a closedloopcontroller)
+                    // Return non-null objects for getters used in constructor
+                    when(mock.getClosedLoopController()).thenReturn(mock(SparkClosedLoopController.class));
                     when(mock.getEncoder()).thenReturn(mock(RelativeEncoder.class));
                     when(mock.getAbsoluteEncoder()).thenReturn(mock(SparkAbsoluteEncoder.class));
-                    when(mock.getClosedLoopController()).thenReturn(mock(SparkClosedLoopController.class));
                 })) {
-
             m_shooter = new ShooterSubsystem();
 
-            // Verify that 6 motors were created (Main shooter, two follower shooters, Hood, Feeder, Conveyor)
-            assertEquals(6, mockedSparkFlex.constructed().size(), "Subsystem constructs 6 SparkFlex motors");
+            List<SparkFlex> constructed = mockedSparkFlex.constructed();
+            // Ensure we have the expected number of motors (6 total in constructor)
+            assertEquals(6, constructed.size());
 
-            // Close the subsystem to release resources
-            m_shooter.close();
-            m_shooter = null;
+            // Retrieve mocks based on instantiation order in ShooterSubsystem constructor
+            SparkFlex rightShooter = constructed.get(0);
+            SparkFlex leftTopShooter = constructed.get(1);
+            SparkFlex leftBotShooter = constructed.get(2);
+            SparkFlex hoodMotor = constructed.get(3);
+            SparkFlex feedMotor = constructed.get(4);
+
+            // Verify that configure was called with the correct config object from Constants
+            Mockito.verify(rightShooter).configure(Mockito.eq(ShooterConstants.MAIN_SHOOTER_CONFIG),
+                    Mockito.eq(ResetMode.kResetSafeParameters), Mockito.eq(PersistMode.kPersistParameters));
+            Mockito.verify(leftTopShooter).configure(Mockito.eq(ShooterConstants.AUX_SHOOTER_CONFIG),
+                    Mockito.eq(ResetMode.kResetSafeParameters), Mockito.eq(PersistMode.kPersistParameters));
+            Mockito.verify(leftBotShooter).configure(Mockito.eq(ShooterConstants.AUX_SHOOTER_CONFIG),
+                    Mockito.eq(ResetMode.kResetSafeParameters), Mockito.eq(PersistMode.kPersistParameters));
+            Mockito.verify(hoodMotor).configure(Mockito.eq(ShooterConstants.HOOD_CONFIG),
+                    Mockito.eq(ResetMode.kResetSafeParameters), Mockito.eq(PersistMode.kPersistParameters));
+            Mockito.verify(feedMotor).configure(Mockito.eq(ShooterConstants.FEED_CONFIG),
+                    Mockito.eq(ResetMode.kResetSafeParameters), Mockito.eq(PersistMode.kPersistParameters));
         }
     }
 
