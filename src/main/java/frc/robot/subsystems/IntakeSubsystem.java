@@ -28,9 +28,14 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
     /** Creates a new IntakeSubsystem. */
     public IntakeSubsystem() {
+        this(new SparkFlex(CANConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless),
+                new SparkFlex(CANConstants.BASKET_MOTOR_CAN_ID, MotorType.kBrushless));
+    }
 
-        m_intakeMotor = new SparkFlex(CANConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless);
-        m_basketMotor = new SparkFlex(CANConstants.BASKET_MOTOR_CAN_ID, MotorType.kBrushless);
+    // Overloading constructor to make testing easier
+    IntakeSubsystem(SparkFlex intakeMotor, SparkFlex basketMotor) {
+        m_intakeMotor = intakeMotor;
+        m_basketMotor = basketMotor;
 
         m_intakeMotor.configure(kIntakeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         m_basketMotor.configure(kBasketMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
