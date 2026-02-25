@@ -9,37 +9,39 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class IntakeSubsystemTest {
-  IntakeSubsystem subsystem;
+    IntakeSubsystem subsystem;
 
-  @BeforeEach
-  void setUp() {
-    // Initialize the HAL to support hardware simulation
-    assert HAL.initialize(500, 0);
-    subsystem = new IntakeSubsystem();
-  }
+    @BeforeEach
+    void setUp() {
+        // Initialize the HAL to support hardware simulation
+        assert HAL.initialize(500, 0);
+        subsystem = new IntakeSubsystem();
+    }
 
-  @AfterEach
-  void tearDown() {
-    // Close the subsystem to release hardware resources (SparkFlex objects)
-    // subsystem.close();
-  }
+    @AfterEach
+    void tearDown() {
+        // Close the subsystem to release hardware resources (SparkFlex objects)
+        // subsystem.close();
+    }
 
-  @Test
-  @Disabled
-  void testIntakeAndConveyorRunTogether() {
-    // Engage the intake
-    // subsystem.setSpeeds(0.5, 0.5);
+    @Test
+    @Disabled
+    void testIntakeAndConveyorRunTogether() {
+        // Engage the intake
+        // subsystem.setSpeeds(0.5, 0.5);
 
-    // Verify both motors are set to the same speed
-    assertEquals(0.5, subsystem.intakeMotor.get(), 0.001, "Intake motor should be at 0.5 speed");
-    //assertEquals(0.5, subsystem.conveyorMotor.get(), 0.001, "Conveyor motor should be at 0.5 speed");
-  }
+        // Verify both motors are set to the same speed
+        assertEquals(0.5, subsystem.intakeMotor.get(), 0.001, "Intake motor should be at 0.5 speed");
+        // assertEquals(0.5, subsystem.conveyorMotor.get(), 0.001, "Conveyor motor
+        // should be at 0.5 speed");
+    }
 
-  @Test
-  @Disabled
-  void testStopDisengagesBoth() {
-    subsystem.stopAll();
-    assertEquals(0.0, subsystem.intakeMotor.get(), 0.001, "Intake motor should be stopped");
-    //assertEquals(0.0, subsystem.conveyorMotor.get(), 0.001, "Conveyor motor should be stopped");
-  }
+    @Test
+    @Disabled
+    void testStopDisengagesBoth() {
+        subsystem.stopAll();
+        assertEquals(0.0, subsystem.intakeMotor.get(), 0.001, "Intake motor should be stopped");
+        // assertEquals(0.0, subsystem.conveyorMotor.get(), 0.001, "Conveyor motor
+        // should be stopped");
+    }
 }
