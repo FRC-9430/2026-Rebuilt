@@ -18,7 +18,7 @@ import frc.robot.Constants.CANConstants;
 
 import static frc.robot.Constants.IntakeConstants.*;
 
-public class IntakeSubsystem extends SubsystemBase {
+public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
   final SparkFlex intakeMotor;
   final SparkFlex basketMotor;
@@ -48,7 +48,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /**
    * Runs the intake at a specified speed
-   * 
+   *
    * @param speed The speed to run the intake at
    */
   public void setIntake(double speed) {
@@ -57,7 +57,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /**
    * Target the intake at a specified RPM
-   * 
+   *
    * @param RPM The RPM to run the intake at
    */
   public void setIntakeRPM(double RPM) {
@@ -98,6 +98,12 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Intake V", intakEncoder.getVelocity());
+  }
+
+  @Override
+  public void close() {
+      intakeMotor.close();
+      basketMotor.close();
   }
 
 }
