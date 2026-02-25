@@ -231,10 +231,10 @@ public class ShooterSubsystemTest {
         // Finally, capture ending values and pass into overloaded validation method
         double endRPM = m_mainShooterMotorSim.getVelocity();
         double endSetpoint = m_mainShooterMotorSim.getSetpoint();
-        double target = Math.abs(m_mainShooterMotorSim.getVelocity() - m_mainShooterMotorSim.getSetpoint());
+        double target = Math.abs(endRPM - endSetpoint);
 
         assertTrue(m_shooter.isShooterAtSpeed(endRPM, endSetpoint),
-                "Shooter should be at speed. Current velocity: " + m_mainShooterMotorSim.getVelocity()  +
+                "Shooter should be at speed. Current velocity: " + endRPM +
                 "\nTarget velocity: " +  targetRPM +
                 "\nWithin Tolerance: " + (target <= 200));
     }
