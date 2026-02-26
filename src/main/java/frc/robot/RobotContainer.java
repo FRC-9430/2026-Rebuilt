@@ -46,7 +46,7 @@ public class RobotContainer {
     public ElasticDashboard dash = new ElasticDashboard();
 
     public DriveMode driveMode = DriveMode.CARTESIAN;
-    
+
     public AimAndShootCommand aimAndShootCommand = new AimAndShootCommand(drivetrain, shooter, intake, polar);
 
     public RobotContainer() {
@@ -60,8 +60,8 @@ public class RobotContainer {
 
         drivetrain.setDefaultCommand(
                 drivetrain.applyRequestWithCondition(
-                        () -> drive.withVelocityX(-controller.getLeftY() * MaxSpeed)
-                                .withVelocityY(-controller.getLeftX() * MaxSpeed)
+                        () -> drive.withVelocityX(-Math.pow(controller.getLeftY(), 3) * MaxSpeed)
+                                .withVelocityY(-Math.pow(controller.getLeftX(), 3) * MaxSpeed)
                                 .withRotationalRate(-controller.getRightX() * MaxAngularRate),
                         () -> aim.withSpeeds(polar.getPolarDriveSpeeds(drivetrain.getState().Pose,
                                 controller.getLeftY(), controller.getLeftX(),
@@ -141,7 +141,7 @@ public class RobotContainer {
         // Retract Basket
         controller.start().onTrue(new RetractBasketCommand(intake));
 
-        controller.x().onTrue(aimAndShootCommand).onFalse(new InstantCommand(()->aimAndShootCommand.cancel()));
+        controller.x().onTrue(aimAndShootCommand).onFalse(new InstantCommand(() -> aimAndShootCommand.cancel()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -178,17 +178,17 @@ public class RobotContainer {
         NamedCommands.registerCommand("Retract Basket", new RetractBasketCommand(intake));
         NamedCommands.registerCommand("Bump Basket", new BumpBasketCommand(intake, 1));
 
-        NamedCommands.registerCommand("Start Intake", new InstantCommand(()->intake.setIntake()));
-        NamedCommands.registerCommand("Stop Intake", new InstantCommand(()->intake.stopIntake()));
+        NamedCommands.registerCommand("Start Intake", new InstantCommand(() -> intake.setIntake()));
+        NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> intake.stopIntake()));
 
-        NamedCommands.registerCommand("Engage Polar", new InstantCommand(()->setPolar()));
-        NamedCommands.registerCommand("Engage Cartesian", new InstantCommand(()->setCartesian()));
+        NamedCommands.registerCommand("Engage Polar", new InstantCommand(() -> setPolar()));
+        NamedCommands.registerCommand("Engage Cartesian", new InstantCommand(() -> setCartesian()));
 
-        NamedCommands.registerCommand("Start Aim and Shoot", new InstantCommand(()->startAimAndShootAutonCommand()));
+        NamedCommands.registerCommand("Start Aim and Shoot", new InstantCommand(() -> startAimAndShootAutonCommand()));
 
-        NamedCommands.registerCommand("Stop Aim and Shoot", new InstantCommand(()->aimAndShootCommand.cancel()));
+        NamedCommands.registerCommand("Stop Aim and Shoot", new InstantCommand(() -> aimAndShootCommand.cancel()));
 
-        NamedCommands.registerCommand("Stow Hood", new InstantCommand(()->shooter.stowHood()));
+        NamedCommands.registerCommand("Stow Hood", new InstantCommand(() -> shooter.stowHood()));
 
     }
 
@@ -197,9 +197,9 @@ public class RobotContainer {
     }
 
     public void startAimAndShootAutonCommand() {
-        if (driveMode == DriveMode.POLAR && DriverStation.isAutonomous()) {
-            CommandScheduler.getInstance().schedule(aimAndShootCommand);
-        }
+
+        CommandScheduler.getInstance().schedule(aimAndShootCommand);
+
     }
 
 }
