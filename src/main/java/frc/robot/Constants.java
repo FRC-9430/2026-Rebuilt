@@ -107,15 +107,15 @@ public final class Constants {
 
     public static final class ShooterConstants {
         // Shooter PID
-        public static final double kShooterP = 4.5E-5;
+        public static final double kShooterP = 5E-5;
         public static final double kShooterI = 0.0;
         public static final double kShooterD = 0.0;
-        public static final double kShooterS = 0.2;
-        public static final double kShooterV = 0.00185;
+        public static final double kShooterS = 0.6;
+        public static final double kShooterV = 0.00169;
         public static final double kShooterA = 0.0;
 
         // Hood PID
-        public static final double kHoodP = 19.0;
+        public static final double kHoodP = 21.0;
         public static final double kHoodI = 0.0;
         public static final double kHoodD = 0.0;
 
@@ -126,7 +126,7 @@ public final class Constants {
 
         // Setpoints
         public static final double kShooterIdleRPM = 1000.0;
-        public static final double kShooterToleranceRPM = 200.0;
+        public static final double kShooterToleranceRPM = 100.0;
 
         public static final double kDefaultConveyorSpeed = 0.3;
 
@@ -186,13 +186,13 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        public static final double kDefaultIntakeSpeed = 2500;
+        public static final double kDefaultIntakeSpeed = 3000;
 
-        public static final double kIntakeP = 0.00006;
+        public static final double kIntakeP = 0.00015;
         public static final double kIntakeI = 0.0;
         public static final double kIntakeD = 0.0;
-        public static final double kIntakeS = 0.2;
-        public static final double kIntakeV = 0.00178;
+        public static final double kIntakeS = 0.6;
+        public static final double kIntakeV = 0.00171;
         public static final double kIntakeA = 0.0;
 
         public static final SparkFlexConfig kIntakeMotorConfig = new SparkFlexConfig();
