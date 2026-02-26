@@ -5,6 +5,7 @@
 package frc.robot.autos;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AimCommand;
 import frc.robot.commands.BumpBasketCommand;
@@ -23,7 +24,7 @@ public class AimAndShootCommand extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ParallelCommandGroup(
+      new ParallelRaceGroup(
         new AimCommand(drive, polar).withTimeout(4.0),
         new BumpBasketCommand(intake, 8).withTimeout(4.0),
         new ShootCommand(shoot, polar).withTimeout(4.0))
