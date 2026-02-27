@@ -71,6 +71,41 @@ public class PolarSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     calculateRadius();
+    // Update target based on whether the robot is "in-field" (between the hubs)
+    var pose = driveTrain.getPose();
+    var transl = pose.getTranslation();
+    double x = transl.getX();
+    double y = transl.getY();
+
+    // If robot is left of the field (< 4.6) -> target blue hub. If right of field (> 11.9) -> target red hub.
+    if (x < 4.6) {
+      target = BLUE_HUB_LOC;
+      SmartDashboard.putString("Polar/Target", "BLUE_HUB");
+    } else if (x > 11.9) {
+      target = RED_HUB_LOC;
+      SmartDashboard.putString("Polar/Target", "RED_HUB");
+    } else {
+      // Robot is in-field between the hubs; pick a volley location based on alliance and Y
+      var alliance = DriverStation.getAlliance();
+      if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
+        if (y > 4.0) {
+          target = BLUE_LEFT_VOLLY_LOC;
+          SmartDashboard.putString("Polar/Target", "BLUE_LEFT_VOLLEY");
+        } else {
+          target = BLUE_RIGHT_VOLLY_LOC;
+          SmartDashboard.putString("Polar/Target", "BLUE_RIGHT_VOLLEY");
+        }
+      } else if (alliance.isPresent() && alliance.get() == Alliance.Red) {
+        // For red alliance choose the volley side according to the requested mapping
+        if (y > 4.0) {
+          target = RED_RIGHT_VOLLY_LOC;
+          SmartDashboard.putString("Polar/Target", "RED_RIGHT_VOLLEY");
+        } else {
+          target = RED_LEFT_VOLLY_LOC;
+          SmartDashboard.putString("Polar/Target", "RED_LEFT_VOLLEY");
+        }
+      }
+    }
 
   }
 

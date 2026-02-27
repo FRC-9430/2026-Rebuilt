@@ -226,6 +226,13 @@ public final class Constants {
     public static final class FieldConstants {
         public static final Translation2d BLUE_HUB_LOC = new Translation2d(4.6525, 4.034);
         public static final Translation2d RED_HUB_LOC = new Translation2d(11.915, 4.034);
+
+        public static final Translation2d BLUE_LEFT_VOLLY_LOC = new Translation2d(3.386, 6.250);
+        public static final Translation2d BLUE_RIGHT_VOLLY_LOC = new Translation2d(3.386, 2.375);
+
+        public static final Translation2d RED_LEFT_VOLLY_LOC = new Translation2d(13.65, 6.250);
+        public static final Translation2d RED_RIGHT_VOLLY_LOC = new Translation2d(13.65, 2.375);
+
     }
 
 }
