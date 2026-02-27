@@ -95,9 +95,9 @@ public class PolarSubsystem extends SubsystemBase {
           target = BLUE_RIGHT_VOLLY_LOC;
           SmartDashboard.putString("Polar/Target", "BLUE_RIGHT_VOLLEY");
         }
-      } else if (alliance.isPresent() && alliance.get() == Alliance.Red) {
+      } else {
         // For red alliance choose the volley side according to the requested mapping
-        if (y > 4.0) {
+        if (y < 4.0) {
           target = RED_RIGHT_VOLLY_LOC;
           SmartDashboard.putString("Polar/Target", "RED_RIGHT_VOLLEY");
         } else {
