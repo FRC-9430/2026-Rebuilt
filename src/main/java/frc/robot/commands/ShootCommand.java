@@ -4,6 +4,9 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.PolarSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -13,6 +16,7 @@ public class ShootCommand extends Command {
 
   final ShooterSubsystem shoot;
   final PolarSubsystem polar;
+  double delay;
 
   /**
    * Creates a new ShootCommand.
@@ -30,6 +34,7 @@ public class ShootCommand extends Command {
   @Override
   public void initialize() {
     System.out.println("Shoot Command Init");
+    delay = Timer.getFPGATimestamp();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -37,11 +42,11 @@ public class ShootCommand extends Command {
   public void execute() {
     shoot.setShooterRPM(polar.getShootVelocity());
     shoot.setHoodPosition(polar.getHoodPosition());
-    if (shoot.isShooterReady() && polar.Angled()) {
+    if (shoot.isShooterReady() && polar.Angled() && Timer.getFPGATimestamp() > delay + 0.2) {
       shoot.startFeeder();
       shoot.startConveyorDefault();
     }
-  }
+  } 
 
   // Called once the command ends or is interrupted.
   @Override

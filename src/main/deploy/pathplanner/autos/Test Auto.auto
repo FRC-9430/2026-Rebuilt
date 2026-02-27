@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "B-SPL-IFL"
+            "pathName": "B-SPL-BEL"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Eject Basket"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B-BEL-IFL"
           }
         },
         {
@@ -43,19 +49,13 @@
         {
           "type": "named",
           "data": {
-            "name": "Engage Polar"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "Start Aim and Shoot"
           }
         }
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": null,
   "choreoAuto": false
 }
