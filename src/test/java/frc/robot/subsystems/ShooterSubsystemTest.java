@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -202,12 +203,19 @@ public class ShooterSubsystemTest {
         double kA_SI = ShooterConstants.kShooterA == 0 ? 0.005 : ShooterConstants.kShooterA * 60 / (2 * Math.PI);
 
         // Feed inputs to a generic simulated flywheel system
+        // ref:
+        // https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-simulation/physics-sim.html#wpilib-s-simulation-classes
         FlywheelSim flywheelSim = new FlywheelSim(
                 LinearSystemId.identifyVelocitySystem(kV_SI, kA_SI),
                 DCMotor.getNeoVortex(3).withReduction(0.67),
                 1.0);
 
         double targetRPM = TEST_RPM;
+
+        // enable the robot so controllers produce output!
+        DriverStationSim.setEnabled(true);
+        DriverStationSim.notifyNewData();
+
         m_shooter.setShooterRPM(targetRPM);
 
         // Simulation Loop: Run for 2 seconds
@@ -215,28 +223,50 @@ public class ShooterSubsystemTest {
             double currentRPM = flywheelSim.getAngularVelocityRPM();
             m_mainShooterMotorSim.setVelocity(currentRPM);
 
-            // Simulate SparkFlex PID + FeedForward
+            // Spark Flex logic loop (PID + FF)
+            // Spark Flex PID calculation: Output = (Error * P) + (Setpoint * V) + (S * -1/+1)
+            // NOTE 20260226.1926 bbontrager, kP is DutyCycle/RPM, while kV and kS are typically Volts/RPM and Volts.
+            // We must divide the Voltage terms by 12.0 to get Duty Cycle.
+            // ref:
+            // https://docs.revrobotics.com/revlib/spark/closed-loop/units#default-units
             double error = targetRPM - currentRPM;
-            double ffVolts = (ShooterConstants.kShooterS * Math.signum(targetRPM))
-                    + (ShooterConstants.kShooterV * targetRPM);
-            double pidOutput = error * ShooterConstants.kShooterP;
-            double appliedVoltage = ffVolts + (pidOutput * 12.0);
+            double dutyCycle = (error * ShooterConstants.kShooterP)
+                             + (targetRPM * ShooterConstants.kShooterV / 12.0)
+                             + (Math.signum(targetRPM) * ShooterConstants.kShooterS / 12.0);
 
-            // Apply to Plant
-            flywheelSim.setInputVoltage(appliedVoltage);
+            // Clamp duty cycle to motor limits
+            dutyCycle = Math.max(-1.0, Math.min(1.0, dutyCycle));
+            double motorVoltage = dutyCycle * 12.0;
+
+            // Physics simulation
+            // FlywheelSim is a perfect linear system, so subtract kS from the motor's
+            // output so the physics plant simulates the friction the motor is fighting.
+            double frictionVolts = ShooterConstants.kShooterS * Math.signum(motorVoltage);
+            double appliedToPlant = Math.abs(motorVoltage) > ShooterConstants.kShooterS
+                ? motorVoltage - frictionVolts
+                : 0;
+
+            flywheelSim.setInputVoltage(appliedToPlant);
             flywheelSim.update(0.02);
             step(0.02);
         }
 
         // Finally, capture ending values and pass into overloaded validation method
         double endRPM = m_mainShooterMotorSim.getVelocity();
+        double endFlywheelSimRPM = flywheelSim.getAngularVelocityRPM();
         double endSetpoint = m_mainShooterMotorSim.getSetpoint();
         double target = Math.abs(endRPM - endSetpoint);
+        double error = Math.abs(endRPM - targetRPM);
 
-        assertTrue(m_shooter.isShooterAtSpeed(endRPM, endSetpoint),
+        // Use the no-args version of isShooterAtSpeed to verify the subsystem
+        // correctly reads its own internal state.
+        assertTrue(m_shooter.isShooterAtSpeed(),
                 "Shooter should be at speed. Current velocity: " + endRPM +
+                "\nSimulated Flywheel Velocity: " + endFlywheelSimRPM +
+                // NOTE 20260226.1945 bbontrager, it helps to see a perfect model
+                // speed be close to the sim hardware speed, doesn't it? :)
                 "\nTarget velocity: " +  targetRPM +
-                "\nWithin Tolerance: " + (target <= 200));
+                "\nWithin Tolerance: " + (error <= FLYWHEEL_RPM_TEST_TOLERANCE));
     }
 
     /**
