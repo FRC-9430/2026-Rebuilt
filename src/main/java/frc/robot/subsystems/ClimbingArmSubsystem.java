@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -95,6 +96,16 @@ public class ClimbingArmSubsystem extends SubsystemBase {
      */
     public void stopRight() {
         rightClimberMotor.stopMotor();
+    }
+
+        /**
+     * Target the intake at a specified RPM
+     *
+     * @param RPM The RPM to run the intake at
+     */
+    public void setClimberRPM(double RPM) {
+        lClimbController.setSetpoint(RPM, ControlType.kVelocity);
+        rClimbController.setSetpoint(RPM, ControlType.kVelocity);
     }
 
     @Override
