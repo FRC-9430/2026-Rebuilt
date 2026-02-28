@@ -1,4 +1,5 @@
 package frc.robot.subsystems;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.revrobotics.sim.SparkFlexSim;
@@ -24,154 +25,154 @@ import org.junit.jupiter.api.Test;
 import static frc.robot.Constants.IntakeConstants.*;
 
 class IntakeSubsystemTest {
-  IntakeSubsystem subsystem;
+    IntakeSubsystem subsystem;
 
-  private SparkFlexSim m_intakeSim;
-  private SparkFlexSim m_basketSim;
-  private SparkRelativeEncoderSim m_intakeEncoderSim;
+    private SparkFlexSim m_intakeSim;
+    private SparkFlexSim m_basketSim;
+    private SparkRelativeEncoderSim m_intakeEncoderSim;
 
-  private static final double TOLERANCE = 0.01;
-  private static final double TEST_RPM = 1500.0;
+    private static final double TOLERANCE = 0.01;
+    private static final double TEST_RPM = 1500.0;
 
-  @BeforeEach
-  void setUp() {
-    // Initialize the HAL to support hardware simulation
-    assertTrue(HAL.initialize(500, 0));
-    subsystem = new IntakeSubsystem();
+    @BeforeEach
+    void setUp() {
+        // Initialize the HAL to support hardware simulation
+        assertTrue(HAL.initialize(500, 0));
+        subsystem = new IntakeSubsystem();
 
-    m_intakeSim = new SparkFlexSim(subsystem.m_intakeMotor, null);
-    m_basketSim = new SparkFlexSim(subsystem.m_basketMotor, null);
-    m_intakeEncoderSim = new SparkRelativeEncoderSim(subsystem.m_intakeMotor);
-  }
-
-  @AfterEach
-  void tearDown() {
-    // Close the subsystem to release hardware resources (SparkFlex objects)
-    if (subsystem != null) {
-      subsystem.close();
+        m_intakeSim = new SparkFlexSim(subsystem.m_intakeMotor, null);
+        m_basketSim = new SparkFlexSim(subsystem.m_basketMotor, null);
+        m_intakeEncoderSim = new SparkRelativeEncoderSim(subsystem.m_intakeMotor);
     }
-    subsystem = null;
-    m_intakeSim = null;
-    m_basketSim = null;
-    m_intakeEncoderSim = null;
-  }
 
-  private void step() {
-    SimHooks.stepTiming(0.02);
-  }
+    @AfterEach
+    void tearDown() {
+        // Close the subsystem to release hardware resources (SparkFlex objects)
+        if (subsystem != null) {
+            subsystem.close();
+        }
+        subsystem = null;
+        m_intakeSim = null;
+        m_basketSim = null;
+        m_intakeEncoderSim = null;
+    }
 
-  @Test
-  void testMotorsInitialized() {
-    assertNotNull(subsystem.m_intakeMotor);
-    assertNotNull(subsystem.m_basketMotor);
-  }
+    private void step() {
+        SimHooks.stepTiming(0.02);
+    }
 
-  @Test
-  void testSetIntakeOpenLoop() {
-    double speed = 0.5;
-    subsystem.setIntake(speed);
-    step();
+    @Test
+    void testMotorsInitialized() {
+        assertNotNull(subsystem.m_intakeMotor);
+        assertNotNull(subsystem.m_basketMotor);
+    }
 
-    assertEquals(speed, subsystem.m_intakeMotor.get(), TOLERANCE);
-  }
+    @Test
+    void testSetIntakeOpenLoop() {
+        double speed = 0.5;
+        subsystem.setIntake(speed);
+        step();
+
+        assertEquals(speed, subsystem.m_intakeMotor.get(), TOLERANCE);
+    }
 
     /**
      * GIVEN IntakeSubsystem with the intake running
      * WHEN stopIntake is called
      * THEN the intake motor should be stopped (speed 0)
      */
-  @Test
-  void testStopIntake() {
-    subsystem.setIntake(0.6);
-    step();
+    @Test
+    void testStopIntake() {
+        subsystem.setIntake(0.6);
+        step();
 
-    subsystem.stopIntake();
-    step();
+        subsystem.stopIntake();
+        step();
 
-    assertEquals(0.0, m_intakeSim.getAppliedOutput(), TOLERANCE);
-  }
+        assertEquals(0.0, m_intakeSim.getAppliedOutput(), TOLERANCE);
+    }
 
     /**
      * GIVEN IntakeSubsystem with both motors running
      * WHEN stopAll is called
      * THEN both the intake and basket motors should be stopped
      */
-  @Test
-  void testStopAll() {
-    subsystem.setIntake(0.6);
-    subsystem.setBasket(0.4);
-    step();
+    @Test
+    void testStopAll() {
+        subsystem.setIntake(0.6);
+        subsystem.setBasket(0.4);
+        step();
 
-    subsystem.stopAll();
-    step();
+        subsystem.stopAll();
+        step();
 
-    assertEquals(0.0, m_intakeSim.getAppliedOutput(), TOLERANCE);
-    assertEquals(0.0, m_basketSim.getAppliedOutput(), TOLERANCE);
-  }
+        assertEquals(0.0, m_intakeSim.getAppliedOutput(), TOLERANCE);
+        assertEquals(0.0, m_basketSim.getAppliedOutput(), TOLERANCE);
+    }
 
     /**
      * GIVEN IntakeSubsystem
      * WHEN setBasket is called with a specific speed
      * THEN the basket motor should be set to that speed
      */
-  @Test
-  void testSetBasketOpenLoop() {
-    double speed = -0.4;
-    subsystem.setBasket(speed);
-    step();
+    @Test
+    void testSetBasketOpenLoop() {
+        double speed = -0.4;
+        subsystem.setBasket(speed);
+        step();
 
-    assertEquals(speed, subsystem.m_basketMotor.get(), TOLERANCE);
-  }
+        assertEquals(speed, subsystem.m_basketMotor.get(), TOLERANCE);
+    }
 
     /**
      * GIVEN IntakeSubsystem with the basket running
      * WHEN stopBasket is called
      * THEN the basket motor should be stopped (speed 0)
      */
-  @Test
-  void testStopBasket() {
-    subsystem.setBasket(0.7);
-    step();
+    @Test
+    void testStopBasket() {
+        subsystem.setBasket(0.7);
+        step();
 
-    subsystem.stopBasket();
-    step();
+        subsystem.stopBasket();
+        step();
 
-    assertEquals(0.0, subsystem.m_basketMotor.get(), TOLERANCE);
-  }
+        assertEquals(0.0, subsystem.m_basketMotor.get(), TOLERANCE);
+    }
 
-   /**
+    /**
      * GIVEN IntakeSubsystem
      * WHEN setIntake is called with a specific speed
      * THEN the intake motor should be set to that speed
      */
-  @Test
-  void testSetIntakeRPMUpdatesController() {
-    SparkClosedLoopController intakeController = subsystem.m_intakeController;
+    @Test
+    void testSetIntakeRPMUpdatesController() {
+        SparkClosedLoopController intakeController = subsystem.m_intakeController;
 
-    subsystem.setIntakeRPM(TEST_RPM);
-    step();
+        subsystem.setIntakeRPM(TEST_RPM);
+        step();
 
-    assertEquals(ControlType.kVelocity, intakeController.getControlType());
-    assertEquals(TEST_RPM, intakeController.getSetpoint(), TOLERANCE);
-  }
+        assertEquals(ControlType.kVelocity, intakeController.getControlType());
+        assertEquals(TEST_RPM, intakeController.getSetpoint(), TOLERANCE);
+    }
 
-   /**
+    /**
      * GIVEN IntakeSubsystem
      * WHEN setIntake is called with no speed
      * THEN the intake motor should be set to default speed
      */
-  @Test
-  void testSetIntakeDefaultUsesController() {
-    SparkClosedLoopController intakeController = subsystem.m_intakeController;
+    @Test
+    void testSetIntakeDefaultUsesController() {
+        SparkClosedLoopController intakeController = subsystem.m_intakeController;
 
-    subsystem.setIntake();
-    step();
+        subsystem.setIntake();
+        step();
 
-    assertEquals(ControlType.kVelocity, intakeController.getControlType());
-    assertEquals(kDefaultIntakeSpeed, intakeController.getSetpoint(), TOLERANCE);
-  }
+        assertEquals(ControlType.kVelocity, intakeController.getControlType());
+        assertEquals(kDefaultIntakeSpeed, intakeController.getSetpoint(), TOLERANCE);
+    }
 
-      /**
+    /**
      * GIVEN IntakeSubsystem
      * WHEN periodic is called
      * THEN the intake velocity should be published to SmartDashboard

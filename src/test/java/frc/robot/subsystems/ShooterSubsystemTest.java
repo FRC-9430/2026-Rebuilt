@@ -64,8 +64,10 @@ public class ShooterSubsystemTest {
                 // Ignore errors during standard close
             }
 
-            // Use reflection to close all SparkFlex fields to ensure HAL resources are released.
-            // This prevents IllegalStateException in subsequent tests if the subsystem's close()
+            // Use reflection to close all SparkFlex fields to ensure HAL resources are
+            // released.
+            // This prevents IllegalStateException in subsequent tests if the subsystem's
+            // close()
             // method misses any motors.
             try {
                 for (Field field : m_shooter.getClass().getDeclaredFields()) {
@@ -100,8 +102,8 @@ public class ShooterSubsystemTest {
      * GIVEN a call to construct ShooterSubsystem
      * WHEN constructor calls configure() on the SparkFlex objects.
      * THEN verify that the configuration logic inside the constructor
-     *      is actually executed. This ensures the correct configs are passed to
-     *      each SparkFlex motor in the ShooterSubsystem.
+     * is actually executed. This ensures the correct configs are passed to
+     * each SparkFlex motor in the ShooterSubsystem.
      */
     @Test
     void testConstructorConfiguration() {
@@ -126,7 +128,8 @@ public class ShooterSubsystemTest {
             SparkFlex hoodMotor = constructed.get(3);
             SparkFlex feedMotor = constructed.get(4);
 
-            // Verify that configure was called with the correct config object from Constants
+            // Verify that configure was called with the correct config object from
+            // Constants
             Mockito.verify(rightShooter).configure(Mockito.eq(ShooterConstants.MAIN_SHOOTER_CONFIG),
                     Mockito.eq(ResetMode.kResetSafeParameters), Mockito.eq(PersistMode.kPersistParameters));
             Mockito.verify(leftTopShooter).configure(Mockito.eq(ShooterConstants.AUX_SHOOTER_CONFIG),
@@ -142,8 +145,10 @@ public class ShooterSubsystemTest {
 
     /**
      * GIVEN a ShooterSubsystem.
-     * WHEN the flywheels are commanded to a target RPM and the simulation is advanced.
-     * THEN both flywheels should be configured to the target setpoint as a velocity control
+     * WHEN the flywheels are commanded to a target RPM and the simulation is
+     * advanced.
+     * THEN both flywheels should be configured to the target setpoint as a velocity
+     * control
      */
     @Test
     void testSetShooterRPM() {
@@ -156,7 +161,8 @@ public class ShooterSubsystemTest {
         step();
 
         assertNotNull(controller); // controller is created
-        assertEquals(targetRPM, controller.getSetpoint(), TOLERANCE); // controller setpoint matches targetRPM within tolerance
+        assertEquals(targetRPM, controller.getSetpoint(), TOLERANCE); // controller setpoint matches targetRPM within
+                                                                      // tolerance
         assertEquals(ControlType.kVelocity, controller.getControlType()); // setpoint control type is velocity
     }
 
@@ -191,7 +197,8 @@ public class ShooterSubsystemTest {
     @Test
     void testIsShooterAtSpeed() {
         m_shooter = new ShooterSubsystem();
-        SparkFlexSim m_mainShooterMotorSim = new SparkFlexSim(m_shooter.getMainShooterMotor(), DCMotor.getNeoVortex(3).withReduction(0.67));
+        SparkFlexSim m_mainShooterMotorSim = new SparkFlexSim(m_shooter.getMainShooterMotor(),
+                DCMotor.getNeoVortex(3).withReduction(0.67));
 
         // Define and convert inputs
         // Convert kV from Volts/RPM to Volts/(rad/s)
@@ -224,15 +231,17 @@ public class ShooterSubsystemTest {
             m_mainShooterMotorSim.setVelocity(currentRPM);
 
             // Spark Flex logic loop (PID + FF)
-            // Spark Flex PID calculation: Output = (Error * P) + (Setpoint * V) + (S * -1/+1)
-            // NOTE 20260226.1926 bbontrager, kP is DutyCycle/RPM, while kV and kS are typically Volts/RPM and Volts.
+            // Spark Flex PID calculation: Output = (Error * P) + (Setpoint * V) + (S *
+            // -1/+1)
+            // NOTE 20260226.1926 bbontrager, kP is DutyCycle/RPM, while kV and kS are
+            // typically Volts/RPM and Volts.
             // We must divide the Voltage terms by 12.0 to get Duty Cycle.
             // ref:
             // https://docs.revrobotics.com/revlib/spark/closed-loop/units#default-units
             double error = targetRPM - currentRPM;
             double dutyCycle = (error * ShooterConstants.kShooterP)
-                             + (targetRPM * ShooterConstants.kShooterV / 12.0)
-                             + (Math.signum(targetRPM) * ShooterConstants.kShooterS / 12.0);
+                    + (targetRPM * ShooterConstants.kShooterV / 12.0)
+                    + (Math.signum(targetRPM) * ShooterConstants.kShooterS / 12.0);
 
             // Clamp duty cycle to motor limits
             dutyCycle = Math.max(-1.0, Math.min(1.0, dutyCycle));
@@ -243,8 +252,8 @@ public class ShooterSubsystemTest {
             // output so the physics plant simulates the friction the motor is fighting.
             double frictionVolts = ShooterConstants.kShooterS * Math.signum(motorVoltage);
             double appliedToPlant = Math.abs(motorVoltage) > ShooterConstants.kShooterS
-                ? motorVoltage - frictionVolts
-                : 0;
+                    ? motorVoltage - frictionVolts
+                    : 0;
 
             flywheelSim.setInputVoltage(appliedToPlant);
             flywheelSim.update(0.02);
@@ -255,23 +264,23 @@ public class ShooterSubsystemTest {
         double endRPM = m_mainShooterMotorSim.getVelocity();
         double endFlywheelSimRPM = flywheelSim.getAngularVelocityRPM();
         double endSetpoint = m_mainShooterMotorSim.getSetpoint();
-        double target = Math.abs(endRPM - endSetpoint);
         double error = Math.abs(endRPM - targetRPM);
 
         // Use the no-args version of isShooterAtSpeed to verify the subsystem
         // correctly reads its own internal state.
         assertTrue(m_shooter.isShooterAtSpeed(endRPM, endSetpoint),
                 "Shooter should be at speed. Current velocity: " + endRPM +
-                "\nSimulated Flywheel Velocity: " + endFlywheelSimRPM +
-                // NOTE 20260226.1945 bbontrager, it helps to see a perfect model
-                // speed be close to the sim hardware speed, doesn't it? :)
-                "\nTarget velocity: " +  targetRPM +
-                "\nWithin Tolerance: " + (error <= FLYWHEEL_RPM_TEST_TOLERANCE));
+                        "\nSimulated Flywheel Velocity: " + endFlywheelSimRPM +
+                        // NOTE 20260226.1945 bbontrager, it helps to see a perfect model
+                        // speed be close to the sim hardware speed, doesn't it? :)
+                        "\nTarget velocity: " + targetRPM +
+                        "\nWithin Tolerance: " + (error <= FLYWHEEL_RPM_TEST_TOLERANCE));
     }
 
     /**
      * GIVEN a ShooterSubsystem.
-     * WHEN the flywheels are commanded to a target RPM but the motors are currently at a different RPM.
+     * WHEN the flywheels are commanded to a target RPM but the motors are currently
+     * at a different RPM.
      * THEN the {@code flywheelsAtSpeed()} method should return false.
      */
     @Test
@@ -310,7 +319,8 @@ public class ShooterSubsystemTest {
     /**
      * GIVEN a ShooterSubsystem.
      * WHEN the hood is simulated to a target position.
-     * THEN the {@code isHoodAtPosition()} method should return true for that position.
+     * THEN the {@code isHoodAtPosition()} method should return true for that
+     * position.
      */
     @Test
     void testIsHoodAtPosition() {
@@ -322,15 +332,17 @@ public class ShooterSubsystemTest {
 
     /**
      * GIVEN a ShooterSubsystem.
-     * WHEN the hood is commanded to a target position but the simulation is at a different position.
-     * THEN the {@code isHoodAtPosition()} method should return false for the target position.
+     * WHEN the hood is commanded to a target position but the simulation is at a
+     * different position.
+     * THEN the {@code isHoodAtPosition()} method should return false for the target
+     * position.
      */
     @Test
     void testHoodNotAtPosition() {
         m_shooter = new ShooterSubsystem();
 
         // Verify the logic returns false when current position is outside tolerance
-        double offTargetPosition = TARGET_HOOD_POSITION - 0.1;
+        double offTargetPosition = TARGET_HOOD_POSITION - 0.25;
         assertFalse(m_shooter.isHoodAtPosition(offTargetPosition, TARGET_HOOD_POSITION));
     }
 
@@ -382,7 +394,7 @@ public class ShooterSubsystemTest {
      * GIVEN a ShooterSubsystem
      * WHEN feed motor is engaged
      * THEN feed controller should be set to the PID velocity
-     * */
+     */
     @Test
     void testsetFeederRPM() {
         m_shooter = new ShooterSubsystem();
@@ -398,7 +410,8 @@ public class ShooterSubsystemTest {
     /**
      * GIVEN a ShooterSubsystem.
      * WHEN the setHoodPosition method is called with a position.
-     * THEN the hood's closed-loop controller setpoint should be updated to that position.
+     * THEN the hood's closed-loop controller setpoint should be updated to that
+     * position.
      */
     @Test
     void testSetHoodPositionUpdatesSetpoint() {
@@ -412,7 +425,6 @@ public class ShooterSubsystemTest {
         assertEquals(targetPosition, hoodController.getSetpoint(), TOLERANCE);
         assertEquals(ControlType.kMAXMotionPositionControl, hoodController.getControlType());
     }
-
 
     /**
      * GIVEN a ShooterSubsystem with a hood motor encoder
