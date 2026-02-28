@@ -37,7 +37,7 @@ public class ShootCommand extends Command {
   public void execute() {
     shoot.setShooterRPM(polar.getShootVelocity());
     shoot.setHoodPosition(polar.getHoodPosition());
-    if (shoot.isShooterReady() && polar.Angled()) {
+    if (shoot.isShooterReady()) {
       shoot.startFeeder();
       shoot.startConveyorDefault();
     }
