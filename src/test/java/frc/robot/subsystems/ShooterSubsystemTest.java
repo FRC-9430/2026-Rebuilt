@@ -260,7 +260,7 @@ public class ShooterSubsystemTest {
 
         // Use the no-args version of isShooterAtSpeed to verify the subsystem
         // correctly reads its own internal state.
-        assertTrue(m_shooter.isShooterAtSpeed(),
+        assertTrue(m_shooter.isShooterAtSpeed(endRPM, endSetpoint),
                 "Shooter should be at speed. Current velocity: " + endRPM +
                 "\nSimulated Flywheel Velocity: " + endFlywheelSimRPM +
                 // NOTE 20260226.1945 bbontrager, it helps to see a perfect model
