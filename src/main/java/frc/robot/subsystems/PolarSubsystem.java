@@ -57,14 +57,14 @@ public class PolarSubsystem extends SubsystemBase {
 
   public double getShootVelocity() {
     if (mode == Mode.VOLLEY) {
-      return 3000.0;
+      return 2000.0 + (1000 * (radiusToTarget / 7));
     }
     return Math.floor(PolarUtils.getEstShootVelFrmR(radiusToTarget));
   }
 
   public double getHoodPosition() {
     if (mode == Mode.VOLLEY) {
-      return 0.8;
+      return 0.85;
     }
     return Math.floor(1000.0 * PolarUtils.getEstHoodPosFrmR(radiusToTarget)) / 1000.0;
   }
@@ -78,10 +78,12 @@ public class PolarSubsystem extends SubsystemBase {
   public ChassisSpeeds getPolarDriveSpeeds(Pose2d estPose, double radialIn, double orbitalIn, double MaxSpeed,
       double MaxAngularRate) {
     double orbital = orbitalIn;
+    double radial = radialIn;
     if (mode == Mode.VOLLEY) {
       orbital = -orbitalIn;
+      radial = -radialIn;
     }
-    return PolarUtils.getPolarDriveSpeeds(estPose, target, radialIn, orbital, MaxSpeed, MaxAngularRate);
+    return PolarUtils.getPolarDriveSpeeds(estPose, target, radial, orbital, MaxSpeed, MaxAngularRate);
   }
 
   @Override
@@ -94,7 +96,8 @@ public class PolarSubsystem extends SubsystemBase {
     double x = transl.getX();
     double y = transl.getY();
 
-    // If robot is left of the field (< 4.6) -> target blue hub. If right of field (> 11.9) -> target red hub.
+    // If robot is left of the field (< 4.6) -> target blue hub. If right of field
+    // (> 11.9) -> target red hub.
     if (x < 4.6) {
       target = BLUE_HUB_LOC;
       mode = Mode.HUB;
@@ -104,7 +107,8 @@ public class PolarSubsystem extends SubsystemBase {
       mode = Mode.HUB;
       SmartDashboard.putString("Polar/Target", "RED_HUB");
     } else {
-      // Robot is in-field between the hubs; pick a volley location based on alliance and Y
+      // Robot is in-field between the hubs; pick a volley location based on alliance
+      // and Y
       var alliance = DriverStation.getAlliance();
       if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
         if (y > 4.0) {
