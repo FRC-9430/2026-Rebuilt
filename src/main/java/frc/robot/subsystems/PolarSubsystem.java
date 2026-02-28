@@ -110,39 +110,39 @@ public class PolarSubsystem extends SubsystemBase {
       return 0.8;
     }
 
-    // Similar lead compensation as for shoot velocity
-    var pose = driveTrain.getPose();
-    var robotTrans = pose.getTranslation();
-    double dx = target.getX() - robotTrans.getX();
-    double dy = target.getY() - robotTrans.getY();
-    double r = Math.hypot(dx, dy);
+    // // Similar lead compensation as for shoot velocity
+    // var pose = driveTrain.getPose();
+    // var robotTrans = pose.getTranslation();
+    // double dx = target.getX() - robotTrans.getX();
+    // double dy = target.getY() - robotTrans.getY();
+    // double r = Math.hypot(dx, dy);
 
-    var speeds = driveTrain.getState().Speeds;
-    double vx = speeds.vxMetersPerSecond;
-    double vy = speeds.vyMetersPerSecond;
+    // var speeds = driveTrain.getState().Speeds;
+    // double vx = speeds.vxMetersPerSecond;
+    // double vy = speeds.vyMetersPerSecond;
 
-    double ux = (r > 1e-6) ? dx / r : 0.0;
-    double uy = (r > 1e-6) ? dy / r : 0.0;
-    double vRadial = vx * ux + vy * uy;
-    // Compute same dynamic lead as for shoot velocity
-    double estRPM = PolarUtils.getEstShootVelFrmR(r);
-    double projectileSpeed = Math.max(0.1, estRPM * rpmToMps); // m/s
-    double flightTime = r / projectileSpeed;
-    double computedLead = Math.min(maxComputedLeadSeconds, flightTime + shooterSystemLatency);
-    double adjustedR = Math.max(0.0, r - vRadial * computedLead);
+    // double ux = (r > 1e-6) ? dx / r : 0.0;
+    // double uy = (r > 1e-6) ? dy / r : 0.0;
+    // double vRadial = vx * ux + vy * uy;
+    // // Compute same dynamic lead as for shoot velocity
+    // double estRPM = PolarUtils.getEstShootVelFrmR(r);
+    // double projectileSpeed = Math.max(0.1, estRPM * rpmToMps); // m/s
+    // double flightTime = r / projectileSpeed;
+    // double computedLead = Math.min(maxComputedLeadSeconds, flightTime + shooterSystemLatency);
+    // double adjustedR = Math.max(0.0, r - vRadial * computedLead);
 
-    double rawHood = Math.floor(1000.0 * PolarUtils.getEstHoodPosFrmR(adjustedR)) / 1000.0;
-    // Smooth hood setpoint to avoid frequent small changes
-    if (lastHoodSetpoint == null) {
-      lastHoodSetpoint = rawHood;
-      return rawHood;
-    }
-    if (Math.abs(rawHood - lastHoodSetpoint) < hoodChangeDeadband) {
-      return lastHoodSetpoint;
-    }
-    double smoothed = hoodSmoothingAlpha * rawHood + (1 - hoodSmoothingAlpha) * lastHoodSetpoint;
-    lastHoodSetpoint = smoothed;
-    return smoothed;
+    // double rawHood = Math.floor(1000.0 * PolarUtils.getEstHoodPosFrmR(adjustedR)) / 1000.0;
+    // // Smooth hood setpoint to avoid frequent small changes
+    // if (lastHoodSetpoint == null) {
+    //   lastHoodSetpoint = rawHood;
+    //   return rawHood;
+    // }
+    // if (Math.abs(rawHood - lastHoodSetpoint) < hoodChangeDeadband) {
+    //   return lastHoodSetpoint;
+    // }
+    // double smoothed = hoodSmoothingAlpha * rawHood + (1 - hoodSmoothingAlpha) * lastHoodSetpoint;
+    // lastHoodSetpoint = smoothed;
+    return PolarUtils.getEstHoodPosFrmR(radiusToTarget);
   }
 
   /**
