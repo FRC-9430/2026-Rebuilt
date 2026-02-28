@@ -32,6 +32,17 @@ public class PolarSubsystem extends SubsystemBase {
     private double leadTimeSeconds = 0.35;
     // Default angular tolerance (radians) to consider "facing the target"
     private double facingToleranceRad = 0.06; // ~3.4 degrees
+  // Estimated conversion from shooter RPM -> projectile speed (m/s). Measure and tune.
+  // Default ~= 0.005 m/s per RPM (3000 RPM -> 8.4 m/s).
+  private double rpmToMps = 0.0028;
+  // System latency to add to flight-time when predicting (seconds)
+  private double shooterSystemLatency = 0.05;
+  // Cap for computed lead seconds to avoid extreme predictions
+  private double maxComputedLeadSeconds = 2.0;
+  // Smoothing for hood setpoint to avoid frequent small changes that can stall the motor
+  private double hoodSmoothingAlpha = 0.25;
+  private double hoodChangeDeadband = 0.002; // meters of hood position
+  private Double lastHoodSetpoint = null;
 
   /** Creates a new PolarSubsystem. */
   public PolarSubsystem(CommandSwerveDrivetrain drivetrain) {
@@ -72,10 +83,10 @@ public class PolarSubsystem extends SubsystemBase {
     double dy = target.getY() - robotTrans.getY();
     double r = Math.hypot(dx, dy);
 
-    // Field-relative robot velocity
-    var speeds = driveTrain.getState().Speeds; // ChassisSpeeds
-    double vx = speeds.vxMetersPerSecond;
-    double vy = speeds.vyMetersPerSecond;
+  // Field-relative robot velocity
+  var speeds = driveTrain.getState().Speeds; // ChassisSpeeds
+  double vx = speeds.vxMetersPerSecond;
+  double vy = speeds.vyMetersPerSecond;
 
     // Unit radial vector
     double ux = (r > 1e-6) ? dx / r : 0.0;
@@ -84,9 +95,13 @@ public class PolarSubsystem extends SubsystemBase {
     // Robot velocity component toward the target (positive when moving toward target)
     double vRadial = vx * ux + vy * uy;
 
-    // Adjust radius by the radial velocity times lead time (moving toward reduces required range)
-    double adjustedR = Math.max(0.0, r - vRadial * leadTimeSeconds);
+    // Compute a dynamic lead time based on estimated projectile speed (from RPM).
+    double estRPM = PolarUtils.getEstShootVelFrmR(r);
+    double projectileSpeed = Math.max(0.1, estRPM * rpmToMps); // m/s
+    double flightTime = r / projectileSpeed;
+    double computedLead = Math.min(maxComputedLeadSeconds, flightTime + shooterSystemLatency);
 
+    double adjustedR = Math.max(0.0, r - vRadial * computedLead);
     return Math.floor(PolarUtils.getEstShootVelFrmR(adjustedR));
   }
 
@@ -109,9 +124,25 @@ public class PolarSubsystem extends SubsystemBase {
     double ux = (r > 1e-6) ? dx / r : 0.0;
     double uy = (r > 1e-6) ? dy / r : 0.0;
     double vRadial = vx * ux + vy * uy;
-    double adjustedR = Math.max(0.0, r - vRadial * leadTimeSeconds);
+    // Compute same dynamic lead as for shoot velocity
+    double estRPM = PolarUtils.getEstShootVelFrmR(r);
+    double projectileSpeed = Math.max(0.1, estRPM * rpmToMps); // m/s
+    double flightTime = r / projectileSpeed;
+    double computedLead = Math.min(maxComputedLeadSeconds, flightTime + shooterSystemLatency);
+    double adjustedR = Math.max(0.0, r - vRadial * computedLead);
 
-    return Math.floor(1000.0 * PolarUtils.getEstHoodPosFrmR(adjustedR)) / 1000.0;
+    double rawHood = Math.floor(1000.0 * PolarUtils.getEstHoodPosFrmR(adjustedR)) / 1000.0;
+    // Smooth hood setpoint to avoid frequent small changes
+    if (lastHoodSetpoint == null) {
+      lastHoodSetpoint = rawHood;
+      return rawHood;
+    }
+    if (Math.abs(rawHood - lastHoodSetpoint) < hoodChangeDeadband) {
+      return lastHoodSetpoint;
+    }
+    double smoothed = hoodSmoothingAlpha * rawHood + (1 - hoodSmoothingAlpha) * lastHoodSetpoint;
+    lastHoodSetpoint = smoothed;
+    return smoothed;
   }
 
   /**
