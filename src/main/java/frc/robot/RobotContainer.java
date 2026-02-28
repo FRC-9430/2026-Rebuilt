@@ -21,6 +21,7 @@ import frc.robot.autos.AimAndShootCommand;
 import frc.robot.commands.BumpBasketCommand;
 import frc.robot.commands.EjectBasketCommand;
 import frc.robot.commands.RetractBasketCommand;
+import frc.robot.commands.ShootCommand;
 import frc.robot.subsystems.ClimbingArmSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
@@ -54,6 +55,7 @@ public class RobotContainer {
     public DriveMode driveMode = DriveMode.CARTESIAN;
 
     public AimAndShootCommand aimAndShootCommand = new AimAndShootCommand(drivetrain, shooter, intake, polar);
+    public ShootCommand shootCommand = new ShootCommand(shooter, polar);
 
     /**
      * Construct and configure the robot: set up the drivetrain, dashboard,
@@ -119,8 +121,8 @@ public class RobotContainer {
         }));
 
         // Shoot
-        // controller.leftTrigger(0.05).onTrue(aimAndShootCommand)
-        //         .onFalse(new InstantCommand(() -> aimAndShootCommand.cancel()));
+        controller.leftTrigger(0.05).onTrue(shootCommand)
+                .onFalse(new InstantCommand(() -> shootCommand.cancel()));
 
         // Intake
         // controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
@@ -149,7 +151,7 @@ public class RobotContainer {
         }));
 
         // Bump the Basket
-        controller.y().onTrue(new BumpBasketCommand(intake, 1));
+        controller.y().onTrue(new BumpBasketCommand(intake, 3));
 
         // Eject Basket
         controller.back().onTrue(new EjectBasketCommand(intake));

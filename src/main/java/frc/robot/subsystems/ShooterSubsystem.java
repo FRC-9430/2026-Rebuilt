@@ -22,7 +22,7 @@ import static frc.robot.Constants.ShooterConstants.*;
  * speeds, and the hood position. It also exposes status checks used by
  * higher-level commands.
  */
-public class ShooterSubsystem extends SubsystemBase {
+public class ShooterSubsystem extends SubsystemBase implements AutoCloseable{
 
     private final SparkFlex m_RightShooterMotor;
     private final SparkFlex m_LeftTopShoooterMotor;
@@ -110,6 +110,10 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public boolean isShooterAtSpeed() {
         return Math.abs(getShooterRPM() - m_shooterController.getSetpoint()) <= kShooterToleranceRPM;
+    }
+
+    public boolean isShooterAtSpeed(double rpm, double setpoint) {
+        return Math.abs(rpm - setpoint) <= kShooterToleranceRPM;
     }
 
     /**
@@ -205,12 +209,35 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return true if hood is at the given position
      */
     public boolean isHoodAtPosition(double position) {
-        return Math.abs(getHoodPosition() - position) <= kHoodPositionTolerance;
+        return isHoodAtPosition(getHoodPosition(), position);
+    }
+
+    /**
+     * Returns true when the hood is within tolerance of a target position.
+     * Overloaded method to allow testing with explicit values.
+     *
+     * @param currentPosition the current position to check against
+     * @param targetPosition target position to check
+     * @return true if hood is at the given position
+     */
+    public boolean isHoodAtPosition(double currentPosition, double targetPosition) {
+        return Math.abs(currentPosition - targetPosition) <= kHoodPositionTolerance;
     }
 
     /** Return true when the hood is in its stowed position. */
     public boolean isHoodStowed() {
         return isHoodAtPosition(kHoodStowedPosition);
+    }
+
+    /**
+     * Return true when the hood is in its stowed position.
+     * Overloaded method to allow testing with explicit values.
+     *
+     * @param currentPosition the current position to check against
+     * @return true if hood is at the stowed position
+     */
+    public boolean isHoodStowed(double currentPosition) {
+        return isHoodAtPosition(currentPosition, kHoodStowedPosition);
     }
 
     /** Get the current hood encoder position. */
@@ -228,6 +255,83 @@ public class ShooterSubsystem extends SubsystemBase {
         return isShooterAtSpeed() && isHoodAtPosition(m_hoodController.getSetpoint());
     }
 
+    /**
+     * Get primary shooter motor with main shooter configurations.
+     *
+     * @author Brady Bontrager, bbontrager
+     *  * @return SparkFlex Returns main shooter motor in Shooter subsystem
+     */
+    public SparkFlex getMainShooterMotor() {
+        return this.m_RightShooterMotor;
+    }
+
+    /**
+     * Get secondary shooter motor with auxillary shooter configurations
+     * There are two secondary motors, and a parameter is required.
+     *
+     *
+     * @author Brady Bontrager, bbontrager
+     *  * @param followerMotorType Specify which follower motor to get.
+     *  *   * 1 = Get Left-Top shooter motor
+     *  *   * 2 = Get Left-Bottom shooter motor
+     *  * @return SparkFlex Gets the first follower shooter motor with aux config.
+     */
+    public SparkFlex getFollowerShooterMotor(int followerMotorType) {
+
+        try {
+            if (followerMotorType == 1) {
+                return this.m_LeftTopShoooterMotor;
+            } else if (followerMotorType == 2) {
+                return this.m_LeftBotShoooterMotor;
+            }
+            else {
+                throw new java.lang.IllegalArgumentException("Invalid parameter passed for shooter follower motor get function");
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            System.err.println(e.getCause());
+            System.err.println(e.getStackTrace());
+            return null;
+        }
+    }
+
+    /**
+     * Get hood motor from shooter subsystem
+     *
+     * @author Brady Bontrager, bbontrager
+     *  * @return SparkFlex hood motor from shooter subsystem.
+     */
+    public SparkFlex getHoodMotor() {
+        return this.m_hoodMotor;
+    }
+
+    /**
+     * Get feed motor from shooter subsystem
+     *
+     * @author Brady Bontrager, bbontrager
+     *         * @return SparkFlex feed motor from shooter subsystem.
+     */
+    public SparkFlex getFeedMotor() {
+        return this.m_feedMotor;
+    }
+
+    public SparkClosedLoopController getShooterPID(String pidController) {
+        if (pidController.equals("shoot")) {
+            return m_shooterController;
+        }
+        if (pidController.equals("feed")) {
+            return m_feedController;
+        }
+        if (pidController.equals("hood")) {
+            return m_hoodController;
+        }
+        Exception e = new java.lang.IllegalArgumentException("Illegal argument in getShooterPID()");
+        System.err.println(e.getMessage());
+        System.err.println(e.getStackTrace());
+        System.err.println("Using null instead");
+        return null;
+    }
+
     /** This method is called once per scheduler run. */
     @Override
     public void periodic() {
@@ -238,8 +342,8 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Hood Pos", m_hoodEncoder.getPosition());
 
         // When the hood is stowed, turn the motor off
-        if ((m_hoodController.isAtSetpoint() || m_hoodEncoder.getPosition() <= kHoodStowedPosition)
-                && m_hoodController.getSetpoint() == kHoodStowedPosition) {
+        if (isHoodStowed() && m_hoodController.getSetpoint() == kHoodStowedPosition) {
+            m_hoodMotor.stopMotor();
         }
 
     }
@@ -252,5 +356,14 @@ public class ShooterSubsystem extends SubsystemBase {
         m_feedMotor.stopMotor();
         m_conveyorMotor.stopMotor();
 
+    }
+
+    @Override
+    public void close() {
+        m_RightShooterMotor.close();
+        m_LeftTopShoooterMotor.close();
+        m_LeftBotShoooterMotor.close();
+        m_hoodMotor.close();
+        m_feedMotor.close();
     }
 }

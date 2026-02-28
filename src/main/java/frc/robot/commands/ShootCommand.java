@@ -47,7 +47,10 @@ public class ShootCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     shoot.stowHood();
-    shoot.stopAll();
+    shoot.stopConveyor();
+    shoot.stopFeeder();
+    shoot.stopShooter();
+    
   }
 
   // Returns true when the command should end.
