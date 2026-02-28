@@ -148,7 +148,7 @@ public final class Constants {
         public static final double kHoodMinPosition = 0.3433;
         public static final double kHoodMinSafePosition = 0.350;
         public static final double kHoodMaxSafePosition = 0.875;
-        public static final double kHoodPositionTolerance = 0.025;
+        public static final double kHoodPositionTolerance = 0.1;
 
         public static final SparkFlexConfig MAIN_SHOOTER_CONFIG = new SparkFlexConfig();
         static {
@@ -170,7 +170,7 @@ public final class Constants {
         static {
             HOOD_CONFIG.idleMode(IdleMode.kBrake);
             HOOD_CONFIG.inverted(false);
-            HOOD_CONFIG.closedLoop.outputRange(-0.5, 1.0); // Half speed when reversed
+            HOOD_CONFIG.closedLoop.outputRange(-0.3, 1.0); // Third speed when reversed
             HOOD_CONFIG.closedLoop.pid(kHoodP, kHoodI, kHoodD);
             HOOD_CONFIG.closedLoop.positionWrappingEnabled(false);
             HOOD_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
