@@ -112,6 +112,10 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable{
         return Math.abs(getShooterRPM() - m_shooterController.getSetpoint()) <= kShooterToleranceRPM;
     }
 
+    public boolean isShooterAtSpeed(double rpm, double setpoint) {
+        return Math.abs(rpm - setpoint) <= kShooterToleranceRPM;
+    }
+
     /**
      * Start the feeder motor at the default configured speed.
      */
@@ -205,12 +209,35 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable{
      * @return true if hood is at the given position
      */
     public boolean isHoodAtPosition(double position) {
-        return Math.abs(getHoodPosition() - position) <= kHoodPositionTolerance;
+        return isHoodAtPosition(getHoodPosition(), position);
+    }
+
+    /**
+     * Returns true when the hood is within tolerance of a target position.
+     * Overloaded method to allow testing with explicit values.
+     *
+     * @param currentPosition the current position to check against
+     * @param targetPosition target position to check
+     * @return true if hood is at the given position
+     */
+    public boolean isHoodAtPosition(double currentPosition, double targetPosition) {
+        return Math.abs(currentPosition - targetPosition) <= kHoodPositionTolerance;
     }
 
     /** Return true when the hood is in its stowed position. */
     public boolean isHoodStowed() {
         return isHoodAtPosition(kHoodStowedPosition);
+    }
+
+    /**
+     * Return true when the hood is in its stowed position.
+     * Overloaded method to allow testing with explicit values.
+     *
+     * @param currentPosition the current position to check against
+     * @return true if hood is at the stowed position
+     */
+    public boolean isHoodStowed(double currentPosition) {
+        return isHoodAtPosition(currentPosition, kHoodStowedPosition);
     }
 
     /** Get the current hood encoder position. */
