@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.util.TunerConstants;
+import frc.robot.Constants.ClimberArmConstants;
 import frc.robot.autos.AimAndShootCommand;
 import frc.robot.commands.BumpBasketCommand;
 import frc.robot.commands.EjectBasketCommand;
@@ -133,13 +134,13 @@ public class RobotContainer {
 
         // Climber
         controller.povDown().whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            climber.setClimberMotors(1.0);
+            climber.setClimberRPM(ClimberArmConstants.kTargetRPM * 1.0);
         }))).onFalse(new InstantCommand(() -> {
             climber.stopClimbers();
         }));
 
         controller.povUp().whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            climber.setClimberMotors(-1.0);
+            climber.setClimberRPM(ClimberArmConstants.kTargetRPM * -1.0);
         }))).onFalse(new InstantCommand(() -> {
             climber.stopClimbers();
         }));

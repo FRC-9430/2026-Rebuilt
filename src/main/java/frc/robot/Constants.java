@@ -250,6 +250,7 @@ public final class Constants {
         public static final double kRightA = 0;
 
         public static final double kMaxSpeed = 0.0; // TODO calibrate
+        public static final double kTargetRPM = 1500.0;
 
         public static final SparkFlexConfig kLeftMotorConfig = new SparkFlexConfig();
         static {
