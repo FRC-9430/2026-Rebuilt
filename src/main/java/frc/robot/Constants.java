@@ -127,7 +127,7 @@ public final class Constants {
         // Hood PID
         public static final double kHoodP = 19.0;
         public static final double kHoodI = 0.0;
-        public static final double kHoodD = 0.0;
+        public static final double kHoodD = 8.0;
 
         // Feed PID TODO tune feeder
         public static final double kFeedP = 0.1;
@@ -138,9 +138,9 @@ public final class Constants {
         public static final double kShooterIdleRPM = 1000.0;
         public static final double kShooterToleranceRPM = 200.0;
 
-        public static final double kDefaultConveyorSpeed = 0.3;
+        public static final double kDefaultConveyorSpeed = 0.2;
 
-        public static final double kHoodStowedPosition = 0.355;
+        public static final double kHoodStowedPosition = 0.350;
 
         public static final double kDefaultFeederSpeed = 0.5;
 
@@ -170,13 +170,12 @@ public final class Constants {
         static {
             HOOD_CONFIG.idleMode(IdleMode.kBrake);
             HOOD_CONFIG.inverted(false);
-            HOOD_CONFIG.closedLoop.outputRange(-0.3, 1.0); // Third speed when reversed
+            HOOD_CONFIG.closedLoop.outputRange(-0.05, 1.0);
             HOOD_CONFIG.closedLoop.pid(kHoodP, kHoodI, kHoodD);
             HOOD_CONFIG.closedLoop.positionWrappingEnabled(false);
             HOOD_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
             HOOD_CONFIG.closedLoop.maxMotion.cruiseVelocity(1000);
-            HOOD_CONFIG.closedLoop.maxMotion.maxAcceleration(1000);
-            HOOD_CONFIG.closedLoop.maxMotion.allowedProfileError(kHoodPositionTolerance);
+            HOOD_CONFIG.closedLoop.maxMotion.maxAcceleration(10000);
             HOOD_CONFIG.closedLoop.maxMotion.positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
         }
 
