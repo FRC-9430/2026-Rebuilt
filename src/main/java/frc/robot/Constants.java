@@ -148,7 +148,7 @@ public final class Constants {
         public static final double kHoodMinPosition = 0.3433;
         public static final double kHoodMinSafePosition = 0.350;
         public static final double kHoodMaxSafePosition = 0.875;
-        public static final double kHoodPositionTolerance = 0.025;
+        public static final double kHoodPositionTolerance = 0.1;
 
         public static final SparkFlexConfig MAIN_SHOOTER_CONFIG = new SparkFlexConfig();
         static {
@@ -170,7 +170,7 @@ public final class Constants {
         static {
             HOOD_CONFIG.idleMode(IdleMode.kBrake);
             HOOD_CONFIG.inverted(false);
-            HOOD_CONFIG.closedLoop.outputRange(-0.5, 1.0); // Half speed when reversed
+            HOOD_CONFIG.closedLoop.outputRange(-0.3, 1.0); // Third speed when reversed
             HOOD_CONFIG.closedLoop.pid(kHoodP, kHoodI, kHoodD);
             HOOD_CONFIG.closedLoop.positionWrappingEnabled(false);
             HOOD_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
@@ -226,6 +226,13 @@ public final class Constants {
     public static final class FieldConstants {
         public static final Translation2d BLUE_HUB_LOC = new Translation2d(4.6525, 4.034);
         public static final Translation2d RED_HUB_LOC = new Translation2d(11.915, 4.034);
+
+        public static final Translation2d BLUE_LEFT_VOLLY_LOC = new Translation2d(3.386, 6.250);
+        public static final Translation2d BLUE_RIGHT_VOLLY_LOC = new Translation2d(3.386, 2.375);
+
+        public static final Translation2d RED_LEFT_VOLLY_LOC = new Translation2d(13.65, 6.250);
+        public static final Translation2d RED_RIGHT_VOLLY_LOC = new Translation2d(13.65, 2.375);
+
     }
 
 }

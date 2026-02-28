@@ -18,13 +18,13 @@ import frc.robot.Constants.CANConstants;
 
 import static frc.robot.Constants.IntakeConstants.*;
 
-public class IntakeSubsystem extends SubsystemBase {
+public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
   final SparkFlex intakeMotor;
   final SparkFlex basketMotor;
 
   final SparkClosedLoopController intakeController;
-  final RelativeEncoder intakEncoder;
+  final RelativeEncoder intakeEncoder;
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
@@ -36,7 +36,7 @@ public class IntakeSubsystem extends SubsystemBase {
     basketMotor.configure(kBasketMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     intakeController = intakeMotor.getClosedLoopController();
-    intakEncoder = intakeMotor.getEncoder();
+    intakeEncoder = intakeMotor.getEncoder();
   }
 
   /**
@@ -87,7 +87,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   /**
-   * Stops both the intake and conveyor
+   * Stops both the intake and basket motors
    */
   public void stopAll() {
     intakeMotor.stopMotor();
@@ -97,7 +97,13 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Intake V", intakEncoder.getVelocity());
+    SmartDashboard.putNumber("Intake V", intakeEncoder.getVelocity());
+  }
+
+  @Override
+  public void close() {
+    intakeMotor.close();
+    basketMotor.close();
   }
 
 }

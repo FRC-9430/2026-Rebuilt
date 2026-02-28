@@ -49,6 +49,14 @@ public class VisionSubsystem extends SubsystemBase {
         addVisionMeasurements();
     }
 
+    /**
+     * Process vision measurements and add them to the drivetrain with appropriate gating and 
+     * per-measurement standard deviations. This method implements several layers of outlier rejection 
+     * to avoid bad vision measurements from negatively impacting the pose estimator, including 
+     * checks on robot speed, measurement ambiguity, and distance to target. 
+     * It also includes logic to require several consecutive good measurements if the 
+     * detected tags are far away, as these measurements tend to be less reliable.
+     */
     public void addVisionMeasurements() {
         SwerveDriveState driveState = drivetrain.getState();
 
