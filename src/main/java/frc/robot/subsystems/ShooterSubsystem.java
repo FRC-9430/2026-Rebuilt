@@ -315,7 +315,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable{
         SmartDashboard.putNumber("Hood Pos", m_hoodEncoder.getPosition());
 
         // When the hood is stowed, turn the motor off
-        if (isHoodStowed() && m_hoodController.getSetpoint() == kHoodStowedPosition) {
+        if (isHoodStowed() && m_hoodController.getMAXMotionSetpointPosition() == kHoodStowedPosition) {
             m_hoodMotor.stopMotor();
         }
 
