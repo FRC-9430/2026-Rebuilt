@@ -18,7 +18,7 @@ public class ClimbingArmSubsystem extends SubsystemBase {
 
     /**
      * Constructs the climber with its motors
-     * 
+     *
      * @author Amaya Lewis
      */
     public ClimbingArmSubsystem() {
@@ -34,7 +34,7 @@ public class ClimbingArmSubsystem extends SubsystemBase {
 
     /**
      * Stops both climber motors simultaneously.
-     * 
+     *
      * @author Amaya Lewis
      */
     public void stopClimbers() {
@@ -44,17 +44,19 @@ public class ClimbingArmSubsystem extends SubsystemBase {
 
     /**
      * Sets the climbing motor speeds
-     * 
+     * Motors are inverted, so + goes one way and - goes the other
+     *
      * @author Amaya Lewis
+     * @param speed Non-controlled speed of motor (between -/+1.0)
      */
-    public void setClimberMotors(double leftSpeed, double rightSpeed) {
-        leftClimberMotor.set(leftSpeed);
-        rightClimberMotor.set(rightSpeed);
+    public void setClimberMotors(double speed) {
+        leftClimberMotor.set(speed);
+        rightClimberMotor.set(speed);
     }
 
     /**
      * Sets the left climber to specified speed
-     * 
+     *
      * @param speed
      */
     public void setLeft(double speed) {
@@ -70,7 +72,7 @@ public class ClimbingArmSubsystem extends SubsystemBase {
 
     /**
      * Sets the right climber to specified speed
-     * 
+     *
      * @param speed
      */
     public void setRight(double speed) {

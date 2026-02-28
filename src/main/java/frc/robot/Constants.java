@@ -233,7 +233,7 @@ public final class Constants {
     * Constants for the Climbing Arm Subsystem
     */
     public static final class ClimberArmConstants {
-        
+
         // TODO: Tune Values
         public static final double kLeftP = 0.001;
         public static final double kLeftI = 0;
@@ -241,7 +241,7 @@ public final class Constants {
         public static final double kLeftS = 0;
         public static final double kLeftV = 0;
         public static final double kLeftA = 0;
-        
+
         public static final double kRightP = 0.001;
         public static final double kRightI = 0;
         public static final double kRightD = 0;
@@ -258,10 +258,10 @@ public final class Constants {
             kLeftMotorConfig.closedLoop.pid(kLeftP, kLeftI, kLeftD);
             kLeftMotorConfig.closedLoop.feedForward.sva(kLeftS, kLeftV, kLeftA);
         }
-        
+
         public static final SparkFlexConfig kRightMotorConfig = new SparkFlexConfig();
         static {
-            kRightMotorConfig.inverted(false);
+            kRightMotorConfig.inverted(true);
             kRightMotorConfig.idleMode(IdleMode.kBrake);
             kRightMotorConfig.closedLoop.pid(kRightP, kRightI, kRightD);
             kRightMotorConfig.closedLoop.feedForward.sva(kRightS, kRightV, kRightA);
