@@ -28,6 +28,10 @@ public class PolarSubsystem extends SubsystemBase {
   }
 
   private Mode mode = Mode.HUB;
+    // Lead time in seconds used to adjust shot calculations while moving. Tweak as needed.
+    private double leadTimeSeconds = 0.35;
+    // Default angular tolerance (radians) to consider "facing the target"
+    private double facingToleranceRad = 0.06; // ~3.4 degrees
 
   /** Creates a new PolarSubsystem. */
   public PolarSubsystem(CommandSwerveDrivetrain drivetrain) {
@@ -57,16 +61,80 @@ public class PolarSubsystem extends SubsystemBase {
 
   public double getShootVelocity() {
     if (mode == Mode.VOLLEY) {
-      return 2000.0 + (1000 * (radiusToTarget / 7));
+      return 3000.0;
     }
-    return Math.floor(PolarUtils.getEstShootVelFrmR(radiusToTarget));
+    // Compensate for robot motion (lead) when computing required shoot velocity.
+    // Project robot linear velocity onto the radial direction to the target and
+    // adjust the effective distance accordingly.
+    var pose = driveTrain.getPose();
+    var robotTrans = pose.getTranslation();
+    double dx = target.getX() - robotTrans.getX();
+    double dy = target.getY() - robotTrans.getY();
+    double r = Math.hypot(dx, dy);
+
+    // Field-relative robot velocity
+    var speeds = driveTrain.getState().Speeds; // ChassisSpeeds
+    double vx = speeds.vxMetersPerSecond;
+    double vy = speeds.vyMetersPerSecond;
+
+    // Unit radial vector
+    double ux = (r > 1e-6) ? dx / r : 0.0;
+    double uy = (r > 1e-6) ? dy / r : 0.0;
+
+    // Robot velocity component toward the target (positive when moving toward target)
+    double vRadial = vx * ux + vy * uy;
+
+    // Adjust radius by the radial velocity times lead time (moving toward reduces required range)
+    double adjustedR = Math.max(0.0, r - vRadial * leadTimeSeconds);
+
+    return Math.floor(PolarUtils.getEstShootVelFrmR(adjustedR));
   }
 
   public double getHoodPosition() {
     if (mode == Mode.VOLLEY) {
-      return 0.85;
+      return 0.8;
     }
-    return Math.floor(1000.0 * PolarUtils.getEstHoodPosFrmR(radiusToTarget)) / 1000.0;
+
+    // Similar lead compensation as for shoot velocity
+    var pose = driveTrain.getPose();
+    var robotTrans = pose.getTranslation();
+    double dx = target.getX() - robotTrans.getX();
+    double dy = target.getY() - robotTrans.getY();
+    double r = Math.hypot(dx, dy);
+
+    var speeds = driveTrain.getState().Speeds;
+    double vx = speeds.vxMetersPerSecond;
+    double vy = speeds.vyMetersPerSecond;
+
+    double ux = (r > 1e-6) ? dx / r : 0.0;
+    double uy = (r > 1e-6) ? dy / r : 0.0;
+    double vRadial = vx * ux + vy * uy;
+    double adjustedR = Math.max(0.0, r - vRadial * leadTimeSeconds);
+
+    return Math.floor(1000.0 * PolarUtils.getEstHoodPosFrmR(adjustedR)) / 1000.0;
+  }
+
+  /**
+   * Returns true when the robot is facing the target (within default tolerance).
+   */
+  public boolean isFacingTarget() {
+    return isFacingTarget(facingToleranceRad);
+  }
+
+  /**
+   * Returns true when the robot is facing the target within the specified tolerance (radians).
+   */
+  public boolean isFacingTarget(double toleranceRad) {
+    var pose = driveTrain.getPose();
+    var robotTrans = pose.getTranslation();
+    double dx = target.getX() - robotTrans.getX();
+    double dy = target.getY() - robotTrans.getY();
+
+    double desiredAngle = Math.atan2(dy, dx);
+    double currentAngle = pose.getRotation().getRadians();
+    double angleError = Math.atan2(Math.sin(desiredAngle - currentAngle), Math.cos(desiredAngle - currentAngle));
+
+    return Math.abs(angleError) <= toleranceRad;
   }
 
   public void calculateRadius() {
