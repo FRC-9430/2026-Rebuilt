@@ -1,7 +1,9 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANConstants;
@@ -14,7 +16,11 @@ import static frc.robot.Constants.ClimberArmConstants.*;
 public class ClimbingArmSubsystem extends SubsystemBase {
 
     private final SparkFlex leftClimberMotor;
+    private final SparkClosedLoopController lClimbController;
+    private final RelativeEncoder lClimbEncoder;
     private final SparkFlex rightClimberMotor;
+    private final SparkClosedLoopController rClimbController;
+    private final RelativeEncoder rClimbEncoder;
 
     /**
      * Constructs the climber with its motors
@@ -29,6 +35,11 @@ public class ClimbingArmSubsystem extends SubsystemBase {
         // Configure Motors
         leftClimberMotor.configure(kLeftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         rightClimberMotor.configure(kRightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        lClimbController = leftClimberMotor.getClosedLoopController();
+        lClimbEncoder = leftClimberMotor.getEncoder();
+        rClimbController = rightClimberMotor.getClosedLoopController();
+        rClimbEncoder = rightClimberMotor.getEncoder();
 
     }
 
