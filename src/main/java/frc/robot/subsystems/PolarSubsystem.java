@@ -151,7 +151,8 @@ public class PolarSubsystem extends SubsystemBase {
       orbital = -orbitalIn;
       radial = -radialIn;
     }
-    return PolarUtils.getPolarDriveSpeeds(estPose, target, radial, orbital, MaxSpeed, MaxAngularRate);
+    return PolarUtils.getPolarDriveSpeeds(estPose, target, radial, orbital, MaxSpeed, MaxAngularRate,
+        leadTimeSeconds);
   }
 
   @Override
@@ -206,8 +207,8 @@ public class PolarSubsystem extends SubsystemBase {
 
   public class PolarUtils {
 
-    public static ChassisSpeeds getPolarDriveSpeeds(Pose2d estPose, Translation2d target, double radialIn,
-        double orbitalIn, double MaxSpeed, double MaxAngularRate) {
+  public static ChassisSpeeds getPolarDriveSpeeds(Pose2d estPose, Translation2d target, double radialIn,
+    double orbitalIn, double MaxSpeed, double MaxAngularRate, double leadSeconds) {
 
       Translation2d pose = estPose.getTranslation();
 
@@ -251,17 +252,31 @@ public class PolarSubsystem extends SubsystemBase {
       double vxField = vRadial * ux + vTangential * tx;
       double vyField = vRadial * uy + vTangential * ty;
 
-      // To keep the robot pointed at the target, compute heading error and use a
-      // P-controller to rotate the robot to face the target. This makes the
-      // robot's orientation converge to the angle toward the target regardless
-      // of tangential motion.
-      double desiredAngle = Math.atan2(dy, dx);
+      // Predict where the robot will be after `leadSeconds` using the commanded
+      // field-relative velocities (vxField, vyField). This lets us aim at the
+      // future robot position (lead) so shots are accurate while orbiting.
+      double predictedX = pose.getX() + vxField * leadSeconds;
+      double predictedY = pose.getY() + vyField * leadSeconds;
+
+      // To keep the robot pointed at the predicted position relative to the
+      // fixed target, compute the desired angle to the target from the
+      // predicted robot position.
+      double desiredAngle = Math.atan2(target.getY() - predictedY, target.getX() - predictedX);
       double currentAngle = estPose.getRotation().getRadians();
       // Normalize angle error to [-pi, pi]
       double angleError = Math.atan2(Math.sin(desiredAngle - currentAngle), Math.cos(desiredAngle - currentAngle));
 
-      // P = 15
-      double omega = 15 * angleError;
+      // Use a P-controller plus a small feedforward term derived from the
+      // commanded tangential speed to account for rotational rate while
+      // orbiting: phi_dot ≈ -vTangential / r. Tune kP and kFF as needed.
+      double kP = 4.0;
+      double kFF = 0.9;
+      double ff = 0.0;
+      if (Math.abs(r) > kEpsilon) {
+        ff = -vTangential / r * kFF;
+      }
+
+      double omega = kP * angleError + ff;
 
       // Clamp angular rate to configured maximum
       omega = Math.max(-MaxAngularRate, Math.min(MaxAngularRate, omega));
