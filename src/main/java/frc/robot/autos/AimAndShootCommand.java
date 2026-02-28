@@ -29,13 +29,13 @@ public class AimAndShootCommand extends SequentialCommandGroup {
           new ParallelCommandGroup(
               new AimCommand(drive, polar).withTimeout(4.0),
               new BumpBasketCommand(intake, 8).withTimeout(4.0),
-              new ShootCommand(shoot, polar).withTimeout(4.0)));
+              new ShootCommand(shoot, polar, intake).withTimeout(4.0)));
     } else {
       addCommands( // Teleop - Go Until Cancelled
           new ParallelCommandGroup(
               new AimCommand(drive, polar),
               new BumpBasketCommand(intake, 8),
-              new ShootCommand(shoot, polar)));
+              new ShootCommand(shoot, polar, intake)));
     }
   }
 

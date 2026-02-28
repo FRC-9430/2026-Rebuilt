@@ -44,7 +44,7 @@ public class AimCommand extends Command {
   public void execute() {
     drive.driveRobotRelative(polar.getPolarDriveSpeeds(drive.getState().Pose,
         0, 0,
-        MaxSpeed, MaxAngularRate));
+        MaxSpeed, MaxAngularRate, false));
   }
 
   // Called once the command ends or is interrupted.
