@@ -133,13 +133,13 @@ public class RobotContainer {
 
         // Climber
         controller.povUp().whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            climber.setClimberMotors(1.0, 1.0);
+            climber.setClimberMotors(1.0);
         }))).onFalse(new InstantCommand(() -> {
             climber.stopClimbers();
         }));
 
         controller.povDown().whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            climber.setClimberMotors(-1.0, -1.0);
+            climber.setClimberMotors(-1.0);
         }))).onFalse(new InstantCommand(() -> {
             climber.stopClimbers();
         }));
