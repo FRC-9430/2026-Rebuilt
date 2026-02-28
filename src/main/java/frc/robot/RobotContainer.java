@@ -137,7 +137,7 @@ public class RobotContainer {
         }));
 
         // Bump the Basket
-        controller.y().onTrue(new BumpBasketCommand(intake, 1));
+        controller.y().onTrue(new BumpBasketCommand(intake, 3));
 
         // Eject Basket
         controller.back().onTrue(new EjectBasketCommand(intake));
