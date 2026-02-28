@@ -125,12 +125,13 @@ public class RobotContainer {
                 .onFalse(new InstantCommand(() -> shootCommand.cancel()));
 
         // Intake
-        // controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-        //     intake.setIntake();
-        // }))).onFalse(new InstantCommand(() -> {
-        //     intake.stopAll();
-        // }));
+        controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
+            intake.setIntake();
+        }))).onFalse(new InstantCommand(() -> {
+            intake.stopAll();
+        }));
 
+        // Climber
         controller.leftTrigger(0.5).whileTrue(new RepeatCommand(new InstantCommand(() -> {
             climber.setLeft(controller.getLeftTriggerAxis() * (controller.getHID().getXButton()? -1.0 : 1.0));
         }))).onFalse(new InstantCommand(() -> {
