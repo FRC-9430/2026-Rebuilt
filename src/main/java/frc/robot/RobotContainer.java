@@ -53,7 +53,7 @@ public class RobotContainer {
     public DriveMode driveMode = DriveMode.CARTESIAN;
 
     public AimAndShootCommand aimAndShootCommand = new AimAndShootCommand(drivetrain, shooter, intake, polar);
-    public ShootCommand shootCommand = new ShootCommand(shooter, polar);
+    public ShootCommand shootCommand = new ShootCommand(shooter, polar, intake);
 
     /**
      * Construct and configure the robot: set up the drivetrain, dashboard,
@@ -79,8 +79,12 @@ public class RobotContainer {
                                 .withVelocityY(-controller.getLeftX() * MaxSpeed)
                                 .withRotationalRate(-controller.getRightX() * MaxAngularRate),
                         () -> aim.withSpeeds(polar.getPolarDriveSpeeds(drivetrain.getState().Pose,
-                                controller.getLeftY(), controller.getLeftX(),
-                                MaxSpeed, MaxAngularRate)),
+                                (Math.abs(controller.getLeftY()) > 0.06? controller.getLeftY() : 0.0) // Clamp Input
+                                / (shootCommand.isScheduled()? 5.0 : 1.0), // Slow When Shooting
+                                (Math.abs(controller.getLeftX()) > 0.06? controller.getLeftX() : 0.0)
+                                / (shootCommand.isScheduled()? 5.0 : 1.0), 
+                                MaxSpeed, MaxAngularRate,
+                                (shootCommand.isScheduled()))),// Lead only when shooting
                         () -> isCartesian()));
 
         // Idle while the robot is disabled. This ensures the configured
@@ -132,6 +136,13 @@ public class RobotContainer {
         // Force Stow Hood
         controller.a().onTrue(new InstantCommand(() -> {
             shooter.stowHood();
+        })).onFalse(new InstantCommand(() -> {
+            shooter.stopHood();
+        }));
+
+        // Force Stow Hood
+        controller.b().onTrue(new InstantCommand(() -> {
+            shooter.setHoodPosition(0.55);
         })).onFalse(new InstantCommand(() -> {
             shooter.stopHood();
         }));

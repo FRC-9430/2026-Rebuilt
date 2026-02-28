@@ -70,6 +70,13 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   public void stopIntake() {
     intakeMotor.stopMotor();
   }
+  
+  /**
+   * Gets the intake RPM
+   */
+  public double getIntakeV() {
+    return intakeEncoder.getVelocity();
+  }
 
   /**
    * Runs the basket at a specified speed

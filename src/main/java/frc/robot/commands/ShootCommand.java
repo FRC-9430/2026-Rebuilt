@@ -4,7 +4,9 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PolarSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
@@ -13,6 +15,8 @@ public class ShootCommand extends Command {
 
   final ShooterSubsystem shoot;
   final PolarSubsystem polar;
+  final IntakeSubsystem intake;
+  double bumpTimer = 0.0;
 
   /**
    * Creates a new ShootCommand.
@@ -20,16 +24,19 @@ public class ShootCommand extends Command {
    * calculations. If the shooter is up to speed and the hood is in position, runs
    * the feeder and conveyor to shoot.
    */
-  public ShootCommand(ShooterSubsystem shoot, PolarSubsystem polar) {
+  public ShootCommand(ShooterSubsystem shoot, PolarSubsystem polar, IntakeSubsystem intake) {
     addRequirements(shoot);
     this.shoot = shoot;
     this.polar = polar;
+    this.intake = intake;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     System.out.println("Shoot Command Init");
+    intake.setBasket(0.08);
+    bumpTimer = Timer.getFPGATimestamp();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -41,6 +48,19 @@ public class ShootCommand extends Command {
       shoot.startFeeder();
       shoot.startConveyorDefault();
     }
+
+    if (intake.getIntakeV() < 1000)
+      intake.setIntakeRPM(1000);
+
+    double cur = Timer.getFPGATimestamp();
+    if (cur - bumpTimer < 0.25) {
+      intake.setBasket(0.12);
+    } else if (cur - bumpTimer < 0.5) {
+      intake.setBasket(-0.12);
+    } else {
+      bumpTimer = Timer.getFPGATimestamp();
+    }
+
   }
 
   // Called once the command ends or is interrupted.
@@ -50,7 +70,9 @@ public class ShootCommand extends Command {
     shoot.stopConveyor();
     shoot.stopFeeder();
     shoot.stopShooter();
-    
+    intake.stopBasket();
+    intake.stopIntake();
+
   }
 
   // Returns true when the command should end.
