@@ -45,7 +45,7 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable{
     private static final double kMaxLinearSpeedReject = 1.0; // m/s (use drivetrain-reported speed)
     private static final double kMaxOutlierDistWhenStopped = 1.0; // meters
     public static final double kMaxAmbiguity = 0.5;
-    public static final double kMaxSingleTagDist = 3.0; // meters (Tier 4)
+    public static final double kMaxSingleTagDist = 4.0; // meters (Tier 4)
     private static final double kMinDistForOutlierReject = 1.0; // meters
     private static final int kLimelightIMUMode = 1;
 
@@ -165,11 +165,11 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable{
 
         if (est.tagCount == 1 && est.rawFiducials.length == 1) {
             var f = est.rawFiducials[0];
-            if (f.ambiguity > 0.5 || f.distToCamera > 4.0)
+            if (f.ambiguity > kMaxAmbiguity || f.distToCamera > kMaxSingleTagDist)
                 return true;
         }
 
-        if (driveState.Speeds.omegaRadiansPerSecond > kMaxAngularRateReject)
+        if (Math.abs(driveState.Speeds.omegaRadiansPerSecond) > kMaxAngularRateReject)
             return true;
 
         if (linearSpeed > kMaxLinearSpeedReject)
@@ -190,7 +190,7 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable{
 
         return linearSpeed < kMaxLinearSpeedReject
                 && distanceToOdo > kMaxOutlierDistWhenStopped
-                && est.avgTagDist > 1.0;
+                && est.avgTagDist > kMinDistForOutlierReject;
     }
 
     private double getAverageAmbiguity(LimelightHelpers.PoseEstimate est) {
@@ -208,21 +208,21 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable{
             LimelightHelpers.PoseEstimate est,
             double avgAmbiguity) {
 
-        double sigma = 0.06
-                + 0.08 * Math.max(0.0, est.avgTagDist)
-                + 0.4 * avgAmbiguity;
+        double sigma = kSigmaBase
+                + kSigmaDistFactor * Math.max(0.0, est.avgTagDist)
+                + kSigmaAmbigFactor * avgAmbiguity;
 
-        sigma = MathUtil.clamp(sigma, 0.03, 2.0);
+        sigma = MathUtil.clamp(sigma, kMinSigmaXY, kMaxSigmaXY);
 
         if (est.avgTagDist >= kFarTagDistance)
-            sigma = Math.max(sigma, 1.0);
+            sigma = Math.max(sigma, kFarTagSigmaFloor);
 
         return sigma;
     }
 
     private double computeSigmaTheta(double avgAmbiguity) {
-        double sigma = 0.5 * (0.5 + avgAmbiguity);
-        return MathUtil.clamp(sigma, 0.05, Math.PI);
+        double sigma = kSigmaThetaBase + kSigmaThetaAmbigFactor * avgAmbiguity;
+        return MathUtil.clamp(sigma, kMinSigmaTheta, kMaxSigmaTheta);
     }
 
     private boolean allowFarTagApplication(LimelightHelpers.PoseEstimate est) {
