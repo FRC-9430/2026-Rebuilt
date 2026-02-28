@@ -9,30 +9,69 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.util.LimelightHelpers.RawFiducial;
 
-public class VisionSubsystem extends SubsystemBase {
+public class VisionSubsystem extends SubsystemBase implements AutoCloseable{
 
     public final CommandSwerveDrivetrain drivetrain;
 
     public VisionSubsystem(CommandSwerveDrivetrain drive) {
         drivetrain = drive;
 
-        drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+        drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(
+            kDefaultSigmaX,
+            kDefaultSigmaY,
+            kDefaultSigmaTheta
+        ));
 
-        LimelightHelpers.SetIMUMode("limelight", 1);
+        // Mode 1: IMU data is used for MegaTag2 orientation
+        LimelightHelpers.SetIMUMode("limelight", kLimelightIMUMode);
     }
 
-    // State for smoothing / gating
+    // state management
     private double m_lastVisionTimestamp = 0.0;
-    // minimum time between processing vision updates (seconds)
-    private static final double kMinVisionInterval = 0.08;
-    // thresholds
+
+    // Tiered Trust Model Constants
+    /** TODO 20260225.1838 bbontrager, where do constants go? why don't they go there?
+     * Vision Input Trust Factors
+     * Tier 1 "High"        : Multi-tag or close single-tag (< 3m).
+     * Tier 2 "OK"          : Multi-tag at medium range (3m - 4m).
+     * Tier 3 "Dubious"     : Multi-tag at long range (> 4m) — requires 3
+     *                        consecutive frames and high sigmas.
+     * Tier 4 "Rejected"    : Single tag > 3m.
+     */
+
+    // Rejection Thresholds (Gating)
+    private static final double kMinVisionInterval = 0.08; // seconds
     private static final double kMaxAngularRateReject = 1.5; // rad/s (existing)
     private static final double kMaxLinearSpeedReject = 1.0; // m/s (use drivetrain-reported speed)
     private static final double kMaxOutlierDistWhenStopped = 1.0; // meters
-    // Handling for distant tags
+    public static final double kMaxAmbiguity = 0.5;
+    public static final double kMaxSingleTagDist = 3.0; // meters (Tier 4)
+    private static final double kMinDistForOutlierReject = 1.0; // meters
+    private static final int kLimelightIMUMode = 1;
+
+    // Base sigmas
+    public static final double kSigmaBase = 0.06; // meters
+    public static final double kSigmaDistFactor = 0.08; // additional meters per meter of distance
+    public static final double kSigmaAmbigFactor = 0.4; // additional meters per unit ambiguity
+
+    // Sigma clamping bounds
+    public static final double kMinSigmaXY = 0.03; // meters (prevents overconfidence)
+    public static final double kMaxSigmaXY = 2.0;  // meters (prevents mathematical instability)
+
+    // Sigma constants (radians)
+    public static final double kSigmaThetaBase = 0.25; // radians (0.5 * 0.5)
+    public static final double kSigmaThetaAmbigFactor = 0.5; // radians per unit ambiguity
+    public static final double kMinSigmaTheta = 0.05; // radians (~2.8 degrees)
+    public static final double kMaxSigmaTheta = Math.PI; // radians (180 degrees)
+    public static final double kDefaultSigmaX = 0.7;
+    public static final double kDefaultSigmaY = 0.7;
+    public static final double kDefaultSigmaTheta = 9999999; // never trust vision for rotation by default
+
+    // Temporal Filtering (Tier 3 Logic)
     private static final double kFarTagDistance = 4.0; // meters
     private static final int kFarTagRequiredConsecutive = 3;
     private static final double kFarTagConsecutiveWindow = 0.6; // seconds
+    public static final double kFarTagSigmaFloor = 1.0; // meters
     private int m_farTagConsecutiveCount = 0;
     private double m_firstFarTagTime = 0.0;
 
@@ -59,10 +98,6 @@ public class VisionSubsystem extends SubsystemBase {
      */
     public void addVisionMeasurements() {
         SwerveDriveState driveState = drivetrain.getState();
-
-        // compute approximate linear speed from drivetrain reported speeds (more
-        // stable)
-        double linearSpeed = Math.hypot(driveState.Speeds.vxMetersPerSecond, driveState.Speeds.vyMetersPerSecond);
         Pose2d currentOdometryPose = drivetrain.getPose();
 
         LimelightHelpers.SetRobotOrientation(
@@ -72,6 +107,14 @@ public class VisionSubsystem extends SubsystemBase {
 
         LimelightHelpers.PoseEstimate poseEstimateMT1 = getPoseEstimateMT1();
 
+        addVisionMeasurements(poseEstimateMT1, driveState, currentOdometryPose);
+    }
+
+    public void addVisionMeasurements(LimelightHelpers.PoseEstimate poseEstimateMT1, SwerveDriveState driveState, Pose2d currentOdometryPose) {
+        // compute approximate linear speed from drivetrain reported speeds (more
+        // stable)
+        double linearSpeed = Math.hypot(driveState.Speeds.vxMetersPerSecond, driveState.Speeds.vyMetersPerSecond);
+
         SmartDashboard.putNumber("Robot Pose Cam Est X", poseEstimateMT1.pose.getX());
         SmartDashboard.putNumber("Robot Pose Cam Est Y", poseEstimateMT1.pose.getY());
         SmartDashboard.putNumber("Vision/avgTagDist", poseEstimateMT1.avgTagDist);
@@ -79,10 +122,10 @@ public class VisionSubsystem extends SubsystemBase {
 
         boolean doRejectUpdate = false;
         if (poseEstimateMT1.tagCount == 1 && poseEstimateMT1.rawFiducials.length == 1) {
-            if (poseEstimateMT1.rawFiducials[0].ambiguity > .5) {
+            if (poseEstimateMT1.rawFiducials[0].ambiguity > kMaxAmbiguity) {
                 doRejectUpdate = true;
             }
-            if (poseEstimateMT1.rawFiducials[0].distToCamera > 3) {
+            if (poseEstimateMT1.rawFiducials[0].distToCamera > kMaxSingleTagDist) {
                 doRejectUpdate = true;
             }
         }
@@ -116,7 +159,7 @@ public class VisionSubsystem extends SubsystemBase {
             SmartDashboard.putNumber("Vision/distanceToOdometry", distanceToOdometry);
 
             if (linearSpeed < kMaxLinearSpeedReject && distanceToOdometry > kMaxOutlierDistWhenStopped
-                    && poseEstimateMT1.avgTagDist > 1.0) {
+                    && poseEstimateMT1.avgTagDist > kMinDistForOutlierReject) {
                 // large jump while stopped -> likely bad measurement
                 doRejectUpdate = true;
             }
@@ -132,24 +175,19 @@ public class VisionSubsystem extends SubsystemBase {
                 avgAmbiguity /= poseEstimateMT1.rawFiducials.length;
             }
 
-            // Base sigmas - tune these values as needed
-            double sigmaBase = 0.06; // meters
-            double sigmaDistFactor = 0.08; // additional meters per meter of distance
-            double sigmaAmbigFactor = 0.4; // additional meters per unit ambiguity
-
-            double sigmaXY = sigmaBase + sigmaDistFactor * Math.max(0.0, poseEstimateMT1.avgTagDist)
-                    + sigmaAmbigFactor * avgAmbiguity;
-            sigmaXY = Math.min(Math.max(sigmaXY, 0.03), 2.0);
+            double sigmaXY = kSigmaBase + kSigmaDistFactor * Math.max(0.0, poseEstimateMT1.avgTagDist)
+                    + kSigmaAmbigFactor * avgAmbiguity;
+            sigmaXY = Math.min(Math.max(sigmaXY, kMinSigmaXY), kMaxSigmaXY);
 
             // If tags are far away, increase covariance and require consecutive good frames
             boolean isFar = poseEstimateMT1.avgTagDist >= kFarTagDistance;
             if (isFar) {
                 // increase sigma to downweight far-away vision measurements
-                sigmaXY = Math.max(sigmaXY, 1.0);
+                sigmaXY = Math.max(sigmaXY, kFarTagSigmaFloor);
             }
 
-            double sigmaTheta = 0.5 * (0.5 + avgAmbiguity); // radians
-            sigmaTheta = Math.min(Math.max(sigmaTheta, 0.05), 3.14);
+            double sigmaTheta = kSigmaThetaBase + (kSigmaThetaAmbigFactor * avgAmbiguity);
+            sigmaTheta = Math.min(Math.max(sigmaTheta, kMinSigmaTheta), kMaxSigmaTheta);
 
             SmartDashboard.putNumber("Vision/sigmaXY", sigmaXY);
             SmartDashboard.putNumber("Vision/sigmaTheta", sigmaTheta);
@@ -192,6 +230,10 @@ public class VisionSubsystem extends SubsystemBase {
             }
         }
 
+    }
+
+    public void close() {
+        drivetrain.close();
     }
 
 }
