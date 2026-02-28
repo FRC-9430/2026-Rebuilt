@@ -132,16 +132,16 @@ public class RobotContainer {
         }));
 
         // Climber
-        controller.leftTrigger(0.5).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            climber.setLeft(controller.getLeftTriggerAxis() * (controller.getHID().getXButton()? -1.0 : 1.0));
+        controller.povUp().whileTrue(new RepeatCommand(new InstantCommand(() -> {
+            climber.setClimberMotors(1.0, 1.0);
         }))).onFalse(new InstantCommand(() -> {
-            climber.stopLeft();
+            climber.stopClimbers();
         }));
 
-        controller.rightTrigger(0.5).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            climber.setRight(controller.getRightTriggerAxis() * (controller.getHID().getXButton()? -1.0 : 1.0));
+        controller.povDown().whileTrue(new RepeatCommand(new InstantCommand(() -> {
+            climber.setClimberMotors(-1.0, -1.0);
         }))).onFalse(new InstantCommand(() -> {
-            climber.stopRight();
+            climber.stopClimbers();
         }));
 
         // Force Stow Hood
