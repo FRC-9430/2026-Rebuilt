@@ -28,24 +28,12 @@ public class PolarSubsystem extends SubsystemBase {
   }
 
   private Mode mode = Mode.HUB;
-  // Lead time in seconds used to adjust shot calculations while moving. Tweak as
-  // needed.
-  private double leadTimeSeconds = 0.7;
-  // Default angular tolerance (radians) to consider "facing the target"
+  /** Lead time in seconds used to adjust shot calculations while moving. */
+  private double orbitalLeadTimeSeconds = 0.8;
+  /** Default angular tolerance (radians) to consider "facing the target" */
   private double facingToleranceRad = 0.06; // ~3.4 degrees
-  // Estimated conversion from shooter RPM -> projectile speed (m/s). Measure and
-  // tune.
-  // Default ~= 0.005 m/s per RPM (3000 RPM -> 8.4 m/s).
-  private double rpmToMps = 0.0028;
-  // System latency to add to flight-time when predicting (seconds)
-  private double shooterSystemLatency = 0.05;
-  // Cap for computed lead seconds to avoid extreme predictions
-  private double maxComputedLeadSeconds = 2.0;
-  // Smoothing for hood setpoint to avoid frequent small changes that can stall
-  // the motor
-  private double hoodSmoothingAlpha = 0.25;
-  private double hoodChangeDeadband = 0.002; // meters of hood position
-  private Double lastHoodSetpoint = null;
+  /** Estimated conversion from shooter RPM -> projectile speed (m/s). */
+  private double rpmToMps = 0.0008;
 
   /** Creates a new PolarSubsystem. */
   public PolarSubsystem(CommandSwerveDrivetrain drivetrain) {
@@ -65,56 +53,98 @@ public class PolarSubsystem extends SubsystemBase {
 
   }
 
+  /**
+   * Sets the robots polar target
+   * @param newTarget Translation2d of new target
+   */
   public void setTarget(Translation2d newTarget) {
     target = newTarget;
   }
 
+  /**
+   * Returns when the robot is moving < 0.1 Rad/s
+   * @return slow rotation
+   */
   public boolean Angled() {
     return Math.abs(driveTrain.getState().Speeds.omegaRadiansPerSecond) < 0.1;
   }
 
+  /**
+   * Calculates and returns the target Shooter Velocity in RPM.
+   * When in Volley mode always returns 3000 RPM.
+   * Else if the robot is stationary returns the RPM from the derived equation.
+   * Else if moving radially to target calculate RPM using an estimated shot lead.
+   * 
+   * @return Target Shooter RPM
+   */
   public double getShootVelocity() {
-    if (mode == Mode.VOLLEY) {
+    if (mode == Mode.VOLLEY)
       return 3000.0;
-    }
-    // Compensate for robot motion (lead) when computing required shoot velocity.
-    // Project robot linear velocity onto the radial direction to the target and
-    // adjust the effective distance accordingly.
-    var pose = driveTrain.getPose();
-    var robotTrans = pose.getTranslation();
-    double dx = target.getX() - robotTrans.getX();
-    double dy = target.getY() - robotTrans.getY();
-    double r = Math.hypot(dx, dy);
 
-    // Field-relative robot velocity
-    var speeds = driveTrain.getState().Speeds; // ChassisSpeeds
-    double vx = speeds.vxMetersPerSecond;
-    double vy = speeds.vyMetersPerSecond;
+    double vRadial = getRadialV();
+    double r = getRadius();
 
-    // Unit radial vector
-    double ux = (r > 1e-6) ? dx / r : 0.0;
-    double uy = (r > 1e-6) ? dy / r : 0.0;
-
-    // Robot velocity component toward the target (positive when moving toward
-    // target)
-    double vRadial = vx * ux + vy * uy;
+    // Ignore small velocities
+    if (Math.abs(vRadial) < 0.05)
+      return Math.floor(PolarUtils.getEstShootVelFrmR(r));
 
     // Compute a dynamic lead time based on estimated projectile speed (from RPM).
     double estRPM = PolarUtils.getEstShootVelFrmR(r);
     double projectileSpeed = Math.max(0.1, estRPM * rpmToMps); // m/s
     double flightTime = r / projectileSpeed;
-    double computedLead = Math.min(maxComputedLeadSeconds, flightTime + shooterSystemLatency);
 
-    double adjustedR = Math.max(0.0, r - vRadial * computedLead);
+    double adjustedR = Math.max(0.0, r + vRadial * flightTime);
     return Math.floor(PolarUtils.getEstShootVelFrmR(adjustedR));
   }
 
+  /**
+   * Calculates and returns the target Hood position.
+   * When in Volley mode always returns 0.8.
+   * Else if the robot is stationary returns the position from the derived
+   * equation.
+   * Else if moving radially to target calculate position using an estimated shot
+   * lead.
+   * 
+   * @return Target Hood Position
+   */
   public double getHoodPosition() {
-    if (mode == Mode.VOLLEY) {
+    if (mode == Mode.VOLLEY)
       return 0.8;
-    }
 
-    // Similar lead compensation as for shoot velocity
+    double vRadial = getRadialV();
+    double r = getRadius();
+
+    // Ignore small velocities
+    if (Math.abs(vRadial) < 0.05)
+      return Math.floor(1000.0 * PolarUtils.getEstHoodPosFrmR(r)) / 1000.0;
+
+    // Compute same dynamic lead for shoot direction
+    double estRPM = PolarUtils.getEstShootVelFrmR(r);
+    double projectileSpeed = Math.max(0.1, estRPM * rpmToMps); // m/s
+    double flightTime = r / projectileSpeed;
+    double adjustedR = Math.max(0.0, r + vRadial * flightTime);
+
+    return Math.floor(1000.0 * PolarUtils.getEstHoodPosFrmR(adjustedR)) / 1000.0;
+  }
+
+  /**
+   * Returns the radius to target
+   * 
+   * @return radius
+   */
+  public double getRadius() {
+    double r = driveTrain.getPose().getTranslation().getDistance(target);
+    SmartDashboard.putNumber("Polar/Distance From Target", r);
+    return r;
+  }
+
+  /**
+   * Calculates and return the radial velocity of the robot around the target hub.
+   * Positive when moving away from target.
+   * 
+   * @return Radial Velocity
+   */
+  public double getRadialV() {
     var pose = driveTrain.getPose();
     var robotTrans = pose.getTranslation();
     double dx = target.getX() - robotTrans.getX();
@@ -128,28 +158,10 @@ public class PolarSubsystem extends SubsystemBase {
     double ux = (r > 1e-6) ? dx / r : 0.0;
     double uy = (r > 1e-6) ? dy / r : 0.0;
     double vRadial = vx * ux + vy * uy;
-    // Compute same dynamic lead as for shoot velocity
-    double estRPM = PolarUtils.getEstShootVelFrmR(r);
-    double projectileSpeed = Math.max(0.1, estRPM * rpmToMps); // m/s
-    double flightTime = r / projectileSpeed;
-    double computedLead = Math.min(maxComputedLeadSeconds, flightTime +
-    shooterSystemLatency);
-    double adjustedR = Math.max(0.0, r - vRadial * computedLead);
 
-    double rawHood = Math.floor(1000.0 * PolarUtils.getEstHoodPosFrmR(adjustedR))
-    / 1000.0;
-    // Smooth hood setpoint to avoid frequent small changes
-    if (lastHoodSetpoint == null) {
-    lastHoodSetpoint = rawHood;
-    return rawHood;
-    }
-    if (Math.abs(rawHood - lastHoodSetpoint) < hoodChangeDeadband) {
-    return lastHoodSetpoint;
-    }
-    double smoothed = hoodSmoothingAlpha * rawHood + (1 - hoodSmoothingAlpha) *
-    lastHoodSetpoint;
-    lastHoodSetpoint = smoothed;
-    return PolarUtils.getEstHoodPosFrmR(radiusToTarget);
+    SmartDashboard.putNumber("Polar/vRadial", vRadial);
+
+    return vRadial;
   }
 
   /**
@@ -176,12 +188,6 @@ public class PolarSubsystem extends SubsystemBase {
     return Math.abs(angleError) <= toleranceRad;
   }
 
-  public void calculateRadius() {
-    radiusToTarget = driveTrain.getPose().getTranslation().getDistance(target);
-
-    SmartDashboard.putNumber("Dist From Hub", radiusToTarget);
-  }
-
   public ChassisSpeeds getPolarDriveSpeeds(Pose2d estPose, double radialIn, double orbitalIn, double MaxSpeed,
       double MaxAngularRate, boolean doLeadShot) {
     double orbital = orbitalIn;
@@ -191,13 +197,13 @@ public class PolarSubsystem extends SubsystemBase {
       radial = -radialIn;
     }
     return PolarUtils.getPolarDriveSpeeds(estPose, target, radial, orbital, MaxSpeed, MaxAngularRate,
-        doLeadShot? leadTimeSeconds : 0.0);
+        doLeadShot ? orbitalLeadTimeSeconds : 0.0);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    calculateRadius();
+
     // Update target based on whether the robot is "in-field" (between the hubs)
     var pose = driveTrain.getPose();
     var transl = pose.getTranslation();
@@ -230,7 +236,7 @@ public class PolarSubsystem extends SubsystemBase {
         }
       } else {
         // For red alliance choose the volley side according to the requested mapping
-        if (y > 4.0) {
+        if (y < 4.0) {
           target = RED_RIGHT_VOLLY_LOC;
           mode = Mode.VOLLEY;
           SmartDashboard.putString("Polar/Target", "RED_RIGHT_VOLLEY");
