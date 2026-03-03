@@ -28,8 +28,6 @@ public class PolarSubsystem extends SubsystemBase {
   }
 
   private Mode mode = Mode.HUB;
-  /** Lead time in seconds used to adjust shot calculations while moving. */
-  private double orbitalLeadTimeSeconds = 0.8;
   /** Default angular tolerance (radians) to consider "facing the target" */
   private double facingToleranceRad = 0.06; // ~3.4 degrees
   /** Estimated conversion from shooter RPM -> projectile speed (m/s). */
@@ -55,6 +53,7 @@ public class PolarSubsystem extends SubsystemBase {
 
   /**
    * Sets the robots polar target
+   * 
    * @param newTarget Translation2d of new target
    */
   public void setTarget(Translation2d newTarget) {
@@ -63,6 +62,7 @@ public class PolarSubsystem extends SubsystemBase {
 
   /**
    * Returns when the robot is moving < 0.1 Rad/s
+   * 
    * @return slow rotation
    */
   public boolean Angled() {
@@ -165,6 +165,19 @@ public class PolarSubsystem extends SubsystemBase {
   }
 
   /**
+   * Calculates and return the orbital velocity of the robot around the target hub.
+   * 
+   * @return Orbital Velocity
+   */
+  public double getOrbitalV() {
+    double oRadial = 0.0;
+
+    SmartDashboard.putNumber("Polar/oRadial", oRadial);
+
+    return oRadial;
+  }
+
+  /**
    * Returns true when the robot is facing the target (within default tolerance).
    */
   public boolean isFacingTarget() {
@@ -196,8 +209,13 @@ public class PolarSubsystem extends SubsystemBase {
       orbital = -orbitalIn;
       radial = -radialIn;
     }
+
+    double estRPM = PolarUtils.getEstShootVelFrmR(getRadius());
+    double projectileSpeed = Math.max(0.1, estRPM * rpmToMps); // m/s
+    double flightTime = getRadius() / projectileSpeed;
+
     return PolarUtils.getPolarDriveSpeeds(estPose, target, radial, orbital, MaxSpeed, MaxAngularRate,
-        doLeadShot ? orbitalLeadTimeSeconds : 0.0);
+        doLeadShot ? getRadialV() * flightTime : 0.0);
   }
 
   @Override
@@ -341,7 +359,7 @@ public class PolarSubsystem extends SubsystemBase {
     public static double getEstShootVelFrmR(double r) {
       double rpm = 20.00902 * Math.pow(r, 2)
           + -2.92682 * r
-          + 2575.2891;
+          + 2625;
       SmartDashboard.putNumber("Calc Shoot V", rpm);
       return rpm;
     }
