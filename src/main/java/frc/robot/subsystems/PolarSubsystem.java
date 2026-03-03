@@ -165,7 +165,8 @@ public class PolarSubsystem extends SubsystemBase {
   }
 
   /**
-   * Calculates and return the orbital velocity of the robot around the target hub.
+   * Calculates and return the orbital velocity of the robot around the target
+   * hub.
    * 
    * @return Orbital Velocity
    */
@@ -230,7 +231,7 @@ public class PolarSubsystem extends SubsystemBase {
     double flightTime = getRadius() / projectileSpeed;
 
     return PolarUtils.getPolarDriveSpeeds(estPose, target, radial, orbital, MaxSpeed, MaxAngularRate,
-        doLeadShot ? getOrbitalV() * flightTime : 0.0);
+        doLeadShot ? getOrbitalV() * flightTime * (orbitalIn < 0.0 ? -1.0 : 1.0) : 0.0);
   }
 
   @Override
