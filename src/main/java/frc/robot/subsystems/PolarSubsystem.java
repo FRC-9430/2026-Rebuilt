@@ -170,11 +170,26 @@ public class PolarSubsystem extends SubsystemBase {
    * @return Orbital Velocity
    */
   public double getOrbitalV() {
-    double oRadial = 0.0;
+    var pose = driveTrain.getPose();
+    var robotTrans = pose.getTranslation();
+    double dx = target.getX() - robotTrans.getX();
+    double dy = target.getY() - robotTrans.getY();
+    double r = Math.hypot(dx, dy);
 
-    SmartDashboard.putNumber("Polar/oRadial", oRadial);
+    var speeds = driveTrain.getState().Speeds;
+    double vx = speeds.vxMetersPerSecond;
+    double vy = speeds.vyMetersPerSecond;
 
-    return oRadial;
+    double ux = (r > 1e-6) ? dx / r : 0.0;
+    double uy = (r > 1e-6) ? dy / r : 0.0;
+    double tx = -uy;
+    double ty = ux;
+
+    double vOrbital = vx * tx + vy * ty;
+
+    SmartDashboard.putNumber("Polar/vOrbital", vOrbital);
+
+    return vOrbital;
   }
 
   /**
@@ -215,7 +230,7 @@ public class PolarSubsystem extends SubsystemBase {
     double flightTime = getRadius() / projectileSpeed;
 
     return PolarUtils.getPolarDriveSpeeds(estPose, target, radial, orbital, MaxSpeed, MaxAngularRate,
-        doLeadShot ? getRadialV() * flightTime : 0.0);
+        doLeadShot ? getOrbitalV() * flightTime : 0.0);
   }
 
   @Override
