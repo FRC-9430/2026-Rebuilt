@@ -101,7 +101,7 @@ public class RobotContainer {
         // controller.start().and(controller.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading
-        controller.back().onTrue(new InstantCommand(() -> {
+        controller.rightBumper().onTrue(new InstantCommand(() -> {
             var seenPose = vision.getPoseEstimateMT1().pose;
             if (!seenPose.equals(new Pose2d())) {
                 drivetrain.resetPose(vision.getPoseEstimateMT1().pose);
