@@ -22,7 +22,7 @@ import static frc.robot.Constants.ShooterConstants.*;
  * speeds, and the hood position. It also exposes status checks used by
  * higher-level commands.
  */
-public class ShooterSubsystem extends SubsystemBase implements AutoCloseable{
+public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
 
     private final SparkFlex m_RightShooterMotor;
     private final SparkFlex m_LeftTopShoooterMotor;
@@ -217,7 +217,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable{
      * Overloaded method to allow testing with explicit values.
      *
      * @param currentPosition the current position to check against
-     * @param targetPosition target position to check
+     * @param targetPosition  target position to check
      * @return true if hood is at the given position
      */
     public boolean isHoodAtPosition(double currentPosition, double targetPosition) {
@@ -259,7 +259,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable{
      * Get primary shooter motor with main shooter configurations.
      *
      * @author Brady Bontrager, bbontrager
-     *  * @return SparkFlex Returns main shooter motor in Shooter subsystem
+     *         * @return SparkFlex Returns main shooter motor in Shooter subsystem
      */
     public SparkFlex getMainShooterMotor() {
         return this.m_RightShooterMotor;
@@ -271,10 +271,11 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable{
      *
      *
      * @author Brady Bontrager, bbontrager
-     *  * @param followerMotorType Specify which follower motor to get.
-     *  *   * 1 = Get Left-Top shooter motor
-     *  *   * 2 = Get Left-Bottom shooter motor
-     *  * @return SparkFlex Gets the first follower shooter motor with aux config.
+     *         * @param followerMotorType Specify which follower motor to get.
+     *         * * 1 = Get Left-Top shooter motor
+     *         * * 2 = Get Left-Bottom shooter motor
+     *         * @return SparkFlex Gets the first follower shooter motor with aux
+     *         config.
      */
     public SparkFlex getFollowerShooterMotor(int followerMotorType) {
 
@@ -283,9 +284,9 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable{
                 return this.m_LeftTopShoooterMotor;
             } else if (followerMotorType == 2) {
                 return this.m_LeftBotShoooterMotor;
-            }
-            else {
-                throw new java.lang.IllegalArgumentException("Invalid parameter passed for shooter follower motor get function");
+            } else {
+                throw new java.lang.IllegalArgumentException(
+                        "Invalid parameter passed for shooter follower motor get function");
             }
         } catch (Exception e) {
             System.err.println(e.getMessage());
@@ -299,7 +300,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable{
      * Get hood motor from shooter subsystem
      *
      * @author Brady Bontrager, bbontrager
-     *  * @return SparkFlex hood motor from shooter subsystem.
+     *         * @return SparkFlex hood motor from shooter subsystem.
      */
     public SparkFlex getHoodMotor() {
         return this.m_hoodMotor;

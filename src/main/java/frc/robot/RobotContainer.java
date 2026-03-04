@@ -8,7 +8,6 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -79,12 +78,12 @@ public class RobotContainer {
                                 .withVelocityY(-Math.pow(controller.getLeftX(), 3) * MaxSpeed)
                                 .withRotationalRate(-controller.getRightX() * MaxAngularRate),
                         () -> aim.withSpeeds(polar.getPolarDriveSpeeds(drivetrain.getState().Pose,
-                                (Math.abs(controller.getLeftY()) > 0.06? controller.getLeftY() : 0.0) // Clamp Input
-                                / (shootCommand.isScheduled()? 5.0 : 1.0), // Slow When Shooting
-                                (Math.abs(controller.getLeftX()) > 0.06? controller.getLeftX() : 0.0)
-                                / (shootCommand.isScheduled()? 10.0 : 1.0),
+                                (Math.abs(controller.getLeftY()) > 0.06 ? controller.getLeftY() : 0.0) // Clamp Input
+                                        / (shootCommand.isScheduled() ? 5.0 : 1.0), // Slow When Shooting
+                                (Math.abs(controller.getLeftX()) > 0.06 ? controller.getLeftX() : 0.0)
+                                        / (shootCommand.isScheduled() ? 10.0 : 1.0),
                                 MaxSpeed, MaxAngularRate,
-                                (shootCommand.isScheduled()))),// Lead only when shooting
+                                (shootCommand.isScheduled()))), // Lead only when shooting
                         () -> isCartesian()));
 
         // Idle while the robot is disabled. This ensures the configured
@@ -175,6 +174,7 @@ public class RobotContainer {
 
     /**
      * Returns true when the current drive mode is Cartesian.
+     * 
      * @return true if Cartesian drive mode is active
      */
     public boolean isCartesian() {
@@ -183,6 +183,7 @@ public class RobotContainer {
 
     /**
      * Returns true when the current drive mode is Polar.
+     * 
      * @return true if Polar drive mode is active
      */
     public boolean isPolar() {
@@ -225,6 +226,7 @@ public class RobotContainer {
     /**
      * Returns the currently selected autonomous command from the dashboard
      * chooser.
+     * 
      * @return the selected autonomous Command
      */
     public Command getAutonomousCommand() {
