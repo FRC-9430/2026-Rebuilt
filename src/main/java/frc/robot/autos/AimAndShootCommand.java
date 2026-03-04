@@ -6,10 +6,8 @@ package frc.robot.autos;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AimCommand;
-import frc.robot.commands.BumpBasketCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -29,13 +27,11 @@ public class AimAndShootCommand extends SequentialCommandGroup {
       addCommands( // Auton - Run for 4 seconds
           new ParallelCommandGroup(
               new AimCommand(drive, polar).withTimeout(4.0),
-              new BumpBasketCommand(intake, 8).withTimeout(4.0),
               new ShootCommand(shoot, polar, intake).withTimeout(4.0)));
     } else {
       addCommands( // Teleop - Go Until Cancelled
           new ParallelCommandGroup(
               new AimCommand(drive, polar),
-              new BumpBasketCommand(intake, 8),
               new ShootCommand(shoot, polar, intake)));
     }
   }
