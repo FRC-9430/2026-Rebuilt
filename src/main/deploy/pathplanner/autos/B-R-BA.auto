@@ -1,0 +1,61 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B-SPR-BER"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Eject Basket"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B-BER-IFR"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Start Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B-IFR-HFR"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B-HFR-SZR"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Start Aim and Shoot"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
