@@ -21,6 +21,7 @@ import frc.robot.autos.AimAndShootCommand;
 import frc.robot.commands.BumpBasketCommand;
 import frc.robot.commands.EjectBasketCommand;
 import frc.robot.commands.RetractBasketCommand;
+import frc.robot.commands.ShootCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.ElasticDashboard;
@@ -29,6 +30,10 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PolarSubsystem;
 import static frc.robot.Constants.DriveConstants.*;
 
+/**
+ * Central robot container that creates subsystems, binds controls to commands,
+ * and exposes autonomous routines.
+ */
 public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
@@ -48,7 +53,12 @@ public class RobotContainer {
     public DriveMode driveMode = DriveMode.CARTESIAN;
 
     public AimAndShootCommand aimAndShootCommand = new AimAndShootCommand(drivetrain, shooter, intake, polar);
+    public ShootCommand shootCommand = new ShootCommand(shooter, polar, intake);
 
+    /**
+     * Construct and configure the robot: set up the drivetrain, dashboard,
+     * named commands, and button bindings.
+     */
     public RobotContainer() {
         drivetrain.configureAutoBuilder();
         configureNamedCommands();
@@ -56,6 +66,11 @@ public class RobotContainer {
         configureBindings();
     }
 
+    /**
+     * Configure controller bindings and the drivetrain default command.
+     * This sets up button handlers for intake, shooting, mode toggles, and
+     * other operator controls.
+     */
     private void configureBindings() {
 
         drivetrain.setDefaultCommand(
@@ -64,8 +79,12 @@ public class RobotContainer {
                                 .withVelocityY(-Math.pow(controller.getLeftX(), 3) * MaxSpeed)
                                 .withRotationalRate(-controller.getRightX() * MaxAngularRate),
                         () -> aim.withSpeeds(polar.getPolarDriveSpeeds(drivetrain.getState().Pose,
-                                controller.getLeftY(), controller.getLeftX(),
-                                MaxSpeed, MaxAngularRate)),
+                                (Math.abs(controller.getLeftY()) > 0.06? controller.getLeftY() : 0.0) // Clamp Input
+                                / (shootCommand.isScheduled()? 5.0 : 1.0), // Slow When Shooting
+                                (Math.abs(controller.getLeftX()) > 0.06? controller.getLeftX() : 0.0)
+                                / (shootCommand.isScheduled()? 10.0 : 1.0),
+                                MaxSpeed, MaxAngularRate,
+                                (shootCommand.isScheduled()))),// Lead only when shooting
                         () -> isCartesian()));
 
         // Idle while the robot is disabled. This ensures the configured
@@ -81,8 +100,8 @@ public class RobotContainer {
         // controller.start().and(controller.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         // controller.start().and(controller.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        // Reset the field-centric heading on left bumper press
-        controller.povDown().onTrue(new InstantCommand(() -> {
+        // Reset the field-centric heading
+        controller.rightBumper().onTrue(new InstantCommand(() -> {
             var seenPose = vision.getPoseEstimateMT1().pose;
             if (!seenPose.equals(new Pose2d())) {
                 drivetrain.resetPose(vision.getPoseEstimateMT1().pose);
@@ -104,19 +123,8 @@ public class RobotContainer {
         }));
 
         // Shoot
-        controller.leftTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-
-            shooter.setShooterSpeedsRPM(polar.getShootVelocity());
-            shooter.setShootingAngle(polar.getHoodPosition());
-
-            if (shooter.isReadyToShoot()) {
-                shooter.setFeeder();
-                shooter.setConveyor();
-            }
-
-        }))).onFalse(new InstantCommand(() -> {
-            shooter.stopAll();
-        }));
+        controller.leftTrigger(0.05).onTrue(shootCommand)
+                .onFalse(new InstantCommand(() -> shootCommand.cancel()));
 
         // Intake
         controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
@@ -132,8 +140,15 @@ public class RobotContainer {
             shooter.stopHood();
         }));
 
+        // Force Stow Hood
+        controller.b().onTrue(new InstantCommand(() -> {
+            shooter.setHoodPosition(0.55);
+        })).onFalse(new InstantCommand(() -> {
+            shooter.stopHood();
+        }));
+
         // Bump the Basket
-        controller.y().onTrue(new BumpBasketCommand(intake, 1));
+        controller.y().onTrue(new BumpBasketCommand(intake, 3));
 
         // Eject Basket
         controller.back().onTrue(new EjectBasketCommand(intake));
@@ -141,37 +156,52 @@ public class RobotContainer {
         // Retract Basket
         controller.start().onTrue(new RetractBasketCommand(intake));
 
-        controller.x().onTrue(aimAndShootCommand).onFalse(new InstantCommand(() -> aimAndShootCommand.cancel()));
-
         drivetrain.registerTelemetry(logger::telemeterize);
 
     }
 
+    /**
+     * Reset the drivetrain pose using the initial pose supplied on the dashboard.
+     */
     public void setInitialPose() {
         drivetrain.resetPose(dash.getInitialPose());
     }
 
+    /** Drive mode for the operator controls: Cartesian or Polar. */
     public enum DriveMode {
         CARTESIAN,
         POLAR
     }
 
+    /**
+     * Returns true when the current drive mode is Cartesian.
+     * @return true if Cartesian drive mode is active
+     */
     public boolean isCartesian() {
         return driveMode == DriveMode.CARTESIAN;
     }
 
+    /**
+     * Returns true when the current drive mode is Polar.
+     * @return true if Polar drive mode is active
+     */
     public boolean isPolar() {
         return driveMode == DriveMode.POLAR;
     }
 
+    /** Set the drive mode to Cartesian. */
     public void setCartesian() {
         driveMode = DriveMode.CARTESIAN;
     }
 
+    /** Set the drive mode to Polar. */
     public void setPolar() {
         driveMode = DriveMode.POLAR;
     }
 
+    /**
+     * Register named commands for PathPlanner
+     */
     public void configureNamedCommands() {
         NamedCommands.registerCommand("Eject Basket", new EjectBasketCommand(intake));
 
@@ -192,10 +222,19 @@ public class RobotContainer {
 
     }
 
+    /**
+     * Returns the currently selected autonomous command from the dashboard
+     * chooser.
+     * @return the selected autonomous Command
+     */
     public Command getAutonomousCommand() {
         return dash.getAutoChooser();
     }
 
+    /**
+     * Schedule the aim-and-shoot autonomous command when in Polar mode
+     * during the autonomous period.
+     */
     public void startAimAndShootAutonCommand() {
 
         CommandScheduler.getInstance().schedule(aimAndShootCommand);

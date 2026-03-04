@@ -4,6 +4,7 @@
 
 package frc.robot.autos;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -19,19 +20,24 @@ import frc.robot.subsystems.ShooterSubsystem;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AimAndShootCommand extends SequentialCommandGroup {
+
   /** Creates a new AimAndShootCommand. */
-  public AimAndShootCommand(CommandSwerveDrivetrain drive, ShooterSubsystem shoot, IntakeSubsystem intake, PolarSubsystem polar) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    addCommands(
-      new ParallelRaceGroup(
-        new AimCommand(drive, polar).withTimeout(4.0),
-        new BumpBasketCommand(intake, 8).withTimeout(4.0),
-        new ShootCommand(shoot, polar).withTimeout(4.0))
-    );
+  public AimAndShootCommand(CommandSwerveDrivetrain drive, ShooterSubsystem shoot,
+      IntakeSubsystem intake, PolarSubsystem polar) {
+
+    if (DriverStation.isAutonomous()) {
+      addCommands( // Auton - Run for 4 seconds
+          new ParallelCommandGroup(
+              new AimCommand(drive, polar).withTimeout(4.0),
+              new BumpBasketCommand(intake, 8).withTimeout(4.0),
+              new ShootCommand(shoot, polar, intake).withTimeout(4.0)));
+    } else {
+      addCommands( // Teleop - Go Until Cancelled
+          new ParallelCommandGroup(
+              new AimCommand(drive, polar),
+              new BumpBasketCommand(intake, 8),
+              new ShootCommand(shoot, polar, intake)));
+    }
   }
 
-  
-
-  
 }

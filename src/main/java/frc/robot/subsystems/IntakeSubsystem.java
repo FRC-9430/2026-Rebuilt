@@ -18,75 +18,105 @@ import frc.robot.Constants.CANConstants;
 
 import static frc.robot.Constants.IntakeConstants.*;
 
-public class IntakeSubsystem extends SubsystemBase {
+public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
-  SparkFlex intakeMotor = new SparkFlex(CANConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless);
-  SparkFlex basketMotor = new SparkFlex(CANConstants.BASKET_CAN_ID, MotorType.kBrushless);
+    final SparkFlex m_intakeMotor;
+    final SparkFlex m_basketMotor;
 
-  SparkClosedLoopController intakeController;
-  RelativeEncoder intakEncoder;
+    final SparkClosedLoopController m_intakeController;
+    final RelativeEncoder m_intakeEncoder;
 
-  /** Creates a new IntakeSubsystem. */
-  public IntakeSubsystem() {
-    intakeMotor.configure(kIntakeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    basketMotor.configure(kBasketMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    /** Creates a new IntakeSubsystem. */
+    public IntakeSubsystem() {
+        this(new SparkFlex(CANConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless),
+                new SparkFlex(CANConstants.BASKET_MOTOR_CAN_ID, MotorType.kBrushless));
+    }
 
-    intakeController = intakeMotor.getClosedLoopController();
-    intakEncoder = intakeMotor.getEncoder();
+    // Overloading constructor to make testing easier
+    IntakeSubsystem(SparkFlex intakeMotor, SparkFlex basketMotor) {
+        m_intakeMotor = intakeMotor;
+        m_basketMotor = basketMotor;
+
+        m_intakeMotor.configure(kIntakeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_basketMotor.configure(kBasketMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        m_intakeController = m_intakeMotor.getClosedLoopController();
+        m_intakeEncoder = m_intakeMotor.getEncoder();
+    }
+
+    /**
+     * Runs the intake at the default speed
+     */
+    public void setIntake() {
+        m_intakeController.setSetpoint(kDefaultIntakeSpeed, ControlType.kVelocity);
+    }
+
+    /**
+     * Runs the intake at a specified speed
+     *
+     * @param speed The speed to run the intake at
+     */
+    public void setIntake(double speed) {
+        m_intakeMotor.set(speed);
+    }
+
+    /**
+     * Target the intake at a specified RPM
+     *
+     * @param RPM The RPM to run the intake at
+     */
+    public void setIntakeRPM(double RPM) {
+        m_intakeController.setSetpoint(RPM, ControlType.kVelocity);
+    }
+
+    /**
+     * Stops the intake
+     */
+    public void stopIntake() {
+        m_intakeMotor.stopMotor();
+    }
+
+    /**
+   * Gets the intake RPM
+   */
+  public double getIntakeV() {
+    return m_intakeEncoder.getVelocity();
   }
 
   /**
-   * Runs the intake at the default speed
-   */
-  public void setIntake() {
-    intakeController.setSetpoint(kDefaultIntakeSpeed, ControlType.kVelocity);
-  }
+     * Runs the basket at a specified speed
+     *
+     * @param speed The speed to run the basket at
+     */
+    public void setBasket(double speed) {
+        m_basketMotor.set(speed);
+    }
 
-  /**
-   * Runs the intake at a specified speed
-   * 
-   * @param speed The speed to run the intake at
-   */
-  public void setIntake(double speed) {
-    intakeMotor.set(speed);
-  }
+    /**
+     * Stops the basket
+     */
+    public void stopBasket() {
+        m_basketMotor.stopMotor();
+    }
 
-  /**
-   * Target the intake at a specified RPM
-   * 
-   * @param RPM The RPM to run the intake at
-   */
-  public void setIntakeRPM(double RPM) {
-    intakeController.setSetpoint(RPM, ControlType.kVelocity);
-  }
+    /**
+     * Stops both the intake and conveyor
+     */
+    public void stopAll() {
+        m_intakeMotor.stopMotor();
+        m_basketMotor.stopMotor();
+    }
 
-  /**
-   * Stops the intake
-   */
-  public void stopIntake() {
-    intakeMotor.stopMotor();
-  }
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
+        SmartDashboard.putNumber("Intake V", m_intakeEncoder.getVelocity());
+    }
 
-  public void setBasket(double speed) {
-    basketMotor.set(speed);
-  }
-
-  public void stopBasket() {
-    basketMotor.stopMotor();
-  }
-
-  /**
-   * Stops both the intake and conveyor
-   */
-  public void stopAll() {
-    intakeMotor.stopMotor();
-    basketMotor.stopMotor();
-  }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Intake V", intakEncoder.getVelocity());
-  }
+    @Override
+    public void close() {
+        m_intakeMotor.close();
+        m_basketMotor.close();
+    }
 
 }

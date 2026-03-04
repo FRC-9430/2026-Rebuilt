@@ -20,7 +20,9 @@ public class AimCommand extends Command {
   final double MaxSpeed;
   final double MaxAngularRate;
 
-  /** Creates a new AimAndShootCommand. */
+  /** Creates a new AimCommand. 
+   * Runs until interrupted. 
+   * Aims robot at polar target */
   public AimCommand(CommandSwerveDrivetrain drive, PolarSubsystem polar) {
     addRequirements(drive);
     this.drive = drive;
@@ -42,7 +44,7 @@ public class AimCommand extends Command {
   public void execute() {
     drive.driveRobotRelative(polar.getPolarDriveSpeeds(drive.getState().Pose,
         0, 0,
-        MaxSpeed, MaxAngularRate));
+        MaxSpeed, MaxAngularRate, false));
   }
 
   // Called once the command ends or is interrupted.

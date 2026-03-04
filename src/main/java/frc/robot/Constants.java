@@ -21,34 +21,44 @@ public final class Constants {
      * CAN IDs for all CAN devices
      */
     public static final class CANConstants {
+        // Essentials
         public static final int ROBORIO_CAN_ID = 0;
         public static final int PIGEON2_CAN_ID = 1;
         public static final int REV_PDH_CAN_ID = 2;
 
+        // Swerve Module Encoders
         public static final int BR_SWERVE_ENCODER_CAN_ID = 6;
         public static final int BL_SWERVE_ENCODER_CAN_ID = 7;
         public static final int FR_SWERVE_ENCODER_CAN_ID = 8;
         public static final int FL_SWERVE_ENCODER_CAN_ID = 9;
 
+        // Swerve Module Turning Motors
         public static final int BR_SWERVE_TURNING_CAN_ID = 10;
         public static final int BL_SWERVE_TURNING_CAN_ID = 11;
         public static final int FR_SWERVE_TURNING_CAN_ID = 12;
         public static final int FL_SWERVE_TURNING_CAN_ID = 13;
 
+        // Swerve Module Driving Motors
         public static final int BR_SWERVE_DRIVING_CAN_ID = 14;
         public static final int BL_SWERVE_DRIVING_CAN_ID = 15;
         public static final int FR_SWERVE_DRIVING_CAN_ID = 16;
         public static final int FL_SWERVE_DRIVING_CAN_ID = 17;
 
-        public static final int HOOD_ARTICULATE_CAN_ID = 20;
-        public static final int FEEDER_CAN_ID = 21;
-        public static final int RIGHT_SHOOTER_CAN_ID = 22;
-        public static final int LEFT_TOP_SHOOTER_CAN_ID = 23;
-        public static final int LEFT_BOTTOM_SHOOTER_CAN_ID = 24;
-
+        // Shooter Subsystem Motors
+        public static final int HOOD_MOTOR_CAN_ID = 20;
+        public static final int FEEDER_MOTOR_CAN_ID = 21;
+        public static final int RIGHT_SHOOT_MOTOR_CAN_ID = 22;
+        public static final int LEFT_TOP_SHOOT_MOTOR_CAN_ID = 23;
+        public static final int LEFT_BOTTOM_SHOOT_MOTOR_CAN_ID = 24;
         public static final int CONVEYOR_MOTOR_CAN_ID = 26;
+
+        // Intake Subsystem Motors
         public static final int INTAKE_MOTOR_CAN_ID = 27;
-        public static final int BASKET_CAN_ID = 28;
+        public static final int BASKET_MOTOR_CAN_ID = 28;
+
+        // Climbing Motors
+        public static final int LEFT_CLIMB_MOTOR_CAN_ID = 31;
+        public static final int RIGHT_CLIMB_MOTOR_CAN_ID = 32;
 
     }
 
@@ -57,18 +67,18 @@ public final class Constants {
         public static final int kControllerPort = 0;
 
         // kSpeedAt12Volts desired top speed
-        public static final double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); 
-        
+        public static final double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+
         // 3/4 of a rotation per second max angular velocity
-        public static final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); 
-        
+        public static final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+
         /* Setting up bindings for necessary control of the swerve drive platform */
         public static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
                 .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
                 .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
         public static final SwerveRequest.ApplyRobotSpeeds aim = new SwerveRequest.ApplyRobotSpeeds();
-                                                                                        
+
     }
 
     public static final class ClimbingArmConstants {
@@ -117,7 +127,7 @@ public final class Constants {
         // Hood PID
         public static final double kHoodP = 21.0;
         public static final double kHoodI = 0.0;
-        public static final double kHoodD = 0.0;
+        public static final double kHoodD = 8.0;
 
         // Feed PID TODO tune feeder
         public static final double kFeedP = 0.1;
@@ -128,17 +138,17 @@ public final class Constants {
         public static final double kShooterIdleRPM = 1000.0;
         public static final double kShooterToleranceRPM = 100.0;
 
-        public static final double kDefaultConveyorSpeed = 0.3;
+        public static final double kDefaultConveyorSpeed = 0.2;
 
-        public static final double kHoodStowedPosition = 0.355;
-        
+        public static final double kHoodStowedPosition = 0.350;
+
         public static final double kDefaultFeederSpeed = 0.5;
 
         // Hood limits
         public static final double kHoodMinPosition = 0.3433;
         public static final double kHoodMinSafePosition = 0.350;
         public static final double kHoodMaxSafePosition = 0.875;
-        public static final double kHoodPositionTolerance = 0.025;
+        public static final double kHoodPositionTolerance = 0.1;
 
         public static final SparkFlexConfig MAIN_SHOOTER_CONFIG = new SparkFlexConfig();
         static {
@@ -153,20 +163,19 @@ public final class Constants {
         public static final SparkFlexConfig AUX_SHOOTER_CONFIG = new SparkFlexConfig();
         static {
             AUX_SHOOTER_CONFIG.idleMode(IdleMode.kCoast);
-            AUX_SHOOTER_CONFIG.follow(CANConstants.RIGHT_SHOOTER_CAN_ID, true);
+            AUX_SHOOTER_CONFIG.follow(CANConstants.RIGHT_SHOOT_MOTOR_CAN_ID, true);
         }
 
         public static final SparkFlexConfig HOOD_CONFIG = new SparkFlexConfig();
         static {
             HOOD_CONFIG.idleMode(IdleMode.kBrake);
             HOOD_CONFIG.inverted(false);
-            HOOD_CONFIG.closedLoop.outputRange(-0.5, 1.0); // Half speed when reversed
+            HOOD_CONFIG.closedLoop.outputRange(-0.05, 1.0);
             HOOD_CONFIG.closedLoop.pid(kHoodP, kHoodI, kHoodD);
             HOOD_CONFIG.closedLoop.positionWrappingEnabled(false);
             HOOD_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
             HOOD_CONFIG.closedLoop.maxMotion.cruiseVelocity(1000);
-            HOOD_CONFIG.closedLoop.maxMotion.maxAcceleration(1000);
-            HOOD_CONFIG.closedLoop.maxMotion.allowedProfileError(kHoodPositionTolerance);
+            HOOD_CONFIG.closedLoop.maxMotion.maxAcceleration(10000);
             HOOD_CONFIG.closedLoop.maxMotion.positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
         }
 
@@ -216,6 +225,13 @@ public final class Constants {
     public static final class FieldConstants {
         public static final Translation2d BLUE_HUB_LOC = new Translation2d(4.6525, 4.034);
         public static final Translation2d RED_HUB_LOC = new Translation2d(11.915, 4.034);
+
+        public static final Translation2d BLUE_LEFT_VOLLY_LOC = new Translation2d(3.386, 6.250);
+        public static final Translation2d BLUE_RIGHT_VOLLY_LOC = new Translation2d(3.386, 2.375);
+
+        public static final Translation2d RED_LEFT_VOLLY_LOC = new Translation2d(13.65, 6.250);
+        public static final Translation2d RED_RIGHT_VOLLY_LOC = new Translation2d(13.65, 2.375);
+
     }
 
 }

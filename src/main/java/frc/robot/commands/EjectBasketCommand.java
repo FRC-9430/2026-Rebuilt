@@ -14,7 +14,9 @@ public class EjectBasketCommand extends Command {
   final IntakeSubsystem intake;
   double startTime;
 
-  /** Creates a new RetractBasketCommand. */
+  /** Creates a new EjectBasketCommand.
+   * Ejects the basket, takes 0.3 secods to run
+   */
   public EjectBasketCommand(IntakeSubsystem intake) {
     addRequirements(intake);
     this.intake = intake;
