@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 
 import static frc.robot.Constants.FieldConstants.*;
@@ -32,6 +33,12 @@ public class PolarSubsystem extends SubsystemBase {
   private double facingToleranceRad = 0.06; // ~3.4 degrees
   /** Estimated conversion from shooter RPM -> projectile speed (m/s). */
   private double rpmToMps = 0.0008;
+
+  private double prevRadialV = 0.0;
+  private double prevOrbitalV = 0.0;
+  private double prevAccelTimestamp = 0.0;
+  private double radialAccel = 0.0;
+  private double orbitalAccel = 0.0;
 
   /** Creates a new PolarSubsystem. */
   public PolarSubsystem(CommandSwerveDrivetrain drivetrain) {
@@ -85,7 +92,7 @@ public class PolarSubsystem extends SubsystemBase {
     double r = getRadius();
 
     // Ignore small velocities
-    if (Math.abs(vRadial) < 0.05)
+    if (Math.abs(vRadial) < 0.05 && Math.abs(radialAccel) < 0.1)
       return Math.floor(PolarUtils.getEstShootVelFrmR(r));
 
     // Compute a dynamic lead time based on estimated projectile speed (from RPM).
@@ -93,7 +100,7 @@ public class PolarSubsystem extends SubsystemBase {
     double projectileSpeed = Math.max(0.1, estRPM * rpmToMps); // m/s
     double flightTime = r / projectileSpeed;
 
-    double adjustedR = Math.max(0.0, r + vRadial * flightTime);
+    double adjustedR = Math.max(0.0, r + vRadial * flightTime + 0.5 * radialAccel * flightTime * flightTime);
     return Math.floor(PolarUtils.getEstShootVelFrmR(adjustedR));
   }
 
@@ -115,14 +122,14 @@ public class PolarSubsystem extends SubsystemBase {
     double r = getRadius();
 
     // Ignore small velocities
-    if (Math.abs(vRadial) < 0.05)
+    if (Math.abs(vRadial) < 0.05 && Math.abs(radialAccel) < 0.1)
       return Math.floor(1000.0 * PolarUtils.getEstHoodPosFrmR(r)) / 1000.0;
 
     // Compute same dynamic lead for shoot direction
     double estRPM = PolarUtils.getEstShootVelFrmR(r);
     double projectileSpeed = Math.max(0.1, estRPM * rpmToMps); // m/s
     double flightTime = r / projectileSpeed;
-    double adjustedR = Math.max(0.0, r + vRadial * flightTime);
+     double adjustedR = Math.max(0.0, r + vRadial * flightTime + 0.5 * radialAccel * flightTime * flightTime);
 
     return Math.floor(1000.0 * PolarUtils.getEstHoodPosFrmR(adjustedR)) / 1000.0;
   }
@@ -229,9 +236,10 @@ public class PolarSubsystem extends SubsystemBase {
     double estRPM = PolarUtils.getEstShootVelFrmR(getRadius());
     double projectileSpeed = Math.max(0.1, estRPM * rpmToMps); // m/s
     double flightTime = getRadius() / projectileSpeed;
-
+    
     return PolarUtils.getPolarDriveSpeeds(estPose, target, radial, orbital, MaxSpeed, MaxAngularRate,
-        doLeadShot ? getOrbitalV() * flightTime * (orbitalIn < 0.0 ? -1.0 : 1.0) : 0.0);
+        doLeadShot ? (getOrbitalV() * flightTime + 0.5 * orbitalAccel * flightTime * flightTime) 
+                     * (orbitalIn < 0.0 ? -1.0 : 1.0) : 0.0);
   }
 
   @Override
@@ -281,6 +289,27 @@ public class PolarSubsystem extends SubsystemBase {
         }
       }
     }
+
+    // Estimate radial and orbital acceleration via finite differences.
+    // Used by getShootVelocity(), getHoodPosition(), and getPolarDriveSpeeds()
+    // to account for acceleration when leading shots (0.5at^2 correction).
+    double now = Timer.getFPGATimestamp();
+    double dt = now - prevAccelTimestamp;
+    if (prevAccelTimestamp > 0.0 && dt > 0.001) {
+      double curRadialV = getRadialV();
+      double curOrbitalV = getOrbitalV();
+      radialAccel = (curRadialV - prevRadialV) / dt;
+      orbitalAccel = (curOrbitalV - prevOrbitalV) / dt;
+      prevRadialV = curRadialV;
+      prevOrbitalV = curOrbitalV;
+    } else if (prevAccelTimestamp == 0.0) {
+      prevRadialV = getRadialV();
+      prevOrbitalV = getOrbitalV();
+    }
+    prevAccelTimestamp = now;
+
+    SmartDashboard.putNumber("Polar/radialAccel", radialAccel);
+    SmartDashboard.putNumber("Polar/orbitalAccel", orbitalAccel);
 
   }
 
