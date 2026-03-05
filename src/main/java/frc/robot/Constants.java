@@ -81,12 +81,6 @@ public final class Constants {
 
     }
 
-    public static final class ClimbingArmConstants {
-        public static final double kP = 0.001; // TODO: Dummy value
-        public static final double kI = 0; // TODO: Dummy value
-        public static final double kD = 0; // TODO: Dummy value
-    }
-
     /**
      * Controller related constants
      */
@@ -231,6 +225,47 @@ public final class Constants {
 
         public static final Translation2d RED_LEFT_VOLLY_LOC = new Translation2d(13.65, 6.250);
         public static final Translation2d RED_RIGHT_VOLLY_LOC = new Translation2d(13.65, 2.375);
+
+    }
+
+    /**
+    * Constants for the Climbing Arm Subsystem
+    */
+    public static final class ClimberArmConstants {
+
+        // TODO: Tune Values
+        public static final double kLeftP = 0.0001;
+        public static final double kLeftI = 0;
+        public static final double kLeftD = 0;
+        public static final double kLeftS = 0.2;
+        public static final double kLeftV = 0.001745;
+        public static final double kLeftA = 0;
+
+        public static final double kRightP = 0.0001;
+        public static final double kRightI = 0;
+        public static final double kRightD = 0;
+        public static final double kRightS = 0.2;
+        public static final double kRightV = 0.001692;
+        public static final double kRightA = 0;
+
+        public static final double kMaxSpeed = 0.0; // TODO calibrate
+        public static final double kTargetRPM = 700.0;
+
+        public static final SparkFlexConfig kLeftMotorConfig = new SparkFlexConfig();
+        static {
+            kLeftMotorConfig.inverted(true);
+            kLeftMotorConfig.idleMode(IdleMode.kBrake);
+            kLeftMotorConfig.closedLoop.pid(kLeftP, kLeftI, kLeftD);
+            kLeftMotorConfig.closedLoop.feedForward.sva(kLeftS, kLeftV, kLeftA);
+        }
+
+        public static final SparkFlexConfig kRightMotorConfig = new SparkFlexConfig();
+        static {
+            kRightMotorConfig.inverted(false);
+            kRightMotorConfig.idleMode(IdleMode.kBrake);
+            kRightMotorConfig.closedLoop.pid(kRightP, kRightI, kRightD);
+            kRightMotorConfig.closedLoop.feedForward.sva(kRightS, kRightV, kRightA);
+        }
 
     }
 

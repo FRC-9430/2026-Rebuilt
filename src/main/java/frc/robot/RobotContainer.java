@@ -16,11 +16,13 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.util.TunerConstants;
+import frc.robot.Constants.ClimberArmConstants;
 import frc.robot.autos.AimAndShootCommand;
 import frc.robot.commands.BumpBasketCommand;
 import frc.robot.commands.EjectBasketCommand;
 import frc.robot.commands.RetractBasketCommand;
 import frc.robot.commands.ShootCommand;
+import frc.robot.subsystems.ClimbingArmSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.ElasticDashboard;
@@ -35,7 +37,7 @@ import static frc.robot.Constants.DriveConstants.*;
  */
 public class RobotContainer {
 
-    private final Telemetry logger = new Telemetry(MaxSpeed);
+  private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController controller = new CommandXboxController(kControllerPort);
 
@@ -43,6 +45,7 @@ public class RobotContainer {
 
     public final ShooterSubsystem shooter = new ShooterSubsystem();
     public final IntakeSubsystem intake = new IntakeSubsystem();
+    public final ClimbingArmSubsystem climber = new ClimbingArmSubsystem();
 
     public final VisionSubsystem vision = new VisionSubsystem(drivetrain);
     public final PolarSubsystem polar = new PolarSubsystem(drivetrain);
@@ -130,6 +133,19 @@ public class RobotContainer {
             intake.setIntake();
         }))).onFalse(new InstantCommand(() -> {
             intake.stopAll();
+        }));
+
+        // Climber
+        controller.povDown().whileTrue(new RepeatCommand(new InstantCommand(() -> {
+            climber.setClimberRPM(ClimberArmConstants.kTargetRPM * 1.0);
+        }))).onFalse(new InstantCommand(() -> {
+            climber.stopClimbers();
+        }));
+
+        controller.povUp().whileTrue(new RepeatCommand(new InstantCommand(() -> {
+            climber.setClimberRPM(ClimberArmConstants.kTargetRPM * -1.0);
+        }))).onFalse(new InstantCommand(() -> {
+            climber.stopClimbers();
         }));
 
         // Force Stow Hood
