@@ -200,6 +200,14 @@ public class PolarSubsystem extends SubsystemBase {
     return isFacingTarget(facingToleranceRad);
   }
 
+  public boolean targetIsHub() {
+    return mode == Mode.HUB;
+  }
+
+  public boolean targetIsVolley() {
+    return mode == Mode.VOLLEY;
+  }
+
   /**
    * Returns true when the robot is facing the target within the specified
    * tolerance (radians).
