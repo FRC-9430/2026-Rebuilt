@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -17,6 +19,7 @@ public class ShootCommand extends Command {
   final PolarSubsystem polar;
   final IntakeSubsystem intake;
   double bumpTimer = 0.0;
+  double uptime = 0.0;
 
   /**
    * Creates a new ShootCommand.
@@ -37,6 +40,7 @@ public class ShootCommand extends Command {
     System.out.println("Shoot Command Init");
     intake.setBasket(0.08);
     bumpTimer = Timer.getFPGATimestamp();
+    uptime = Timer.getFPGATimestamp();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -79,6 +83,6 @@ public class ShootCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return (DriverStation.isAutonomous() && Timer.getFPGATimestamp() > uptime + 5);
   }
 }

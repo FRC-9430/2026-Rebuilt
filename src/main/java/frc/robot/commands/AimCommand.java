@@ -6,6 +6,8 @@ package frc.robot.commands;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -19,12 +21,13 @@ public class AimCommand extends Command {
   final PolarSubsystem polar;
   final double MaxSpeed;
   final double MaxAngularRate;
+  double uptime;
 
   /** Creates a new AimCommand. 
    * Runs until interrupted. 
    * Aims robot at polar target */
   public AimCommand(CommandSwerveDrivetrain drive, PolarSubsystem polar) {
-    addRequirements(drive);
+    //addRequirements(drive);
     this.drive = drive;
     this.polar = polar;
     this.aim = DriveConstants.aim;
@@ -37,6 +40,7 @@ public class AimCommand extends Command {
   @Override
   public void initialize() {
     System.out.println("Aim Command Init");
+    uptime = Timer.getFPGATimestamp();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -56,6 +60,6 @@ public class AimCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return (DriverStation.isAutonomous() && Timer.getFPGATimestamp() > uptime + 5);
   }
 }
