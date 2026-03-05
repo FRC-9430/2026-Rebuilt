@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AimCommand;
-import frc.robot.commands.BumpBasketCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -25,18 +24,43 @@ public class AimAndShootCommand extends SequentialCommandGroup {
       IntakeSubsystem intake, PolarSubsystem polar) {
 
     if (DriverStation.isAutonomous()) {
-      addCommands( // Auton - Run for 4 seconds
+      addCommands( // Auton - Run for 5 seconds
           new ParallelCommandGroup(
-              new AimCommand(drive, polar).withTimeout(4.0),
-              new BumpBasketCommand(intake, 8).withTimeout(4.0),
-              new ShootCommand(shoot, polar).withTimeout(4.0)));
+              new AimCommand(drive, polar),
+              new ShootCommand(shoot, polar, intake)));
     } else {
       addCommands( // Teleop - Go Until Cancelled
           new ParallelCommandGroup(
               new AimCommand(drive, polar),
-              new BumpBasketCommand(intake, 8),
-              new ShootCommand(shoot, polar)));
+              new ShootCommand(shoot, polar, intake)));
     }
+  }
+
+  /** Creates a new AimAndShootCommand with timeout. */
+  public AimAndShootCommand(CommandSwerveDrivetrain drive, ShooterSubsystem shoot,
+      IntakeSubsystem intake, PolarSubsystem polar, Double timeoutSeconds) {
+    System.out.println("New Aim & Shoot Command: " + timeoutSeconds);
+    if (timeoutSeconds != null) {
+      System.out.println("Timing out");
+      addCommands(
+          new ParallelCommandGroup(
+              new AimCommand(drive, polar).withTimeout(timeoutSeconds),
+              new ShootCommand(shoot, polar, intake).withTimeout(timeoutSeconds))
+              .withTimeout(timeoutSeconds));
+    } else if (DriverStation.isAutonomous()) {
+      System.out.println("Auton");
+      addCommands( // Auton - Run for 5 seconds
+          new ParallelCommandGroup(
+              new AimCommand(drive, polar).withTimeout(5.0),
+              new ShootCommand(shoot, polar, intake).withTimeout(5.0)));
+    } else {
+      System.out.println("Teleop");
+      addCommands( // Teleop - Go Until Cancelled
+          new ParallelCommandGroup(
+              new AimCommand(drive, polar),
+              new ShootCommand(shoot, polar, intake)));
+    }
+
   }
 
 }

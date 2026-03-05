@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.164973166368515,
-        "y": 7.4991234347048294
+        "x": 7.7994633273703045,
+        "y": 5.487173524150268
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.414973166367307,
-        "y": 7.4991242118412025
+        "x": 7.7893306499867085,
+        "y": 4.816540066625786
       },
       "isLocked": false,
-      "linkedName": "B-SPL"
+      "linkedName": "IFL2"
     },
     {
       "anchor": {
-        "x": 7.734561717352415,
-        "y": 7.369320214669052
+        "x": 7.7994633273703045,
+        "y": 3.86463327370304
       },
       "prevControl": {
-        "x": 7.247799642218246,
-        "y": 7.434221824686941
+        "x": 7.8059494625016645,
+        "y": 4.70180703332224
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "B-IFL"
+      "linkedName": "HFL2"
     }
   ],
   "rotationTargets": [],
@@ -33,10 +33,10 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 740.0,
+    "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 89.10482628978899
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

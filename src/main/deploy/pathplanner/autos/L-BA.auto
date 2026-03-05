@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "B-SPL-IFL"
+            "pathName": "SPL-BEL"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Eject Basket"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BEL-IFL"
           }
         },
         {
@@ -25,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "B-IFL-HFL"
+            "pathName": "IFL-HFL"
           }
         },
         {
@@ -37,25 +43,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "B-HFL-SZL"
+            "pathName": "HFL-SZL"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Engage Polar"
+            "name": "Aim & Shoot 5s"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SZL-IFL2"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Start Aim and Shoot"
+            "name": "Start Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "IFL2-HFL2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Intake"
           }
         }
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": null,
   "choreoAuto": false
 }

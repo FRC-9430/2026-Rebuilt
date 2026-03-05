@@ -28,6 +28,10 @@ public class PolarSubsystem extends SubsystemBase {
   }
 
   private Mode mode = Mode.HUB;
+  /** Default angular tolerance (radians) to consider "facing the target" */
+  private double facingToleranceRad = 0.06; // ~3.4 degrees
+  /** Estimated conversion from shooter RPM -> projectile speed (m/s). */
+  private double rpmToMps = 0.0008;
 
   /** Creates a new PolarSubsystem. */
   public PolarSubsystem(CommandSwerveDrivetrain drivetrain) {
@@ -47,49 +51,201 @@ public class PolarSubsystem extends SubsystemBase {
 
   }
 
+  /**
+   * Sets the robots polar target
+   * 
+   * @param newTarget Translation2d of new target
+   */
   public void setTarget(Translation2d newTarget) {
     target = newTarget;
   }
 
+  /**
+   * Returns when the robot is moving < 0.1 Rad/s
+   * 
+   * @return slow rotation
+   */
   public boolean Angled() {
     return Math.abs(driveTrain.getState().Speeds.omegaRadiansPerSecond) < 0.1;
   }
 
+  /**
+   * Calculates and returns the target Shooter Velocity in RPM.
+   * When in Volley mode always returns 3000 RPM.
+   * Else if the robot is stationary returns the RPM from the derived equation.
+   * Else if moving radially to target calculate RPM using an estimated shot lead.
+   * 
+   * @return Target Shooter RPM
+   */
   public double getShootVelocity() {
-    if (mode == Mode.VOLLEY) {
-      return 2000.0 + (1000 * (radiusToTarget / 7));
-    }
-    return Math.floor(PolarUtils.getEstShootVelFrmR(radiusToTarget));
+    if (mode == Mode.VOLLEY)
+      return 3000.0;
+
+    double vRadial = getRadialV();
+    double r = getRadius();
+
+    // Ignore small velocities
+    if (Math.abs(vRadial) < 0.05)
+      return Math.floor(PolarUtils.getEstShootVelFrmR(r));
+
+    // Compute a dynamic lead time based on estimated projectile speed (from RPM).
+    double estRPM = PolarUtils.getEstShootVelFrmR(r);
+    double projectileSpeed = Math.max(0.1, estRPM * rpmToMps); // m/s
+    double flightTime = r / projectileSpeed;
+
+    double adjustedR = Math.max(0.0, r + vRadial * flightTime);
+    return Math.floor(PolarUtils.getEstShootVelFrmR(adjustedR));
   }
 
+  /**
+   * Calculates and returns the target Hood position.
+   * When in Volley mode always returns 0.8.
+   * Else if the robot is stationary returns the position from the derived
+   * equation.
+   * Else if moving radially to target calculate position using an estimated shot
+   * lead.
+   * 
+   * @return Target Hood Position
+   */
   public double getHoodPosition() {
-    if (mode == Mode.VOLLEY) {
-      return 0.85;
-    }
-    return Math.floor(1000.0 * PolarUtils.getEstHoodPosFrmR(radiusToTarget)) / 1000.0;
+    if (mode == Mode.VOLLEY)
+      return 0.8;
+
+    double vRadial = getRadialV();
+    double r = getRadius();
+
+    // Ignore small velocities
+    if (Math.abs(vRadial) < 0.05)
+      return Math.floor(1000.0 * PolarUtils.getEstHoodPosFrmR(r)) / 1000.0;
+
+    // Compute same dynamic lead for shoot direction
+    double estRPM = PolarUtils.getEstShootVelFrmR(r);
+    double projectileSpeed = Math.max(0.1, estRPM * rpmToMps); // m/s
+    double flightTime = r / projectileSpeed;
+    double adjustedR = Math.max(0.0, r + vRadial * flightTime);
+
+    return Math.floor(1000.0 * PolarUtils.getEstHoodPosFrmR(adjustedR)) / 1000.0;
   }
 
-  public void calculateRadius() {
-    radiusToTarget = driveTrain.getPose().getTranslation().getDistance(target);
+  /**
+   * Returns the radius to target
+   * 
+   * @return radius
+   */
+  public double getRadius() {
+    double r = driveTrain.getPose().getTranslation().getDistance(target);
+    SmartDashboard.putNumber("Polar/Distance From Target", r);
+    return r;
+  }
 
-    SmartDashboard.putNumber("Dist From Hub", radiusToTarget);
+  /**
+   * Calculates and return the radial velocity of the robot around the target hub.
+   * Positive when moving away from target.
+   * 
+   * @return Radial Velocity
+   */
+  public double getRadialV() {
+    var pose = driveTrain.getPose();
+    var robotTrans = pose.getTranslation();
+    double dx = target.getX() - robotTrans.getX();
+    double dy = target.getY() - robotTrans.getY();
+    double r = Math.hypot(dx, dy);
+
+    var speeds = driveTrain.getState().Speeds;
+    double vx = speeds.vxMetersPerSecond;
+    double vy = speeds.vyMetersPerSecond;
+
+    double ux = (r > 1e-6) ? dx / r : 0.0;
+    double uy = (r > 1e-6) ? dy / r : 0.0;
+    double vRadial = vx * ux + vy * uy;
+
+    SmartDashboard.putNumber("Polar/vRadial", vRadial);
+
+    return vRadial;
+  }
+
+  /**
+   * Calculates and return the orbital velocity of the robot around the target
+   * hub.
+   * 
+   * @return Orbital Velocity
+   */
+  public double getOrbitalV() {
+    var pose = driveTrain.getPose();
+    var robotTrans = pose.getTranslation();
+    double dx = target.getX() - robotTrans.getX();
+    double dy = target.getY() - robotTrans.getY();
+    double r = Math.hypot(dx, dy);
+
+    var speeds = driveTrain.getState().Speeds;
+    double vx = speeds.vxMetersPerSecond;
+    double vy = speeds.vyMetersPerSecond;
+
+    double ux = (r > 1e-6) ? dx / r : 0.0;
+    double uy = (r > 1e-6) ? dy / r : 0.0;
+    double tx = -uy;
+    double ty = ux;
+
+    double vOrbital = vx * tx + vy * ty;
+
+    SmartDashboard.putNumber("Polar/vOrbital", vOrbital);
+
+    return vOrbital;
+  }
+
+  /**
+   * Returns true when the robot is facing the target (within default tolerance).
+   */
+  public boolean isFacingTarget() {
+    return isFacingTarget(facingToleranceRad);
+  }
+
+  public boolean targetIsHub() {
+    return mode == Mode.HUB;
+  }
+
+  public boolean targetIsVolley() {
+    return mode == Mode.VOLLEY;
+  }
+
+  /**
+   * Returns true when the robot is facing the target within the specified
+   * tolerance (radians).
+   */
+  public boolean isFacingTarget(double toleranceRad) {
+    var pose = driveTrain.getPose();
+    var robotTrans = pose.getTranslation();
+    double dx = target.getX() - robotTrans.getX();
+    double dy = target.getY() - robotTrans.getY();
+
+    double desiredAngle = Math.atan2(dy, dx);
+    double currentAngle = pose.getRotation().getRadians();
+    double angleError = Math.atan2(Math.sin(desiredAngle - currentAngle), Math.cos(desiredAngle - currentAngle));
+
+    return Math.abs(angleError) <= toleranceRad;
   }
 
   public ChassisSpeeds getPolarDriveSpeeds(Pose2d estPose, double radialIn, double orbitalIn, double MaxSpeed,
-      double MaxAngularRate) {
+      double MaxAngularRate, boolean doLeadShot) {
     double orbital = orbitalIn;
     double radial = radialIn;
     if (mode == Mode.VOLLEY) {
       orbital = -orbitalIn;
       radial = -radialIn;
     }
-    return PolarUtils.getPolarDriveSpeeds(estPose, target, radial, orbital, MaxSpeed, MaxAngularRate);
+
+    double estRPM = PolarUtils.getEstShootVelFrmR(getRadius());
+    double projectileSpeed = Math.max(0.1, estRPM * rpmToMps); // m/s
+    double flightTime = getRadius() / projectileSpeed;
+
+    return PolarUtils.getPolarDriveSpeeds(estPose, target, radial, orbital, MaxSpeed, MaxAngularRate,
+        doLeadShot ? getOrbitalV() * flightTime * (orbitalIn < 0.0 ? -1.0 : 1.0) : 0.0);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    calculateRadius();
+
     // Update target based on whether the robot is "in-field" (between the hubs)
     var pose = driveTrain.getPose();
     var transl = pose.getTranslation();
@@ -122,7 +278,7 @@ public class PolarSubsystem extends SubsystemBase {
         }
       } else {
         // For red alliance choose the volley side according to the requested mapping
-        if (y > 4.0) {
+        if (y < 4.0) {
           target = RED_RIGHT_VOLLY_LOC;
           mode = Mode.VOLLEY;
           SmartDashboard.putString("Polar/Target", "RED_RIGHT_VOLLEY");
@@ -139,16 +295,12 @@ public class PolarSubsystem extends SubsystemBase {
   public class PolarUtils {
 
     public static ChassisSpeeds getPolarDriveSpeeds(Pose2d estPose, Translation2d target, double radialIn,
-        double orbitalIn, double MaxSpeed, double MaxAngularRate) {
+        double orbitalIn, double MaxSpeed, double MaxAngularRate, double leadSeconds) {
 
       Translation2d pose = estPose.getTranslation();
 
       double radialInput = -radialIn;
       double orbitInput = -orbitalIn;
-
-      // Clamp Input
-      radialInput = (Math.abs(radialInput) > 0.06 ? radialInput : 0.0);
-      orbitInput = (Math.abs(orbitInput) > 0.06 ? orbitInput : 0.0);
 
       // Compute vector from robot to the target (field frame)
       double dx = target.getX() - pose.getX();
@@ -183,17 +335,31 @@ public class PolarSubsystem extends SubsystemBase {
       double vxField = vRadial * ux + vTangential * tx;
       double vyField = vRadial * uy + vTangential * ty;
 
-      // To keep the robot pointed at the target, compute heading error and use a
-      // P-controller to rotate the robot to face the target. This makes the
-      // robot's orientation converge to the angle toward the target regardless
-      // of tangential motion.
-      double desiredAngle = Math.atan2(dy, dx);
+      // Predict where the robot will be after `leadSeconds` using the commanded
+      // field-relative velocities (vxField, vyField). This lets us aim at the
+      // future robot position (lead) so shots are accurate while orbiting.
+      double predictedX = pose.getX() + vxField * leadSeconds;
+      double predictedY = pose.getY() + vyField * leadSeconds;
+
+      // To keep the robot pointed at the predicted position relative to the
+      // fixed target, compute the desired angle to the target from the
+      // predicted robot position.
+      double desiredAngle = Math.atan2(target.getY() - predictedY, target.getX() - predictedX);
       double currentAngle = estPose.getRotation().getRadians();
       // Normalize angle error to [-pi, pi]
       double angleError = Math.atan2(Math.sin(desiredAngle - currentAngle), Math.cos(desiredAngle - currentAngle));
 
-      // P = 15
-      double omega = 15 * angleError;
+      // Use a P-controller plus a small feedforward term derived from the
+      // commanded tangential speed to account for rotational rate while
+      // orbiting: phi_dot ≈ -vTangential / r. Tune kP and kFF as needed.
+      double kP = 6.0;
+      double kFF = 0.9;
+      double ff = 0.0;
+      if (Math.abs(r) > kEpsilon) {
+        ff = -vTangential / r * kFF;
+      }
+
+      double omega = kP * angleError + ff;
 
       // Clamp angular rate to configured maximum
       omega = Math.max(-MaxAngularRate, Math.min(MaxAngularRate, omega));
@@ -217,7 +383,7 @@ public class PolarSubsystem extends SubsystemBase {
     public static double getEstShootVelFrmR(double r) {
       double rpm = 20.00902 * Math.pow(r, 2)
           + -2.92682 * r
-          + 2575.2891;
+          + 2625;
       SmartDashboard.putNumber("Calc Shoot V", rpm);
       return rpm;
     }

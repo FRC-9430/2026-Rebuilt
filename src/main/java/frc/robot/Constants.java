@@ -81,12 +81,6 @@ public final class Constants {
 
     }
 
-    public static final class ClimbingArmConstants {
-        public static final double kP = 0.001; // TODO: Dummy value
-        public static final double kI = 0; // TODO: Dummy value
-        public static final double kD = 0; // TODO: Dummy value
-    }
-
     /**
      * Controller related constants
      */
@@ -117,17 +111,17 @@ public final class Constants {
 
     public static final class ShooterConstants {
         // Shooter PID
-        public static final double kShooterP = 4.5E-5;
+        public static final double kShooterP = 0.0003;
         public static final double kShooterI = 0.0;
-        public static final double kShooterD = 0.0;
-        public static final double kShooterS = 0.2;
-        public static final double kShooterV = 0.00185;
+        public static final double kShooterD = 0.009;
+        public static final double kShooterS = 0.6;
+        public static final double kShooterV = 0.00169;
         public static final double kShooterA = 0.0;
 
         // Hood PID
-        public static final double kHoodP = 19.0;
+        public static final double kHoodP = 21.0;
         public static final double kHoodI = 0.0;
-        public static final double kHoodD = 0.0;
+        public static final double kHoodD = 8.0;
 
         // Feed PID TODO tune feeder
         public static final double kFeedP = 0.1;
@@ -136,11 +130,11 @@ public final class Constants {
 
         // Setpoints
         public static final double kShooterIdleRPM = 1000.0;
-        public static final double kShooterToleranceRPM = 200.0;
+        public static final double kShooterToleranceRPM = 100.0;
 
-        public static final double kDefaultConveyorSpeed = 0.3;
+        public static final double kDefaultConveyorSpeed = 0.2;
 
-        public static final double kHoodStowedPosition = 0.355;
+        public static final double kHoodStowedPosition = 0.350;
 
         public static final double kDefaultFeederSpeed = 0.5;
 
@@ -170,13 +164,12 @@ public final class Constants {
         static {
             HOOD_CONFIG.idleMode(IdleMode.kBrake);
             HOOD_CONFIG.inverted(false);
-            HOOD_CONFIG.closedLoop.outputRange(-0.3, 1.0); // Third speed when reversed
+            HOOD_CONFIG.closedLoop.outputRange(-0.05, 1.0);
             HOOD_CONFIG.closedLoop.pid(kHoodP, kHoodI, kHoodD);
             HOOD_CONFIG.closedLoop.positionWrappingEnabled(false);
             HOOD_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
             HOOD_CONFIG.closedLoop.maxMotion.cruiseVelocity(1000);
-            HOOD_CONFIG.closedLoop.maxMotion.maxAcceleration(1000);
-            HOOD_CONFIG.closedLoop.maxMotion.allowedProfileError(kHoodPositionTolerance);
+            HOOD_CONFIG.closedLoop.maxMotion.maxAcceleration(10000);
             HOOD_CONFIG.closedLoop.maxMotion.positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
         }
 
@@ -196,13 +189,13 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        public static final double kDefaultIntakeSpeed = 2500;
+        public static final double kDefaultIntakeSpeed = 2800;
 
-        public static final double kIntakeP = 0.00006;
+        public static final double kIntakeP = 0.0003;
         public static final double kIntakeI = 0.0;
-        public static final double kIntakeD = 0.0;
-        public static final double kIntakeS = 0.2;
-        public static final double kIntakeV = 0.00178;
+        public static final double kIntakeD = 0.03;
+        public static final double kIntakeS = 0.6;
+        public static final double kIntakeV = 0.00171;
         public static final double kIntakeA = 0.0;
 
         public static final SparkFlexConfig kIntakeMotorConfig = new SparkFlexConfig();
@@ -232,6 +225,47 @@ public final class Constants {
 
         public static final Translation2d RED_LEFT_VOLLY_LOC = new Translation2d(13.65, 6.250);
         public static final Translation2d RED_RIGHT_VOLLY_LOC = new Translation2d(13.65, 2.375);
+
+    }
+
+    /**
+    * Constants for the Climbing Arm Subsystem
+    */
+    public static final class ClimberArmConstants {
+
+        // TODO: Tune Values
+        public static final double kLeftP = 0.0001;
+        public static final double kLeftI = 0;
+        public static final double kLeftD = 0;
+        public static final double kLeftS = 0.2;
+        public static final double kLeftV = 0.001745;
+        public static final double kLeftA = 0;
+
+        public static final double kRightP = 0.0001;
+        public static final double kRightI = 0;
+        public static final double kRightD = 0;
+        public static final double kRightS = 0.2;
+        public static final double kRightV = 0.001692;
+        public static final double kRightA = 0;
+
+        public static final double kMaxSpeed = 0.0; // TODO calibrate
+        public static final double kTargetRPM = 700.0;
+
+        public static final SparkFlexConfig kLeftMotorConfig = new SparkFlexConfig();
+        static {
+            kLeftMotorConfig.inverted(true);
+            kLeftMotorConfig.idleMode(IdleMode.kBrake);
+            kLeftMotorConfig.closedLoop.pid(kLeftP, kLeftI, kLeftD);
+            kLeftMotorConfig.closedLoop.feedForward.sva(kLeftS, kLeftV, kLeftA);
+        }
+
+        public static final SparkFlexConfig kRightMotorConfig = new SparkFlexConfig();
+        static {
+            kRightMotorConfig.inverted(false);
+            kRightMotorConfig.idleMode(IdleMode.kBrake);
+            kRightMotorConfig.closedLoop.pid(kRightP, kRightI, kRightD);
+            kRightMotorConfig.closedLoop.feedForward.sva(kRightS, kRightV, kRightA);
+        }
 
     }
 

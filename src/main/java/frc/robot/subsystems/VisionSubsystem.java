@@ -2,12 +2,12 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LimelightHelpers;
-import frc.robot.util.LimelightHelpers.RawFiducial;
 
 public class VisionSubsystem extends SubsystemBase implements AutoCloseable{
 
@@ -45,7 +45,7 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable{
     private static final double kMaxLinearSpeedReject = 1.0; // m/s (use drivetrain-reported speed)
     private static final double kMaxOutlierDistWhenStopped = 1.0; // meters
     public static final double kMaxAmbiguity = 0.5;
-    public static final double kMaxSingleTagDist = 3.0; // meters (Tier 4)
+    public static final double kMaxSingleTagDist = 4.0; // meters (Tier 4)
     private static final double kMinDistForOutlierReject = 1.0; // meters
     private static final int kLimelightIMUMode = 1;
 
@@ -89,151 +89,177 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable{
     }
 
     /**
-     * Process vision measurements and add them to the drivetrain with appropriate gating and 
-     * per-measurement standard deviations. This method implements several layers of outlier rejection 
-     * to avoid bad vision measurements from negatively impacting the pose estimator, including 
-     * checks on robot speed, measurement ambiguity, and distance to target. 
-     * It also includes logic to require several consecutive good measurements if the 
+     * Process vision measurements and add them to the drivetrain with appropriate
+     * gating and
+     * per-measurement standard deviations. This method implements several layers of
+     * outlier rejection
+     * to avoid bad vision measurements from negatively impacting the pose
+     * estimator, including
+     * checks on robot speed, measurement ambiguity, and distance to target.
+     * It also includes logic to require several consecutive good measurements if
+     * the
      * detected tags are far away, as these measurements tend to be less reliable.
      */
     public void addVisionMeasurements() {
         SwerveDriveState driveState = drivetrain.getState();
-        Pose2d currentOdometryPose = drivetrain.getPose();
+        Pose2d odometryPose = drivetrain.getPose();
 
         LimelightHelpers.SetRobotOrientation(
                 "limelight",
                 driveState.Pose.getRotation().getDegrees(),
                 0, 0, 0, 0, 0);
 
-        LimelightHelpers.PoseEstimate poseEstimateMT1 = getPoseEstimateMT1();
+        LimelightHelpers.PoseEstimate estimate = getPoseEstimateMT1();
 
-        addVisionMeasurements(poseEstimateMT1, driveState, currentOdometryPose);
+        addVisionMeasurements(estimate, driveState, odometryPose);
     }
 
-    public void addVisionMeasurements(LimelightHelpers.PoseEstimate poseEstimateMT1, SwerveDriveState driveState, Pose2d currentOdometryPose) {
-        // compute approximate linear speed from drivetrain reported speeds (more
-        // stable)
-        double linearSpeed = Math.hypot(driveState.Speeds.vxMetersPerSecond, driveState.Speeds.vyMetersPerSecond);
+    public void addVisionMeasurements(LimelightHelpers.PoseEstimate estimate, SwerveDriveState driveState,
+            Pose2d odometryPose) {
 
-        SmartDashboard.putNumber("Robot Pose Cam Est X", poseEstimateMT1.pose.getX());
-        SmartDashboard.putNumber("Robot Pose Cam Est Y", poseEstimateMT1.pose.getY());
-        SmartDashboard.putNumber("Vision/avgTagDist", poseEstimateMT1.avgTagDist);
-        SmartDashboard.putNumber("Vision/tagCount", poseEstimateMT1.tagCount);
+        double linearSpeed = Math.hypot(
+                driveState.Speeds.vxMetersPerSecond,
+                driveState.Speeds.vyMetersPerSecond);
 
-        boolean doRejectUpdate = false;
-        if (poseEstimateMT1.tagCount == 1 && poseEstimateMT1.rawFiducials.length == 1) {
-            if (poseEstimateMT1.rawFiducials[0].ambiguity > kMaxAmbiguity) {
-                doRejectUpdate = true;
-            }
-            if (poseEstimateMT1.rawFiducials[0].distToCamera > kMaxSingleTagDist) {
-                doRejectUpdate = true;
-            }
-        }
-        if (poseEstimateMT1.tagCount == 0) {
-            doRejectUpdate = true;
-        }
+        LimelightHelpers.SetRobotOrientation(
+                "limelight",
+                driveState.Pose.getRotation().getDegrees(),
+                0, 0, 0, 0, 0);
 
-        // reject during high angular rates
-        if (driveState.Speeds.omegaRadiansPerSecond > kMaxAngularRateReject) {
-            doRejectUpdate = true;
-        }
+        logVisionData(estimate);
 
-        // reject if robot is moving too fast linearly (approximate from odometry)
-        if (linearSpeed > kMaxLinearSpeedReject) {
-            doRejectUpdate = true;
-        }
+        if (shouldRejectMeasurement(estimate, driveState, linearSpeed))
+            return;
 
-        // small safeguard: avoid applying vision updates too often
-        if (Math.abs(poseEstimateMT1.timestampSeconds - m_lastVisionTimestamp) < kMinVisionInterval) {
-            doRejectUpdate = true;
-        }
+        double distanceToOdo = estimate.pose.getTranslation()
+                .getDistance(odometryPose.getTranslation());
 
-        // Additional outlier rejection: if robot is nearly stopped but vision jump is
-        // large,
-        // reject the update.
-        if (!doRejectUpdate) {
-            double distanceToOdometry = Math.hypot(
-                    poseEstimateMT1.pose.getX() - currentOdometryPose.getX(),
-                    poseEstimateMT1.pose.getY() - currentOdometryPose.getY());
+        if (isStoppedOutlier(estimate, linearSpeed, distanceToOdo))
+            return;
 
-            SmartDashboard.putNumber("Vision/distanceToOdometry", distanceToOdometry);
+        double avgAmbiguity = getAverageAmbiguity(estimate);
+        double sigmaXY = computeSigmaXY(estimate, avgAmbiguity);
+        double sigmaTheta = computeSigmaTheta(avgAmbiguity);
 
-            if (linearSpeed < kMaxLinearSpeedReject && distanceToOdometry > kMaxOutlierDistWhenStopped
-                    && poseEstimateMT1.avgTagDist > kMinDistForOutlierReject) {
-                // large jump while stopped -> likely bad measurement
-                doRejectUpdate = true;
-            }
-        }
+        SmartDashboard.putNumber("Vision/sigmaXY", sigmaXY);
+        SmartDashboard.putNumber("Vision/sigmaTheta", sigmaTheta);
 
-        if (!doRejectUpdate) {
-            // Compute a per-measurement standard deviation based on ambiguity and distance
-            double avgAmbiguity = 0.0;
-            if (poseEstimateMT1.rawFiducials.length > 0) {
-                for (RawFiducial f : poseEstimateMT1.rawFiducials) {
-                    avgAmbiguity += f.ambiguity;
-                }
-                avgAmbiguity /= poseEstimateMT1.rawFiducials.length;
-            }
+        if (!allowFarTagApplication(estimate))
+            return;
 
-            double sigmaXY = kSigmaBase + kSigmaDistFactor * Math.max(0.0, poseEstimateMT1.avgTagDist)
-                    + kSigmaAmbigFactor * avgAmbiguity;
-            sigmaXY = Math.min(Math.max(sigmaXY, kMinSigmaXY), kMaxSigmaXY);
+        drivetrain.addVisionMeasurement(
+                estimate.pose,
+                estimate.timestampSeconds,
+                VecBuilder.fill(sigmaXY, sigmaXY, sigmaTheta));
 
-            // If tags are far away, increase covariance and require consecutive good frames
-            boolean isFar = poseEstimateMT1.avgTagDist >= kFarTagDistance;
-            if (isFar) {
-                // increase sigma to downweight far-away vision measurements
-                sigmaXY = Math.max(sigmaXY, kFarTagSigmaFloor);
-            }
+        m_lastVisionTimestamp = estimate.timestampSeconds;
+    }
 
-            double sigmaTheta = kSigmaThetaBase + (kSigmaThetaAmbigFactor * avgAmbiguity);
-            sigmaTheta = Math.min(Math.max(sigmaTheta, kMinSigmaTheta), kMaxSigmaTheta);
+    private boolean shouldRejectMeasurement(
+            LimelightHelpers.PoseEstimate est,
+            SwerveDriveState driveState,
+            double linearSpeed) {
 
-            SmartDashboard.putNumber("Vision/sigmaXY", sigmaXY);
-            SmartDashboard.putNumber("Vision/sigmaTheta", sigmaTheta);
+        if (est.tagCount == 0)
+            return true;
 
-            // If far away, require several consecutive good frames within a window before
-            // applying
-            double now = poseEstimateMT1.timestampSeconds;
-            boolean allowApply = true;
-            if (isFar) {
-                if (m_farTagConsecutiveCount == 0) {
-                    m_firstFarTagTime = now;
-                }
-                m_farTagConsecutiveCount++;
-
-                // reset if outside time window
-                if (now - m_firstFarTagTime > kFarTagConsecutiveWindow) {
-                    m_farTagConsecutiveCount = 1;
-                    m_firstFarTagTime = now;
-                }
-
-                if (m_farTagConsecutiveCount < kFarTagRequiredConsecutive) {
-                    allowApply = false;
-                }
-            } else {
-                // reset counter when not far
-                m_farTagConsecutiveCount = 0;
-                m_firstFarTagTime = 0.0;
-            }
-
-            if (allowApply) {
-                // Build matrix and send measurement with per-measurement std devs
-                drivetrain.addVisionMeasurement(
-                        poseEstimateMT1.pose,
-                        poseEstimateMT1.timestampSeconds,
-                        VecBuilder.fill(sigmaXY, sigmaXY, sigmaTheta));
-
-                m_lastVisionTimestamp = poseEstimateMT1.timestampSeconds;
-            } else {
-                SmartDashboard.putString("Vision/lastRejectReason", "far-consecutive");
-            }
+        if (est.tagCount == 1 && est.rawFiducials.length == 1) {
+            var f = est.rawFiducials[0];
+            if (f.ambiguity > kMaxAmbiguity || f.distToCamera > kMaxSingleTagDist)
+                return true;
         }
 
+        if (Math.abs(driveState.Speeds.omegaRadiansPerSecond) > kMaxAngularRateReject)
+            return true;
+
+        if (linearSpeed > kMaxLinearSpeedReject)
+            return true;
+
+        if (Math.abs(est.timestampSeconds - m_lastVisionTimestamp) < kMinVisionInterval)
+            return true;
+
+        return false;
+    }
+
+    private boolean isStoppedOutlier(
+            LimelightHelpers.PoseEstimate est,
+            double linearSpeed,
+            double distanceToOdo) {
+
+        SmartDashboard.putNumber("Vision/distanceToOdometry", distanceToOdo);
+
+        return linearSpeed < kMaxLinearSpeedReject
+                && distanceToOdo > kMaxOutlierDistWhenStopped
+                && est.avgTagDist > kMinDistForOutlierReject;
+    }
+
+    private double getAverageAmbiguity(LimelightHelpers.PoseEstimate est) {
+        if (est.rawFiducials.length == 0)
+            return 0.0;
+
+        double total = 0;
+        for (var f : est.rawFiducials)
+            total += f.ambiguity;
+
+        return total / est.rawFiducials.length;
+    }
+
+    private double computeSigmaXY(
+            LimelightHelpers.PoseEstimate est,
+            double avgAmbiguity) {
+
+        double sigma = kSigmaBase
+                + kSigmaDistFactor * Math.max(0.0, est.avgTagDist)
+                + kSigmaAmbigFactor * avgAmbiguity;
+
+        sigma = MathUtil.clamp(sigma, kMinSigmaXY, kMaxSigmaXY);
+
+        if (est.avgTagDist >= kFarTagDistance)
+            sigma = Math.max(sigma, kFarTagSigmaFloor);
+
+        return sigma;
+    }
+
+    private double computeSigmaTheta(double avgAmbiguity) {
+        double sigma = kSigmaThetaBase + kSigmaThetaAmbigFactor * avgAmbiguity;
+        return MathUtil.clamp(sigma, kMinSigmaTheta, kMaxSigmaTheta);
+    }
+
+    private boolean allowFarTagApplication(LimelightHelpers.PoseEstimate est) {
+        if (est.avgTagDist < kFarTagDistance) {
+            m_farTagConsecutiveCount = 0;
+            m_firstFarTagTime = 0.0;
+            return true;
+        }
+
+        double now = est.timestampSeconds;
+
+        if (m_farTagConsecutiveCount == 0)
+            m_firstFarTagTime = now;
+
+        m_farTagConsecutiveCount++;
+
+        if (now - m_firstFarTagTime > kFarTagConsecutiveWindow) {
+            m_farTagConsecutiveCount = 1;
+            m_firstFarTagTime = now;
+        }
+
+        if (m_farTagConsecutiveCount < kFarTagRequiredConsecutive) {
+            SmartDashboard.putString("Vision/lastRejectReason", "far-consecutive");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void logVisionData(LimelightHelpers.PoseEstimate est) {
+        SmartDashboard.putNumber("Robot Pose Cam Est X", est.pose.getX());
+        SmartDashboard.putNumber("Robot Pose Cam Est Y", est.pose.getY());
+        SmartDashboard.putNumber("Vision/avgTagDist", est.avgTagDist);
+        SmartDashboard.putNumber("Vision/tagCount", est.tagCount);
     }
 
     public void close() {
         drivetrain.close();
     }
-
 }
