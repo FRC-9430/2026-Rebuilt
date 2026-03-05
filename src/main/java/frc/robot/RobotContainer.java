@@ -84,9 +84,9 @@ public class RobotContainer {
                                 .withRotationalRate(-controller.getRightX() * MaxAngularRate),
                         () -> aim.withSpeeds(polar.getPolarDriveSpeeds(drivetrain.getState().Pose,
                                 (Math.abs(controller.getLeftY()) > 0.06 ? controller.getLeftY() : 0.0) // Clamp Input
-                                        / (shootCommand.isScheduled() ? 5.0 : 1.0), // Slow When Shooting
+                                        / (shootCommand.isScheduled() && polar.targetIsHub() ? 5.0 : 1.0), // Slow When Shooting
                                 (Math.abs(controller.getLeftX()) > 0.06 ? controller.getLeftX() : 0.0)
-                                        / (shootCommand.isScheduled() ? 10.0 : 1.0),
+                                        / (shootCommand.isScheduled() && polar.targetIsHub() ? 10.0 : 1.0),
                                 MaxSpeed, MaxAngularRate,
                                 (shootCommand.isScheduled()))), // Lead only when shooting
                         () -> isCartesian()));
