@@ -81,11 +81,11 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
                 drivetrain.applyRequestWithCondition(
                         () -> drive.withVelocityX((!controller.getHID().getRightBumperButton()
-                                ? -Math.pow(controller.getLeftY(), 3)
-                                : -controller.getLeftY() / 5) * MaxSpeed)
+                                ? -controller.getLeftY()
+                                : -controller.getLeftY() / 3) * MaxSpeed)
                                 .withVelocityY((!controller.getHID().getRightBumperButton()
-                                ? -Math.pow(controller.getLeftX(), 3)
-                                : -controller.getLeftX() / 5) * MaxSpeed)
+                                ? -controller.getLeftX()
+                                : -controller.getLeftX() / 3) * MaxSpeed)
                                 .withRotationalRate(-controller.getRightX() * MaxAngularRate),
                         () -> aim.withSpeeds(polar.getPolarDriveSpeeds(drivetrain.getState().Pose,
                                 (Math.abs(controller.getLeftY()) > 0.06 ? controller.getLeftY() : 0.0) // Clamp Input
