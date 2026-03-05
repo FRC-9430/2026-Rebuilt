@@ -52,6 +52,43 @@
             "name": "Aim & Shoot 5s"
           }
         }
+        ,
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SZR-IFR2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Start Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "IFR2-HFR2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HFR2-SZR"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Aim & Shoot 5s"
+          }
+        }
       ]
     }
   },

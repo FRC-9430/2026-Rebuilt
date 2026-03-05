@@ -51,6 +51,42 @@
           "data": {
             "name": "Aim & Shoot 5s"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SZL-IFL2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Start Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "IFL2-HFL2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HFL2-SZL"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Aim & Shoot 5s"
+          }
         }
       ]
     }
