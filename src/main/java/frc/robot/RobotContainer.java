@@ -29,6 +29,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PolarSubsystem;
 import static frc.robot.Constants.DriveConstants.*;
 
+import java.util.HashMap;
+
 /**
  * Central robot container that creates subsystems, binds controls to commands,
  * and exposes autonomous routines.
@@ -114,10 +116,8 @@ public class RobotContainer {
         controller.leftBumper().onTrue(new InstantCommand(() -> {
             if (isCartesian()) {
                 driveMode = DriveMode.POLAR;
-                SmartDashboard.putString("DriveMode", "POLAR");
             } else {
                 driveMode = DriveMode.CARTESIAN;
-                SmartDashboard.putString("DriveMode", "CARTESIAN");
             }
         }));
 
@@ -159,13 +159,6 @@ public class RobotContainer {
 
     }
 
-    /**
-     * Reset the drivetrain pose using the initial pose supplied on the dashboard.
-     */
-    public void setInitialPose() {
-        drivetrain.resetPose(dash.getInitialPose());
-    }
-
     /** Drive mode for the operator controls: Cartesian or Polar. */
     public enum DriveMode {
         CARTESIAN,
@@ -193,33 +186,41 @@ public class RobotContainer {
     /** Set the drive mode to Cartesian. */
     public void setCartesian() {
         driveMode = DriveMode.CARTESIAN;
+        SmartDashboard.putString("DriveMode", "CARTESIAN");
     }
 
     /** Set the drive mode to Polar. */
     public void setPolar() {
         driveMode = DriveMode.POLAR;
+        SmartDashboard.putString("DriveMode", "POLAR");
     }
 
     /**
-     * Register named commands for PathPlanner
+     * Register Named Commands for PathPlanner and dashboard
      */
     public void configureNamedCommands() {
-        NamedCommands.registerCommand("Eject Basket", new EjectBasketCommand(intake));
 
-        NamedCommands.registerCommand("Retract Basket", new RetractBasketCommand(intake));
-        NamedCommands.registerCommand("Bump Basket", new BumpBasketCommand(intake, 1));
+        HashMap<String, Command> namedCommands = new HashMap<>();
 
-        NamedCommands.registerCommand("Start Intake", new InstantCommand(() -> intake.setIntake()));
-        NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> intake.stopIntake()));
+        namedCommands.put("Eject Basket", new EjectBasketCommand(intake));
+        namedCommands.put("Retract Basket", new RetractBasketCommand(intake));
+        namedCommands.put("Start Intake", new InstantCommand(() -> intake.setIntake()));
+        namedCommands.put("Stop Intake", new InstantCommand(() -> intake.stopIntake()));
+        namedCommands.put("Engage Polar", new InstantCommand(() -> setPolar()));
+        namedCommands.put("Engage Cartesian", new InstantCommand(() -> setCartesian()));
+        namedCommands.put("Start Aim and Shoot", new InstantCommand(() -> startAimAndShootAutonCommand()));
+        namedCommands.put("Aim & Shoot 5s", new AimAndShootCommand(drivetrain, shooter, intake, polar, 5.0));
+        namedCommands.put("Stop Aim and Shoot", new InstantCommand(() -> aimAndShootCommand.cancel()));
+        namedCommands.put("Stow Hood", new InstantCommand(() -> shooter.stowHood()));
 
-        NamedCommands.registerCommand("Engage Polar", new InstantCommand(() -> setPolar()));
-        NamedCommands.registerCommand("Engage Cartesian", new InstantCommand(() -> setCartesian()));
+        namedCommands.put("Stop All Motors & Commands", new InstantCommand(() -> {
+            CommandScheduler.getInstance().cancelAll();
+            shooter.stopAll();
+            intake.stopAll();
+        }));
 
-        NamedCommands.registerCommand("Start Aim and Shoot", new InstantCommand(() -> startAimAndShootAutonCommand()));
-
-        NamedCommands.registerCommand("Stop Aim and Shoot", new InstantCommand(() -> aimAndShootCommand.cancel()));
-
-        NamedCommands.registerCommand("Stow Hood", new InstantCommand(() -> shooter.stowHood()));
+        NamedCommands.registerCommands(namedCommands);
+        dash.initCommandChooser(namedCommands);
 
     }
 
