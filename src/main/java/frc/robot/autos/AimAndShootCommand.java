@@ -39,26 +39,28 @@ public class AimAndShootCommand extends SequentialCommandGroup {
   /** Creates a new AimAndShootCommand with timeout. */
   public AimAndShootCommand(CommandSwerveDrivetrain drive, ShooterSubsystem shoot,
       IntakeSubsystem intake, PolarSubsystem polar, Double timeoutSeconds) {
-      
-      if (timeoutSeconds != null) {
+    System.out.println("New Aim & Shoot Command: " + timeoutSeconds);
+    if (timeoutSeconds != null) {
+      System.out.println("Timing out");
       addCommands(
           new ParallelCommandGroup(
               new AimCommand(drive, polar).withTimeout(timeoutSeconds),
-              new ShootCommand(shoot, polar, intake).withTimeout(timeoutSeconds)));
-      } else if (DriverStation.isAutonomous()) {
+              new ShootCommand(shoot, polar, intake).withTimeout(timeoutSeconds))
+              .withTimeout(timeoutSeconds));
+    } else if (DriverStation.isAutonomous()) {
+      System.out.println("Auton");
       addCommands( // Auton - Run for 5 seconds
           new ParallelCommandGroup(
               new AimCommand(drive, polar).withTimeout(5.0),
               new ShootCommand(shoot, polar, intake).withTimeout(5.0)));
     } else {
+      System.out.println("Teleop");
       addCommands( // Teleop - Go Until Cancelled
           new ParallelCommandGroup(
               new AimCommand(drive, polar),
               new ShootCommand(shoot, polar, intake)));
-      }
+    }
 
-
-    
   }
 
 }
