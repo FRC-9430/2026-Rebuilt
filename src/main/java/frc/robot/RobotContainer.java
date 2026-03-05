@@ -105,7 +105,7 @@ public class RobotContainer {
         // controller.start().and(controller.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading
-        controller.rightBumper().onTrue(new InstantCommand(() -> {
+        controller.povDown().onTrue(new InstantCommand(() -> {
             var seenPose = vision.getPoseEstimateMT1().pose;
             if (!seenPose.equals(new Pose2d())) {
                 drivetrain.resetPose(vision.getPoseEstimateMT1().pose);
@@ -136,13 +136,13 @@ public class RobotContainer {
         }));
 
         // Climber
-        controller.povDown().whileTrue(new RepeatCommand(new InstantCommand(() -> {
+        controller.x().whileTrue(new RepeatCommand(new InstantCommand(() -> {
             climber.setClimberRPM(ClimberArmConstants.kTargetRPM * 1.0);
         }))).onFalse(new InstantCommand(() -> {
             climber.stopClimbers();
         }));
 
-        controller.povUp().whileTrue(new RepeatCommand(new InstantCommand(() -> {
+        controller.y().whileTrue(new RepeatCommand(new InstantCommand(() -> {
             climber.setClimberRPM(ClimberArmConstants.kTargetRPM * -1.0);
         }))).onFalse(new InstantCommand(() -> {
             climber.stopClimbers();
@@ -161,9 +161,6 @@ public class RobotContainer {
         })).onFalse(new InstantCommand(() -> {
             shooter.stopHood();
         }));
-
-        // Bump the Basket
-        controller.y().onTrue(new BumpBasketCommand(intake, 3));
 
         // Eject Basket
         controller.back().onTrue(new EjectBasketCommand(intake));
