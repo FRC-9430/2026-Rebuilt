@@ -72,6 +72,7 @@ public class ShootCommand extends Command {
     shoot.stopShooter();
     intake.stopBasket();
     intake.stopIntake();
+    System.out.println("End Shoot Command: " + interrupted);
 
   }
 
