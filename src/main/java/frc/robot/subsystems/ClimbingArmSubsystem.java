@@ -6,6 +6,8 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANConstants;
 import frc.robot.Constants.ClimberArmConstants;
@@ -111,5 +113,7 @@ public class ClimbingArmSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("RClimbRPM", rClimbEncoder.getVelocity());
+        SmartDashboard.putNumber("LClimbRPM", lClimbEncoder.getVelocity());
     }
 }
