@@ -1,12 +1,17 @@
 # 2026-Rebuilt
-CTEC Robotics Program code for 2026
+
+CTEC Robotics Program code for 2026.
 
 ## Driver Controls
-Movement - left analog stick
-Rotation -> right analog stick horizontal
-Shoot -> right trigger
-Intake -> left trigger
-Reset Field Position -> d-pad down
-Toggle polar/cartesian mode -> left bumper
-Slowdown Drive (cartesian) -> right bumper (hold)
-Force Stow Hood -> A
+
+
+| Action | Control |
+|---|---|
+| Movement | Left analog stick |
+| Rotation | Right analog stick (horizontal) |
+| Shoot | Right trigger (RT) |
+| Intake | Left trigger (LT) |
+| Reset field position | D-pad Down |
+| Toggle polar/cartesian mode | Left bumper (LB) |
+| Slowdown drive (cartesian) | Right bumper (RB) — hold |
+| Force stow hood | A button |
