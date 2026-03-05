@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.util.TunerConstants;
 import frc.robot.Constants.ClimberArmConstants;
 import frc.robot.autos.AimAndShootCommand;
-import frc.robot.commands.BumpBasketCommand;
 import frc.robot.commands.EjectBasketCommand;
 import frc.robot.commands.RetractBasketCommand;
 import frc.robot.commands.ShootCommand;
@@ -68,6 +68,7 @@ public class RobotContainer {
         configureNamedCommands();
         dash.initAutoChooser();
         configureBindings();
+        SignalLogger.stop();
     }
 
     /**
@@ -155,18 +156,11 @@ public class RobotContainer {
             shooter.stopHood();
         }));
 
-        // Force Stow Hood
-        controller.b().onTrue(new InstantCommand(() -> {
-            shooter.setHoodPosition(0.55);
-        })).onFalse(new InstantCommand(() -> {
-            shooter.stopHood();
-        }));
-
         // Eject Basket
-        controller.back().onTrue(new EjectBasketCommand(intake));
+        controller.start().onTrue(new EjectBasketCommand(intake));
 
         // Retract Basket
-        controller.start().onTrue(new RetractBasketCommand(intake));
+        controller.back().onTrue(new RetractBasketCommand(intake));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
