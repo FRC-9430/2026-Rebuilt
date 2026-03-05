@@ -4,53 +4,62 @@
     {
       "anchor": {
         "x": 7.7021109123434695,
-        "y": 5.633202146690519
+        "y": 7.4828980322003575
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.750787119856886,
-        "y": 7.71005366726297
+        "x": 7.7021109123434695,
+        "y": 6.931234347048299
       },
       "isLocked": false,
-      "linkedName": "B-HFL"
+      "linkedName": "IFL"
     },
     {
       "anchor": {
-        "x": 4.586833631484795,
-        "y": 7.4828980322003575
+        "x": 7.740646243291593,
+        "y": 6.2984436493738825
       },
       "prevControl": {
-        "x": 5.446779964221824,
-        "y": 7.4828980322003575
+        "x": 7.740646243291593,
+        "y": 6.558067914593069
       },
       "nextControl": {
-        "x": 2.495578874476362,
-        "y": 7.4828980322003575
+        "x": 7.740646243291593,
+        "y": 6.038819384154696
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.8122898032200352,
-        "y": 6.022611806797853
+        "x": 7.7021109123434695,
+        "y": 5.633202146690519
       },
       "prevControl": {
-        "x": 1.6987119856887296,
-        "y": 7.239516994633274
+        "x": 7.718336314847942,
+        "y": 6.314669051878355
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "HFL"
     }
   ],
-  "rotationTargets": [
+  "rotationTargets": [],
+  "constraintZones": [
     {
-      "waypointRelativePos": 1.1925133689839575,
-      "rotationDegrees": 180.0
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.5016949152542375,
+      "maxWaypointRelativePos": 2.0,
+      "constraints": {
+        "maxVelocity": 0.8,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 740.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
     }
   ],
-  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -62,8 +71,8 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 1.0,
-    "rotation": -45.86152573456725
+    "velocity": 0,
+    "rotation": 90.0
   },
   "reversed": false,
   "folder": null,

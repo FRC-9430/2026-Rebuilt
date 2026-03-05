@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 12.115420393559929,
+        "x": 4.424579606440071,
         "y": 7.4828980322003575
       },
       "prevControl": null,
       "nextControl": {
-        "x": 11.865420393561137,
+        "x": 4.674579606438863,
         "y": 7.482898809336731
       },
       "isLocked": false,
-      "linkedName": "R-SPR"
+      "linkedName": "SPL"
     },
     {
       "anchor": {
-        "x": 10.565440518783995,
+        "x": 5.974559481216005,
         "y": 7.482898323626498
       },
       "prevControl": {
-        "x": 11.052202593918162,
+        "x": 5.487797406081838,
         "y": 7.482898323626498
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "R-BER"
+      "linkedName": "BEL"
     }
   ],
   "rotationTargets": [],

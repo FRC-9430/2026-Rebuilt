@@ -3,45 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.837889087656531,
-        "y": 7.4828980322003575
+        "x": 7.7021109123434695,
+        "y": 0.5871019677996425
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.837889087656531,
-        "y": 6.931234347048299
+        "x": 7.7021109123434695,
+        "y": 1.138765652951701
       },
       "isLocked": false,
-      "linkedName": "R-IFR"
+      "linkedName": "IFR"
     },
     {
       "anchor": {
-        "x": 8.799353756708408,
-        "y": 6.2984436493738825
+        "x": 7.740646243291593,
+        "y": 1.7715563506261175
       },
       "prevControl": {
-        "x": 8.799353756708408,
-        "y": 6.558067914593069
+        "x": 7.740646243291593,
+        "y": 1.511932085406931
       },
       "nextControl": {
-        "x": 8.799353756708408,
-        "y": 6.038819384154696
+        "x": 7.740646243291593,
+        "y": 2.031180615845304
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.837889087656531,
-        "y": 5.633202146690519
+        "x": 7.7021109123434695,
+        "y": 2.436797853309481
       },
       "prevControl": {
-        "x": 8.821663685152058,
-        "y": 6.314669051878355
+        "x": 7.718336314847942,
+        "y": 1.755330948121645
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "R-HFR"
+      "linkedName": "HFR"
     }
   ],
   "rotationTargets": [],
@@ -72,13 +72,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": -90.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": -90.0
   },
   "useDefaultConstraints": true
 }

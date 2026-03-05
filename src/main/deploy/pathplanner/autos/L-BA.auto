@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R-SPR-BER"
+            "pathName": "SPL-BEL"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R-BER-IFR"
+            "pathName": "BEL-IFL"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R-IFR-HFR"
+            "pathName": "IFL-HFL"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R-HFR-SZR"
+            "pathName": "HFL-SZL"
           }
         },
         {
