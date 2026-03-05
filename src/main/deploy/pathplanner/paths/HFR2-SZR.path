@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 8.281352470290493,
-        "y": 3.5571982284330985
+        "y": 3.5571982284330983
       },
       "prevControl": null,
       "nextControl": {
         "x": 7.99566942671655,
-        "y": 0.371832292583626
+        "y": 0.37183229258362704
       },
       "isLocked": false,
       "linkedName": "HFR2"
@@ -25,7 +25,7 @@
       },
       "nextControl": {
         "x": 2.6947783052028758,
-        "y": 0.720964850640584
+        "y": 0.7209648506405842
       },
       "isLocked": false,
       "linkedName": null
@@ -37,7 +37,7 @@
       },
       "prevControl": {
         "x": 2.7690420059419023,
-        "y": 0.60879951584507
+        "y": 0.6087995158450699
       },
       "nextControl": null,
       "isLocked": false,
@@ -56,8 +56,8 @@
   "globalConstraints": {
     "maxVelocity": 3.5,
     "maxAcceleration": 3.5,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularVelocity": 460.0,
+    "maxAngularAcceleration": 600.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

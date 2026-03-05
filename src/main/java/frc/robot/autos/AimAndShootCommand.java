@@ -26,8 +26,8 @@ public class AimAndShootCommand extends SequentialCommandGroup {
     if (DriverStation.isAutonomous()) {
       addCommands( // Auton - Run for 5 seconds
           new ParallelCommandGroup(
-              new AimCommand(drive, polar).withTimeout(5.0),
-              new ShootCommand(shoot, polar, intake).withTimeout(5.0)));
+              new AimCommand(drive, polar),
+              new ShootCommand(shoot, polar, intake)));
     } else {
       addCommands( // Teleop - Go Until Cancelled
           new ParallelCommandGroup(

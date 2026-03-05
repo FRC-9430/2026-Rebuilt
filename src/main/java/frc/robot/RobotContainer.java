@@ -39,7 +39,7 @@ import java.util.HashMap;
  */
 public class RobotContainer {
 
-  private final Telemetry logger = new Telemetry(MaxSpeed);
+    private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController controller = new CommandXboxController(kControllerPort);
 
@@ -80,12 +80,17 @@ public class RobotContainer {
 
         drivetrain.setDefaultCommand(
                 drivetrain.applyRequestWithCondition(
-                        () -> drive.withVelocityX(-Math.pow(controller.getLeftY(), 3) * MaxSpeed)
-                                .withVelocityY(-Math.pow(controller.getLeftX(), 3) * MaxSpeed)
+                        () -> drive.withVelocityX((!controller.getHID().getRightBumperButton()
+                                ? -Math.pow(controller.getLeftY(), 3)
+                                : -controller.getLeftY() / 5) * MaxSpeed)
+                                .withVelocityY((!controller.getHID().getRightBumperButton()
+                                ? -Math.pow(controller.getLeftX(), 3)
+                                : -controller.getLeftX() / 5) * MaxSpeed)
                                 .withRotationalRate(-controller.getRightX() * MaxAngularRate),
                         () -> aim.withSpeeds(polar.getPolarDriveSpeeds(drivetrain.getState().Pose,
                                 (Math.abs(controller.getLeftY()) > 0.06 ? controller.getLeftY() : 0.0) // Clamp Input
-                                        / (shootCommand.isScheduled() && polar.targetIsHub() ? 5.0 : 1.0), // Slow When Shooting
+                                        / (shootCommand.isScheduled() && polar.targetIsHub() ? 5.0 : 1.0), // Slow When
+                                                                                                           // Shooting
                                 (Math.abs(controller.getLeftX()) > 0.06 ? controller.getLeftX() : 0.0)
                                         / (shootCommand.isScheduled() && polar.targetIsHub() ? 10.0 : 1.0),
                                 MaxSpeed, MaxAngularRate,
@@ -216,7 +221,7 @@ public class RobotContainer {
         namedCommands.put("Engage Polar", new InstantCommand(() -> setPolar()));
         namedCommands.put("Engage Cartesian", new InstantCommand(() -> setCartesian()));
         namedCommands.put("Start Aim and Shoot", new InstantCommand(() -> startAimAndShootAutonCommand()));
-        namedCommands.put("Aim & Shoot 5s", new AimAndShootCommand(drivetrain, shooter, intake, polar, 5.0));
+        namedCommands.put("Aim & Shoot 5s", new AimAndShootCommand(drivetrain, shooter, intake, polar));
         namedCommands.put("Stop Aim and Shoot", new InstantCommand(() -> aimAndShootCommand.cancel()));
         namedCommands.put("Stow Hood", new InstantCommand(() -> shooter.stowHood()));
 
