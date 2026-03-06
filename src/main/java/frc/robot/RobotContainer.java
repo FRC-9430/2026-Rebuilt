@@ -23,6 +23,7 @@ import frc.robot.autos.AimAndShootCommand;
 import frc.robot.commands.EjectBasketCommand;
 import frc.robot.commands.RetractBasketCommand;
 import frc.robot.commands.ShootCommand;
+import frc.robot.commands.ShootTouchingHubCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.ElasticDashboard;
@@ -224,6 +225,7 @@ public class RobotContainer {
         namedCommands.put("Aim & Shoot 5s", new AimAndShootCommand(drivetrain, shooter, intake, polar));
         namedCommands.put("Stop Aim and Shoot", new InstantCommand(() -> aimAndShootCommand.cancel()));
         namedCommands.put("Stow Hood", new InstantCommand(() -> shooter.stowHood()));
+        namedCommands.put("Shoot While Touching Hub", new ShootTouchingHubCommand(shooter, intake));
 
         namedCommands.put("Stop All Motors & Commands", new InstantCommand(() -> {
             CommandScheduler.getInstance().cancelAll();
