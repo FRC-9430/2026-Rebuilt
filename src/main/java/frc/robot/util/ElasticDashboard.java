@@ -68,7 +68,7 @@ public class ElasticDashboard extends SubsystemBase {
 
         // Schedule Selected Named Command when Run Command button is pressed
         if (SmartDashboard.getBoolean("Run Command", false)) {
-
+            SmartDashboard.putBoolean("Run Command", false);
             var command = getCommandChooser();
 
             if (command != null && command != Commands.none()) {
