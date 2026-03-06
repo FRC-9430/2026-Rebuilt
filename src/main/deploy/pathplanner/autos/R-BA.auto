@@ -75,18 +75,6 @@
           "data": {
             "name": "Stop Intake"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "HFR2-SZR"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Aim & Shoot 5s"
-          }
         }
       ]
     }
