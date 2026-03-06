@@ -47,7 +47,7 @@ public class ShootCommand extends Command {
   public void execute() {
     shoot.setShooterRPM(polar.getShootVelocity());
     shoot.setHoodPosition(polar.getHoodPosition());
-    if (shoot.isShooterReady() && Timer.getFPGATimestamp() < uptime + 0.4) {
+    if (shoot.isShooterReady() && Timer.getFPGATimestamp() < uptime + 0.6) {
       shoot.startFeeder();
       shoot.startConveyorDefault();
     }
