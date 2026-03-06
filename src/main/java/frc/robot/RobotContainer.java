@@ -5,7 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
-import com.ctre.phoenix6.SignalLogger;
+import com.revrobotics.util.StatusLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -68,7 +68,7 @@ public class RobotContainer {
         configureNamedCommands();
         dash.initAutoChooser();
         configureBindings();
-        SignalLogger.stop();
+        StatusLogger.disableAutoLogging();
     }
 
     /**
