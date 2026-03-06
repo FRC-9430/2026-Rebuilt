@@ -162,6 +162,10 @@ public class RobotContainer {
             shooter.stopHood();
         }));
 
+        controller.x().onTrue(new InstantCommand(() -> 
+            CommandScheduler.getInstance().cancelAll()
+        ));
+
         // Eject Basket
         controller.start().onTrue(new EjectBasketCommand(intake));
 
