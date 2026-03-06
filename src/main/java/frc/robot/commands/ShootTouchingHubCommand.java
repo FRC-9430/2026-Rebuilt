@@ -39,7 +39,7 @@ public class ShootTouchingHubCommand extends Command {
   @Override
   public void execute() {
     shoot.setShooterRPM(2750);
-    shoot.setHoodPosition(0.415);
+    shoot.setHoodPosition(0.425);
     if (shoot.isShooterReady() && Timer.getFPGATimestamp() < uptime + 0.6) {
       shoot.startFeeder();
       shoot.startConveyorDefault();
