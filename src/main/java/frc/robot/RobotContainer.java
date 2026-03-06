@@ -162,7 +162,9 @@ public class RobotContainer {
             shooter.stopHood();
         }));
 
-        controller.x().onTrue(new InstantCommand(() -> 
+        controller.x().onTrue(new ShootTouchingHubCommand(shooter, intake));
+
+        controller.y().onTrue(new InstantCommand(() -> 
             CommandScheduler.getInstance().cancelAll()
         ));
 
