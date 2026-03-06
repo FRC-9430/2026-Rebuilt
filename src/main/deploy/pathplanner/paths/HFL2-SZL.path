@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.7994633273703045,
-        "y": 3.86463327370304
+        "x": 8.529606440071557,
+        "y": 4.237817531305903
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.513780283796361,
-        "y": 7.049999209552512
+        "x": 8.243923396497614,
+        "y": 7.423183467155375
       },
       "isLocked": false,
       "linkedName": "HFL2"
@@ -83,7 +83,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 118.81079374297315
   },
   "useDefaultConstraints": true
 }

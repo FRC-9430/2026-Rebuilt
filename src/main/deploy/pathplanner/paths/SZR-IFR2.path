@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.7209123434704825,
-        "y": 1.706654740608229
+        "x": 2.2503756708407865,
+        "y": 1.950035778175312
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.7314915272887332,
-        "y": 0.917748885893486
+        "x": 2.2609548546590372,
+        "y": 1.1611299234605688
       },
       "isLocked": false,
       "linkedName": "SZR"
@@ -97,7 +97,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 50.710593137499636
+    "rotation": 41.65805614273887
   },
   "useDefaultConstraints": true
 }
