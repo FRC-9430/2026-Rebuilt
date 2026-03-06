@@ -8,35 +8,29 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.PolarSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ShootCommand extends Command {
+public class ShootTouchingHubCommand extends Command {
 
   final ShooterSubsystem shoot;
-  final PolarSubsystem polar;
   final IntakeSubsystem intake;
   double bumpTimer = 0.0;
   double uptime = 0.0;
 
   /**
-   * Creates a new ShootCommand.
-   * Sets the shooter speeds and hood angle based on the polar subsystem's
-   * calculations. If the shooter is up to speed and the hood is in position, runs
-   * the feeder and conveyor to shoot.
+   * Shoots at the hub only when touching hub, times out after 5 seconds
    */
-  public ShootCommand(ShooterSubsystem shoot, PolarSubsystem polar, IntakeSubsystem intake) {
+  public ShootTouchingHubCommand(ShooterSubsystem shoot, IntakeSubsystem intake) {
     addRequirements(shoot);
     this.shoot = shoot;
-    this.polar = polar;
     this.intake = intake;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("Shoot Command Init");
+    System.out.println("Shoot&Touch Command Init");
     intake.setBasket(0.08);
     bumpTimer = Timer.getFPGATimestamp();
     uptime = Timer.getFPGATimestamp();
@@ -45,8 +39,8 @@ public class ShootCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shoot.setShooterRPM(polar.getShootVelocity());
-    shoot.setHoodPosition(polar.getHoodPosition());
+    shoot.setShooterRPM(2750);
+    shoot.setHoodPosition(0.415);
     if (shoot.isShooterReady() && Timer.getFPGATimestamp() < uptime + 0.6) {
       shoot.startFeeder();
       shoot.startConveyorDefault();
@@ -75,13 +69,13 @@ public class ShootCommand extends Command {
     shoot.stopShooter();
     intake.stopBasket();
     intake.stopIntake();
-    System.out.println("End Shoot Command: " + interrupted);
+    System.out.println("End Shoot&Touch Command: " + interrupted);
 
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (DriverStation.isAutonomous() && Timer.getFPGATimestamp() > uptime + 5);
+    return (Timer.getFPGATimestamp() > uptime + 5);
   }
 }

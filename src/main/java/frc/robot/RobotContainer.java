@@ -5,7 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
-import com.ctre.phoenix6.SignalLogger;
+import com.revrobotics.util.StatusLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,12 +17,13 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.util.TunerConstants;
-import frc.robot.Constants.ClimberArmConstants;
+// import frc.robot.Constants.ClimberArmConstants;
+// import frc.robot.subsystems.ClimbingArmSubsystem;
 import frc.robot.autos.AimAndShootCommand;
 import frc.robot.commands.EjectBasketCommand;
 import frc.robot.commands.RetractBasketCommand;
 import frc.robot.commands.ShootCommand;
-import frc.robot.subsystems.ClimbingArmSubsystem;
+import frc.robot.commands.ShootTouchingHubCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.ElasticDashboard;
@@ -47,7 +48,7 @@ public class RobotContainer {
 
     public final ShooterSubsystem shooter = new ShooterSubsystem();
     public final IntakeSubsystem intake = new IntakeSubsystem();
-    public final ClimbingArmSubsystem climber = new ClimbingArmSubsystem();
+    // public final ClimbingArmSubsystem climber = new ClimbingArmSubsystem();
 
     public final VisionSubsystem vision = new VisionSubsystem(drivetrain);
     public final PolarSubsystem polar = new PolarSubsystem(drivetrain);
@@ -68,7 +69,7 @@ public class RobotContainer {
         configureNamedCommands();
         dash.initAutoChooser();
         configureBindings();
-        SignalLogger.stop();
+        StatusLogger.disableAutoLogging();
     }
 
     /**
@@ -141,18 +142,18 @@ public class RobotContainer {
             intake.stopAll();
         }));
 
-        // Climber
-        controller.x().whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            climber.setClimberRPM(ClimberArmConstants.kTargetRPM * 1.0);
-        }))).onFalse(new InstantCommand(() -> {
-            climber.stopClimbers();
-        }));
+        // // Climber
+        // controller.x().whileTrue(new RepeatCommand(new InstantCommand(() -> {
+        //     climber.setClimberRPM(ClimberArmConstants.kTargetRPM * 1.0);
+        // }))).onFalse(new InstantCommand(() -> {
+        //     climber.stopClimbers();
+        // }));
 
-        controller.y().whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            climber.setClimberRPM(ClimberArmConstants.kTargetRPM * -1.0);
-        }))).onFalse(new InstantCommand(() -> {
-            climber.stopClimbers();
-        }));
+        // controller.y().whileTrue(new RepeatCommand(new InstantCommand(() -> {
+        //     climber.setClimberRPM(ClimberArmConstants.kTargetRPM * -1.0);
+        // }))).onFalse(new InstantCommand(() -> {
+        //     climber.stopClimbers();
+        // }));
 
         // Force Stow Hood
         controller.a().onTrue(new InstantCommand(() -> {
@@ -224,6 +225,7 @@ public class RobotContainer {
         namedCommands.put("Aim & Shoot 5s", new AimAndShootCommand(drivetrain, shooter, intake, polar));
         namedCommands.put("Stop Aim and Shoot", new InstantCommand(() -> aimAndShootCommand.cancel()));
         namedCommands.put("Stow Hood", new InstantCommand(() -> shooter.stowHood()));
+        namedCommands.put("Shoot While Touching Hub", new ShootTouchingHubCommand(shooter, intake));
 
         namedCommands.put("Stop All Motors & Commands", new InstantCommand(() -> {
             CommandScheduler.getInstance().cancelAll();
