@@ -79,7 +79,7 @@ public class PolarSubsystem extends SubsystemBase {
    */
   public double getShootVelocity() {
     if (mode == Mode.VOLLEY)
-      return 3000.0;
+      return 2750.0;
 
     double vRadial = getRadialV();
     double r = getRadius();

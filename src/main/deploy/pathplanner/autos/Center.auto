@@ -5,24 +5,12 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "SPR-BER"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "Eject Basket"
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "BER-IFR"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "Start Intake"
@@ -31,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "IFR-HFR"
+            "pathName": "CEN-DEP"
           }
         },
         {
@@ -43,37 +31,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "HFR-SZR"
+            "pathName": "DEP-CSZ"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Aim & Shoot 5s"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SZR-IFR2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Start Intake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "IFR2-HFR2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Stop Intake"
           }
         }
       ]
