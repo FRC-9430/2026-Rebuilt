@@ -79,7 +79,7 @@ public class PolarSubsystem extends SubsystemBase {
    */
   public double getShootVelocity() {
     if (mode == Mode.VOLLEY)
-      return 3000.0;
+      return 2750.0;
 
     double vRadial = getRadialV();
     double r = getRadius();
@@ -254,38 +254,41 @@ public class PolarSubsystem extends SubsystemBase {
 
     // If robot is left of the field (< 4.6) -> target blue hub. If right of field
     // (> 11.9) -> target red hub.
-    if (x < 4.6) {
-      target = BLUE_HUB_LOC;
-      mode = Mode.HUB;
-      SmartDashboard.putString("Polar/Target", "BLUE_HUB");
-    } else if (x > 11.9) {
-      target = RED_HUB_LOC;
-      mode = Mode.HUB;
-      SmartDashboard.putString("Polar/Target", "RED_HUB");
-    } else {
-      // Robot is in-field between the hubs; pick a volley location based on alliance
-      // and Y
-      var alliance = DriverStation.getAlliance();
-      if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
-        if (y > 4.0) {
-          target = BLUE_LEFT_VOLLY_LOC;
-          mode = Mode.VOLLEY;
-          SmartDashboard.putString("Polar/Target", "BLUE_LEFT_VOLLEY");
-        } else {
-          target = BLUE_RIGHT_VOLLY_LOC;
-          mode = Mode.VOLLEY;
-          SmartDashboard.putString("Polar/Target", "BLUE_RIGHT_VOLLEY");
-        }
+    var alliance1 = DriverStation.getAlliance();
+    if (alliance1.isPresent()) {
+      if (x < 4.6 && alliance1.get() == Alliance.Blue) {
+        target = BLUE_HUB_LOC;
+        mode = Mode.HUB;
+        SmartDashboard.putString("Polar/Target", "BLUE_HUB");
+      } else if (x > 11.9 && alliance1.get() == Alliance.Red) {
+        target = RED_HUB_LOC;
+        mode = Mode.HUB;
+        SmartDashboard.putString("Polar/Target", "RED_HUB");
       } else {
-        // For red alliance choose the volley side according to the requested mapping
-        if (y < 4.0) {
-          target = RED_RIGHT_VOLLY_LOC;
-          mode = Mode.VOLLEY;
-          SmartDashboard.putString("Polar/Target", "RED_RIGHT_VOLLEY");
+        // Robot is in-field between the hubs; pick a volley location based on alliance
+        // and Y
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
+          if (y > 4.0) {
+            target = BLUE_LEFT_VOLLY_LOC;
+            mode = Mode.VOLLEY;
+            SmartDashboard.putString("Polar/Target", "BLUE_LEFT_VOLLEY");
+          } else {
+            target = BLUE_RIGHT_VOLLY_LOC;
+            mode = Mode.VOLLEY;
+            SmartDashboard.putString("Polar/Target", "BLUE_RIGHT_VOLLEY");
+          }
         } else {
-          target = RED_LEFT_VOLLY_LOC;
-          mode = Mode.VOLLEY;
-          SmartDashboard.putString("Polar/Target", "RED_LEFT_VOLLEY");
+          // For red alliance choose the volley side according to the requested mapping
+          if (y < 4.0) {
+            target = RED_RIGHT_VOLLY_LOC;
+            mode = Mode.VOLLEY;
+            SmartDashboard.putString("Polar/Target", "RED_RIGHT_VOLLEY");
+          } else {
+            target = RED_LEFT_VOLLY_LOC;
+            mode = Mode.VOLLEY;
+            SmartDashboard.putString("Polar/Target", "RED_LEFT_VOLLEY");
+          }
         }
       }
     }
