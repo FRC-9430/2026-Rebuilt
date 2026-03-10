@@ -25,15 +25,15 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
     public void addVisionMeasurements() {
 
         LimelightHelpers.PoseEstimate est = LimelightHelpers.getBotPoseEstimate_wpiBlue(camNames[0]);
-        if (est != null) {
+        if (est != null && est.tagCount > 0) {
             logVisionData(est);
             drive.addVisionMeasurement(est.pose, est.timestampSeconds);
         }
     }
 
     private void logVisionData(LimelightHelpers.PoseEstimate est) {
-        SmartDashboard.putNumber("Robot Pose Cam Est X", est.pose.getX());
-        SmartDashboard.putNumber("Robot Pose Cam Est Y", est.pose.getY());
+        SmartDashboard.putNumber("Vision/Robot Pose Cam Est X", est.pose.getX());
+        SmartDashboard.putNumber("Vision/Robot Pose Cam Est Y", est.pose.getY());
         SmartDashboard.putNumber("Vision/avgTagDist", est.avgTagDist);
         SmartDashboard.putNumber("Vision/tagCount", est.tagCount);
     }
