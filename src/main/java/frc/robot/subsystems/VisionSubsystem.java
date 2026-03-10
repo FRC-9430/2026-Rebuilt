@@ -25,10 +25,22 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
     public void addVisionMeasurements() {
 
         LimelightHelpers.PoseEstimate est = LimelightHelpers.getBotPoseEstimate_wpiBlue(camNames[0]);
-        if (est != null && est.tagCount > 0) {
             logVisionData(est);
-            drive.addVisionMeasurement(est.pose, est.timestampSeconds);
+
+
+
+        if (est == null || est.tagCount < 0) {
+            return;
         }
+
+        if (est.rawFiducials[0].ambiguity < 0.05) {
+            drive.resetPose(est.pose);
+            return;
+        }
+
+
+
+        drive.addVisionMeasurement(est.pose, est.timestampSeconds);
     }
 
     private void logVisionData(LimelightHelpers.PoseEstimate est) {
@@ -36,6 +48,13 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
         SmartDashboard.putNumber("Vision/Robot Pose Cam Est Y", est.pose.getY());
         SmartDashboard.putNumber("Vision/avgTagDist", est.avgTagDist);
         SmartDashboard.putNumber("Vision/tagCount", est.tagCount);
+        if (est.tagCount == 0)
+            return;
+
+        for (var fiducial : est.rawFiducials) {
+            SmartDashboard.putNumber("Vision/Tag "+fiducial.id+" Ambiguity", fiducial.ambiguity);
+        }
+
     }
 
     public void close() {
