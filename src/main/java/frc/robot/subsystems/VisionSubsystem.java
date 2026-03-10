@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LimelightHelpers;
@@ -23,8 +25,9 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
     }
 
     public void addVisionMeasurements() {
-
-        LimelightHelpers.PoseEstimate est = LimelightHelpers.getBotPoseEstimate_wpiBlue(camNames[0]);
+        SwerveDriveState driveState = drive.getState();
+        LimelightHelpers.SetRobotOrientation(camNames[0], driveState.RawHeading.getDegrees(), 0, 0, 0, 0, 0);
+        LimelightHelpers.PoseEstimate est = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(camNames[0]);
         logVisionData(est);
 
         if (est == null || est.tagCount == 0) {
