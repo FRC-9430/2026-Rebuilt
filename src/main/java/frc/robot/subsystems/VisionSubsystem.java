@@ -7,7 +7,7 @@ import frc.robot.util.LimelightHelpers;
 public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
 
     private final CommandSwerveDrivetrain drive;
-    private final String[] camNames = {"limelight"};
+    private final String[] camNames = { "limelight" };
 
     public VisionSubsystem(CommandSwerveDrivetrain drive) {
         this.drive = drive;
@@ -25,20 +25,15 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
     public void addVisionMeasurements() {
 
         LimelightHelpers.PoseEstimate est = LimelightHelpers.getBotPoseEstimate_wpiBlue(camNames[0]);
-            logVisionData(est);
+        logVisionData(est);
 
-
-
-        if (est == null || est.tagCount < 0) {
+        if (est == null || est.tagCount == 0) {
             return;
         }
 
-        if (est.rawFiducials[0].ambiguity < 0.05) {
-            drive.resetPose(est.pose);
+        if (est.avgTagDist > 4) {
             return;
         }
-
-
 
         drive.addVisionMeasurement(est.pose, est.timestampSeconds);
     }
@@ -52,7 +47,7 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
             return;
 
         for (var fiducial : est.rawFiducials) {
-            SmartDashboard.putNumber("Vision/Tag "+fiducial.id+" Ambiguity", fiducial.ambiguity);
+            SmartDashboard.putNumber("Vision/Tag/ " + fiducial.id + " Ambiguity", fiducial.ambiguity);
         }
 
     }
