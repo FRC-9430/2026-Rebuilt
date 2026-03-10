@@ -18,6 +18,10 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
         addVisionMeasurements();
     }
 
+    public LimelightHelpers.PoseEstimate getPoseEstimateMT1() {
+        return LimelightHelpers.getBotPoseEstimate_wpiBlue(camNames[0]);
+    }
+
     public void addVisionMeasurements() {
 
         LimelightHelpers.PoseEstimate est = LimelightHelpers.getBotPoseEstimate_wpiBlue(camNames[0]);
