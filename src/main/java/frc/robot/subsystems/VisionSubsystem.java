@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
-
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LimelightHelpers;
@@ -13,6 +12,7 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
 
     public VisionSubsystem(CommandSwerveDrivetrain drive) {
         this.drive = drive;
+        drive.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
     }
 
     @Override
@@ -25,20 +25,40 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
     }
 
     public void addVisionMeasurements() {
-        SwerveDriveState driveState = drive.getState();
-        LimelightHelpers.SetRobotOrientation(camNames[0], driveState.RawHeading.getDegrees(), 0, 0, 0, 0, 0);
-        LimelightHelpers.PoseEstimate est = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(camNames[0]);
+
+        var state = drive.getState();
+
+        LimelightHelpers.PoseEstimate est = LimelightHelpers.getBotPoseEstimate_wpiBlue(camNames[0]);
         logVisionData(est);
 
-        if (est == null || est.tagCount == 0) {
+        if (est == null || est.tagCount == 0 || state.Speeds.omegaRadiansPerSecond > 30) {
             return;
         }
 
-        if (est.avgTagDist > 4) {
+        if (est.avgTagDist > 3) {
             return;
+        }
+
+        if (Math.abs(state.Speeds.omegaRadiansPerSecond) > 1.5) {
+            return;
+        }
+
+        if (Math.abs(est.pose.getRotation().getDegrees() - state.Pose.getRotation().getDegrees()) > 1) { 
+            // If estimated position is greater than 1 degree off from detected
+            if (Math.abs(state.Speeds.omegaRadiansPerSecond) < 0.05 &&
+                    Math.abs(state.Speeds.vxMetersPerSecond) < 0.05 &&
+                    Math.abs(state.Speeds.vyMetersPerSecond) < 0.05) { // Robot is still
+                for (var fiducial : est.rawFiducials) {
+                    if (fiducial.ambiguity < 0.07) { // Low Tag Ambiguity
+                        drive.resetRotation(est.pose.getRotation()); // Force Robot Angle
+                        break;
+                    }
+                }
+            }
         }
 
         drive.addVisionMeasurement(est.pose, est.timestampSeconds);
+
     }
 
     private void logVisionData(LimelightHelpers.PoseEstimate est) {
