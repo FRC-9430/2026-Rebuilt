@@ -20,8 +20,8 @@ import frc.robot.util.TunerConstants;
 // import frc.robot.Constants.ClimberArmConstants;
 // import frc.robot.subsystems.ClimbingArmSubsystem;
 import frc.robot.autos.AimAndShootCommand;
-import frc.robot.commands.EjectBasketCommand;
-import frc.robot.commands.RetractBasketCommand;
+import frc.robot.commands.EjectHopperCommand;
+import frc.robot.commands.RetractHopperCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.commands.ShootTouchingHubCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -170,11 +170,11 @@ public class RobotContainer {
             CommandScheduler.getInstance().cancelAll()
         ));
 
-        // Eject Basket
-        controller.start().onTrue(new EjectBasketCommand(intake));
+        // Eject Hopper
+        controller.start().onTrue(new EjectHopperCommand(intake));
 
-        // Retract Basket
-        controller.back().onTrue(new RetractBasketCommand(intake));
+        // Retract Hopper
+        controller.back().onTrue(new RetractHopperCommand(intake));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -223,8 +223,8 @@ public class RobotContainer {
 
         HashMap<String, Command> namedCommands = new HashMap<>();
 
-        namedCommands.put("Eject Basket", new EjectBasketCommand(intake));
-        namedCommands.put("Retract Basket", new RetractBasketCommand(intake));
+        namedCommands.put("Eject Hopper", new EjectHopperCommand(intake));
+        namedCommands.put("Retract Hopper", new RetractHopperCommand(intake));
         namedCommands.put("Start Intake", new InstantCommand(() -> intake.setIntake()));
         namedCommands.put("Stop Intake", new InstantCommand(() -> intake.stopIntake()));
         namedCommands.put("Engage Polar", new InstantCommand(() -> setPolar()));

@@ -53,16 +53,16 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
         m_feedMotor = new SparkFlex(CANConstants.FEEDER_MOTOR_CAN_ID, MotorType.kBrushless);
         m_conveyorMotor = new SparkFlex(CANConstants.CONVEYOR_MOTOR_CAN_ID, MotorType.kBrushless);
 
-        m_RightShooterMotor.configure(MAIN_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
+        m_RightShooterMotor.configure(MAIN_SHOOTER_MOTOR_CONFIG, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
-        m_LeftTopShoooterMotor.configure(AUX_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
+        m_LeftTopShoooterMotor.configure(AUX_MOTOR_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
-        m_LeftBotShoooterMotor.configure(AUX_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
+        m_LeftBotShoooterMotor.configure(AUX_MOTOR_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
 
-        m_hoodMotor.configure(HOOD_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        m_feedMotor.configure(FEED_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        m_conveyorMotor.configure(CONVEYOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_hoodMotor.configure(HOOD_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_feedMotor.configure(FEEDER_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_conveyorMotor.configure(CONVEYOR_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         m_shooterEncoder = m_RightShooterMotor.getEncoder();
         m_hoodEncoder = m_hoodMotor.getAbsoluteEncoder();

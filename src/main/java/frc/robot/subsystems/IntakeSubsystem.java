@@ -21,7 +21,7 @@ import static frc.robot.Constants.IntakeConstants.*;
 public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
     final SparkFlex m_intakeMotor;
-    final SparkFlex m_basketMotor;
+    final SparkFlex m_hopperMotor;
 
     final SparkClosedLoopController m_intakeController;
     final RelativeEncoder m_intakeEncoder;
@@ -29,16 +29,16 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     /** Creates a new IntakeSubsystem. */
     public IntakeSubsystem() {
         this(new SparkFlex(CANConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless),
-                new SparkFlex(CANConstants.BASKET_MOTOR_CAN_ID, MotorType.kBrushless));
+                new SparkFlex(CANConstants.HOPPER_MOTOR_CAN_ID, MotorType.kBrushless));
     }
 
     // Overloading constructor to make testing easier
-    IntakeSubsystem(SparkFlex intakeMotor, SparkFlex basketMotor) {
+    IntakeSubsystem(SparkFlex intakeMotor, SparkFlex hopperMotor) {
         m_intakeMotor = intakeMotor;
-        m_basketMotor = basketMotor;
+        m_hopperMotor = hopperMotor;
 
-        m_intakeMotor.configure(kIntakeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        m_basketMotor.configure(kBasketMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_intakeMotor.configure(INTAKE_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_hopperMotor.configure(HOPPER_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         m_intakeController = m_intakeMotor.getClosedLoopController();
         m_intakeEncoder = m_intakeMotor.getEncoder();
@@ -84,19 +84,19 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   /**
-     * Runs the basket at a specified speed
+     * Runs the hopper motor at a specified speed
      *
-     * @param speed The speed to run the basket at
+     * @param speed The speed to run the hopper motor at
      */
-    public void setBasket(double speed) {
-        m_basketMotor.set(speed);
+    public void setHopper(double speed) {
+        m_hopperMotor.set(speed);
     }
 
     /**
-     * Stops the basket
+     * Stops the hopper motor
      */
-    public void stopBasket() {
-        m_basketMotor.stopMotor();
+    public void stopHopper() {
+        m_hopperMotor.stopMotor();
     }
 
     /**
@@ -104,7 +104,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
      */
     public void stopAll() {
         m_intakeMotor.stopMotor();
-        m_basketMotor.stopMotor();
+        m_hopperMotor.stopMotor();
     }
 
     @Override
@@ -116,7 +116,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     @Override
     public void close() {
         m_intakeMotor.close();
-        m_basketMotor.close();
+        m_hopperMotor.close();
     }
 
 }

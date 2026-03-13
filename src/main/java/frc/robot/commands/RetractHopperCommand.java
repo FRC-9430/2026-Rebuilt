@@ -9,15 +9,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class RetractBasketCommand extends Command {
+public class RetractHopperCommand extends Command {
 
   final IntakeSubsystem intake;
   double startTime;
 
-  /** Creates a new RetractBasketCommand. 
-   * Retracts the basket, takes 0.8 seconds to run
+  /** Creates a new RetractHopperCommand. 
+   * Retracts the hopper, takes 0.8 seconds to run
   */
-  public RetractBasketCommand(IntakeSubsystem intake) {
+  public RetractHopperCommand(IntakeSubsystem intake) {
     addRequirements(intake);
     this.intake = intake;
   }
@@ -27,7 +27,7 @@ public class RetractBasketCommand extends Command {
   public void initialize() {
     startTime = Timer.getFPGATimestamp();
 
-    intake.setBasket(0.4);
+    intake.setHopper(0.4);
     
   }
 
@@ -38,8 +38,8 @@ public class RetractBasketCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intake.stopBasket();
-    System.out.println("Basket Retracted");
+    intake.stopHopper();
+    System.out.println("Hopper Retracted");
   }
 
   // Returns true when the command should end.

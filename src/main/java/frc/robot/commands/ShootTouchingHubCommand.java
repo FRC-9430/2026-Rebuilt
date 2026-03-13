@@ -30,7 +30,7 @@ public class ShootTouchingHubCommand extends Command {
   @Override
   public void initialize() {
     System.out.println("Shoot&Touch Command Init");
-    intake.setBasket(0.08);
+    intake.setHopper(0.08);
     bumpTimer = Timer.getFPGATimestamp();
     uptime = Timer.getFPGATimestamp();
   }
@@ -50,9 +50,9 @@ public class ShootTouchingHubCommand extends Command {
 
     double cur = Timer.getFPGATimestamp();
     if (cur - bumpTimer < 0.25) {
-      intake.setBasket(0.12);
+      intake.setHopper(0.12);
     } else if (cur - bumpTimer < 0.5) {
-      intake.setBasket(-0.12);
+      intake.setHopper(-0.12);
     } else {
       bumpTimer = Timer.getFPGATimestamp();
     }
@@ -66,7 +66,7 @@ public class ShootTouchingHubCommand extends Command {
     shoot.stopConveyor();
     shoot.stopFeeder();
     shoot.stopShooter();
-    intake.stopBasket();
+    intake.stopHopper();
     intake.stopIntake();
     System.out.println("End Shoot&Touch Command: " + interrupted);
 
