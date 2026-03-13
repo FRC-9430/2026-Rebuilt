@@ -111,17 +111,17 @@ public final class Constants {
 
     public static final class ShooterConstants {
         // Shooter PID
-        public static final double kShooterP = 0.0003;
+        public static final double kShooterP = 0.0;
         public static final double kShooterI = 0.0;
-        public static final double kShooterD = 0.009;
-        public static final double kShooterS = 0.6;
-        public static final double kShooterV = 0.00169;
+        public static final double kShooterD = 0.0;
+        public static final double kShooterS = 0.0;
+        public static final double kShooterV = 0.001888;
         public static final double kShooterA = 0.0;
 
         // Hood PID
-        public static final double kHoodP = 21.0;
+        public static final double kHoodP = 25.0;
         public static final double kHoodI = 0.0;
-        public static final double kHoodD = 8.0;
+        public static final double kHoodD = 0.0;
 
         // Feed PID TODO tune feeder
         public static final double kFeedP = 0.1;
@@ -189,13 +189,13 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        public static final double kDefaultIntakeSpeed = 2800;
+        public static final double kDefaultIntakeSpeed = 2500;
 
-        public static final double kIntakeP = 0.0003;
+        public static final double kIntakeP = 0.0;
         public static final double kIntakeI = 0.0;
-        public static final double kIntakeD = 0.03;
-        public static final double kIntakeS = 0.6;
-        public static final double kIntakeV = 0.00171;
+        public static final double kIntakeD = 0.0;
+        public static final double kIntakeS = 0.0;
+        public static final double kIntakeV = 0.001888;
         public static final double kIntakeA = 0.0;
 
         public static final SparkFlexConfig kIntakeMotorConfig = new SparkFlexConfig();
