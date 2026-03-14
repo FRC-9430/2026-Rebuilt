@@ -7,19 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SPR-BER"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Eject Hopper"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "BER-IFR"
+            "pathName": "SPR-IFR+EH"
           }
         },
         {
@@ -49,7 +37,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Aim & Shoot 5s"
+            "name": "Aim & Shoot + Timeout"
           }
         },
         {
@@ -74,6 +62,18 @@
           "type": "named",
           "data": {
             "name": "Stop Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HFR2-SZR"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Aim & Shoot + Timeout"
           }
         }
       ]
