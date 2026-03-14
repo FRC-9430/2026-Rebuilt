@@ -74,7 +74,12 @@ public final class Constants {
 
         /* Setting up bindings for necessary control of the swerve drive platform */
         public static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-                .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+                .withDeadband(MaxSpeed * 0.08).withRotationalDeadband(MaxAngularRate * 0.08) // Add a 8% deadband
+                .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+
+        /* Setting up bindings for necessary control of the swerve drive platform */
+        public static final SwerveRequest.FieldCentric slow = new SwerveRequest.FieldCentric()
+                .withDeadband((MaxSpeed/3.0) * 0.08).withRotationalDeadband((MaxAngularRate/3.0) * 0.08) // Add a 8% deadband
                 .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
         public static final SwerveRequest.ApplyRobotSpeeds aim = new SwerveRequest.ApplyRobotSpeeds();
@@ -190,7 +195,7 @@ public final class Constants {
 
     public static final class IntakeConstants {
 
-        public static final double kDefaultIntakeSpeed = 2500;
+        public static final double kDefaultIntakeSpeed = 2700;
 
         public static final double kIntakeP = 0.0;
         public static final double kIntakeI = 0.0;

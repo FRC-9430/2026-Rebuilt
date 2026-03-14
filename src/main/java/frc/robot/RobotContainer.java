@@ -79,15 +79,38 @@ public class RobotContainer {
      */
     private void configureBindings() {
 
+        // drivetrain.setDefaultCommand(
+        // drivetrain.applyRequestWithCondition(
+        // () -> drive.withVelocityX((!controller.getHID().getRightBumperButton()
+        // ? -controller.getLeftY()
+        // : -controller.getLeftY() / 3) * MaxSpeed)
+        // .withVelocityY((!controller.getHID().getRightBumperButton()
+        // ? -controller.getLeftX()
+        // : -controller.getLeftX() / 3) * MaxSpeed)
+        // .withRotationalRate(-controller.getRightX() * MaxAngularRate),
+        // () -> aim.withSpeeds(polar.getPolarDriveSpeeds(drivetrain.getState().Pose,
+        // (Math.abs(controller.getLeftY()) > 0.06 ? controller.getLeftY() : 0.0) //
+        // Clamp Input
+        // / (shootCommand.isScheduled() && polar.targetIsHub() ? 5.0 : 1.0), // Slow
+        // When
+        // // Shooting
+        // (Math.abs(controller.getLeftX()) > 0.06 ? controller.getLeftX() : 0.0)
+        // / (shootCommand.isScheduled() && polar.targetIsHub() ? 10.0 : 1.0),
+        // MaxSpeed, MaxAngularRate,
+        // (shootCommand.isScheduled()))), // Lead only when shooting
+        // () -> isCartesian()));
+
         drivetrain.setDefaultCommand(
                 drivetrain.applyRequestWithCondition(
-                        () -> drive.withVelocityX((!controller.getHID().getRightBumperButton()
-                                ? -controller.getLeftY()
-                                : -controller.getLeftY() / 3) * MaxSpeed)
-                                .withVelocityY((!controller.getHID().getRightBumperButton()
-                                ? -controller.getLeftX()
-                                : -controller.getLeftX() / 3) * MaxSpeed)
-                                .withRotationalRate(-controller.getRightX() * MaxAngularRate),
+                        () -> (controller.getHID().getRightBumperButton()
+                                ? slow
+                                        .withVelocityX(-controller.getLeftY() * MaxSpeed / 3.0)
+                                        .withVelocityY(-controller.getLeftX() * MaxSpeed / 3.0)
+                                        .withRotationalRate(-controller.getRightX() * MaxAngularRate / 3.0)
+                                : drive
+                                        .withVelocityX(-controller.getLeftY() * MaxSpeed)
+                                        .withVelocityY(-controller.getLeftX() * MaxSpeed)
+                                        .withRotationalRate(-controller.getRightX() * MaxAngularRate)),
                         () -> aim.withSpeeds(polar.getPolarDriveSpeeds(drivetrain.getState().Pose,
                                 (Math.abs(controller.getLeftY()) > 0.06 ? controller.getLeftY() : 0.0) // Clamp Input
                                         / (shootCommand.isScheduled() && polar.targetIsHub() ? 5.0 : 1.0), // Slow When
@@ -142,18 +165,18 @@ public class RobotContainer {
             intake.stopAll();
         }));
 
-        // // Climber
-        // controller.x().whileTrue(new RepeatCommand(new InstantCommand(() -> {
-        //     climber.setClimberRPM(ClimberArmConstants.kTargetRPM * 1.0);
-        // }))).onFalse(new InstantCommand(() -> {
-        //     climber.stopClimbers();
-        // }));
+        // Climber
+        controller.x().whileTrue(new RepeatCommand(new InstantCommand(() -> {
 
-        // controller.y().whileTrue(new RepeatCommand(new InstantCommand(() -> {
-        //     climber.setClimberRPM(ClimberArmConstants.kTargetRPM * -1.0);
-        // }))).onFalse(new InstantCommand(() -> {
-        //     climber.stopClimbers();
-        // }));
+        }))).onFalse(new InstantCommand(() -> {
+
+        }));
+
+        controller.y().whileTrue(new RepeatCommand(new InstantCommand(() -> {
+
+        }))).onFalse(new InstantCommand(() -> {
+
+        }));
 
         // Force Stow Hood
         controller.a().onTrue(new InstantCommand(() -> {
@@ -163,12 +186,10 @@ public class RobotContainer {
         }));
 
         controller.x()
-            .onTrue(new ShootTouchingHubCommand(shooter, intake))
-            .onFalse(new InstantCommand(()->CommandScheduler.getInstance().cancelAll()));
+                .onTrue(new ShootTouchingHubCommand(shooter, intake))
+                .onFalse(new InstantCommand(() -> CommandScheduler.getInstance().cancelAll()));
 
-        controller.y().onTrue(new InstantCommand(() -> 
-            CommandScheduler.getInstance().cancelAll()
-        ));
+        controller.y().onTrue(new InstantCommand(() -> CommandScheduler.getInstance().cancelAll()));
 
         // Eject Hopper
         controller.start().onTrue(new EjectHopperCommand(intake));
@@ -230,7 +251,7 @@ public class RobotContainer {
         namedCommands.put("Engage Polar", new InstantCommand(() -> setPolar()));
         namedCommands.put("Engage Cartesian", new InstantCommand(() -> setCartesian()));
         namedCommands.put("Start Aim and Shoot", new InstantCommand(() -> startAimAndShootAutonCommand()));
-        namedCommands.put("Aim & Shoot 5s", new AimAndShootCommand(drivetrain, shooter, intake, polar));
+        namedCommands.put("Aim & Shoot + Timeout", new AimAndShootCommand(drivetrain, shooter, intake, polar));
         namedCommands.put("Stop Aim and Shoot", new InstantCommand(() -> aimAndShootCommand.cancel()));
         namedCommands.put("Stow Hood", new InstantCommand(() -> shooter.stowHood()));
         namedCommands.put("Shoot While Touching Hub", new ShootTouchingHubCommand(shooter, intake));
