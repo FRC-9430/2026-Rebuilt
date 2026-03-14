@@ -27,7 +27,7 @@ public class RetractHopperCommand extends Command {
   public void initialize() {
     startTime = Timer.getFPGATimestamp();
 
-    intake.setHopper(0.4);
+    intake.setHopper(0.5);
     
   }
 
