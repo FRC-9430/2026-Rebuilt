@@ -376,18 +376,30 @@ public class PolarSubsystem extends SubsystemBase {
     }
 
     public static double getEstHoodPosFrmR(double r) {
-      double pos = -0.00447476 * Math.pow(r, 2)
-          + 0.102495 * r
-          + (-0.080651 + Constants.ShooterConstants.kHoodMinPosition);
-      SmartDashboard.putNumber("Calc Hood Pos", pos);
+      // Value for slow low shot
+      // double pos = -0.00447476 * Math.pow(r, 2)
+      // + 0.102495 * r
+      // + (-0.080651 + Constants.ShooterConstants.kHoodMinPosition);
+
+      double pos = (0.12414 / (1 + Math.pow(Math.E, -1 * (6.72801 * r + -8.63109))))
+          + (0.6866 - Constants.ShooterConstants.kHoodMinPosition);
+
+      SmartDashboard.putNumber("Polar/Calc Hood Pos", pos);
       return pos;
     }
 
     public static double getEstShootVelFrmR(double r) {
-      double rpm = 20.00902 * Math.pow(r, 2)
-          + -2.92682 * r
-          + 2625;
-      SmartDashboard.putNumber("Calc Shoot V", rpm);
+      // Values for slow low shot
+      // double rpm = 20.00902 * Math.pow(r, 2)
+      // + -2.92682 * r
+      // + 2625;
+
+      // Values for Lob Shot
+      double rpm = -40.97241 * Math.pow(r, 2)
+          + 593.65807 * r
+          + 2438.79676;
+
+      SmartDashboard.putNumber("Polar/Calc Shoot V", rpm);
       return rpm;
     }
   }
