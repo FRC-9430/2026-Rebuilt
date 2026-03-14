@@ -57,9 +57,9 @@ public class ShootCommand extends Command {
 
     double cur = Timer.getFPGATimestamp();
     if (cur - bumpTimer < 0.25) {
-      intake.setHopper(0.12);
+      intake.setHopper(0.16);
     } else if (cur - bumpTimer < 0.5) {
-      intake.setHopper(-0.12);
+      intake.setHopper(-0.16);
     } else {
       bumpTimer = Timer.getFPGATimestamp();
     }
@@ -82,6 +82,6 @@ public class ShootCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (DriverStation.isAutonomous() && Timer.getFPGATimestamp() > uptime + 5);
+    return (DriverStation.isAutonomous() && Timer.getFPGATimestamp() > uptime + 4);
   }
 }
