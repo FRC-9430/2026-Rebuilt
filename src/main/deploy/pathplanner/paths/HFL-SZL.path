@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.945491949910554,
-        "y": 5.50339892665474
+        "x": 7.831914132379248,
+        "y": 5.324919499105545
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.994168157423971,
-        "y": 7.580250447227191
+        "x": 7.880590339892665,
+        "y": 7.401771019677995
       },
       "isLocked": false,
       "linkedName": "HFL"
@@ -59,7 +59,7 @@
         "maxVelocity": 2.0,
         "maxAcceleration": 3.5,
         "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
+        "maxAngularAcceleration": 500.0,
         "nominalVoltage": 12.0,
         "unlimited": false
       }
@@ -69,9 +69,9 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.5,
-    "maxAcceleration": 3.5,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 460.0,
-    "maxAngularAcceleration": 600.0,
+    "maxAngularAcceleration": 575.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

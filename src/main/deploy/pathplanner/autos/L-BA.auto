@@ -7,19 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SPL-BEL"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Eject Hopper"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "BEL-IFL"
+            "pathName": "SPL-IFL+EH"
           }
         },
         {
@@ -49,7 +37,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Aim & Shoot 5s"
+            "name": "Aim & Shoot + Timeout"
           }
         },
         {
