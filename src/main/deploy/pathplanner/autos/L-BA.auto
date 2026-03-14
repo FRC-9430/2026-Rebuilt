@@ -63,6 +63,18 @@
           "data": {
             "name": "Stop Intake"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HFL2-SZL"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Aim & Shoot + Timeout"
+          }
         }
       ]
     }
