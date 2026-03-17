@@ -355,7 +355,7 @@ public class PolarSubsystem extends SubsystemBase {
       // Use a P-controller plus a small feedforward term derived from the
       // commanded tangential speed to account for rotational rate while
       // orbiting: phi_dot ≈ -vTangential / r. Tune kP and kFF as needed.
-      double kP = 10.0;
+      double kP = 25.0;
       double kFF = 0.9;
       double ff = 0.0;
       if (Math.abs(r) > kEpsilon) {
@@ -376,18 +376,30 @@ public class PolarSubsystem extends SubsystemBase {
     }
 
     public static double getEstHoodPosFrmR(double r) {
-      double pos = -0.00447476 * Math.pow(r, 2)
-          + 0.102495 * r
-          + (-0.080651 + Constants.ShooterConstants.kHoodMinPosition);
-      SmartDashboard.putNumber("Calc Hood Pos", pos);
+      // Value for slow low shot
+      // double pos = -0.00447476 * Math.pow(r, 2)
+      // + 0.102495 * r
+      // + (-0.080651 + Constants.ShooterConstants.kHoodMinPosition);
+
+      double pos = (0.292958 / (1 + Math.pow(Math.E, -1 * (0.477807 * r + -1.5966))))
+          + (0.6866 - Constants.ShooterConstants.kHoodMinPosition);
+
+      SmartDashboard.putNumber("Polar/Calc Hood Pos", pos);
       return pos;
     }
 
     public static double getEstShootVelFrmR(double r) {
-      double rpm = 20.00902 * Math.pow(r, 2)
-          + -2.92682 * r
-          + 2625;
-      SmartDashboard.putNumber("Calc Shoot V", rpm);
+      // Values for slow low shot
+      // double rpm = 20.00902 * Math.pow(r, 2)
+      // + -2.92682 * r
+      // + 2625;
+
+      // Values for Lob Shot
+      double rpm = -33.21617 * Math.pow(r, 2)
+          + 366.72357 * r
+          + 2657.10459;
+
+      SmartDashboard.putNumber("Polar/Calc Shoot V", rpm);
       return rpm;
     }
   }
