@@ -54,7 +54,7 @@ public final class Constants {
 
         // Intake Subsystem Motors
         public static final int INTAKE_MOTOR_CAN_ID = 27;
-        public static final int BASKET_MOTOR_CAN_ID = 28;
+        public static final int HOPPER_MOTOR_CAN_ID = 28;
 
         // Climbing Motors
         public static final int LEFT_CLIMB_MOTOR_CAN_ID = 31;
@@ -74,7 +74,12 @@ public final class Constants {
 
         /* Setting up bindings for necessary control of the swerve drive platform */
         public static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-                .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+                .withDeadband(MaxSpeed * 0.08).withRotationalDeadband(MaxAngularRate * 0.08) // Add a 8% deadband
+                .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+
+        /* Setting up bindings for necessary control of the swerve drive platform */
+        public static final SwerveRequest.FieldCentric slow = new SwerveRequest.FieldCentric()
+                .withDeadband((MaxSpeed/3.0) * 0.08).withRotationalDeadband((MaxAngularRate/3.0) * 0.08) // Add a 8% deadband
                 .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
         public static final SwerveRequest.ApplyRobotSpeeds aim = new SwerveRequest.ApplyRobotSpeeds();
@@ -111,17 +116,17 @@ public final class Constants {
 
     public static final class ShooterConstants {
         // Shooter PID
-        public static final double kShooterP = 0.0003;
+        public static final double kShooterP = 0.0;
         public static final double kShooterI = 0.0;
-        public static final double kShooterD = 0.009;
-        public static final double kShooterS = 0.6;
-        public static final double kShooterV = 0.00169;
+        public static final double kShooterD = 0.0;
+        public static final double kShooterS = 0.0;
+        public static final double kShooterV = 0.001888;
         public static final double kShooterA = 0.0;
 
         // Hood PID
-        public static final double kHoodP = 21.0;
+        public static final double kHoodP = 25.0;
         public static final double kHoodI = 0.0;
-        public static final double kHoodD = 8.0;
+        public static final double kHoodD = 0.0;
 
         // Feed PID TODO tune feeder
         public static final double kFeedP = 0.1;
@@ -144,74 +149,75 @@ public final class Constants {
         public static final double kHoodMaxSafePosition = 0.875;
         public static final double kHoodPositionTolerance = 0.1;
 
-        public static final SparkFlexConfig MAIN_SHOOTER_CONFIG = new SparkFlexConfig();
+        public static final SparkFlexConfig MAIN_SHOOTER_MOTOR_CONFIG = new SparkFlexConfig();
         static {
-            MAIN_SHOOTER_CONFIG.idleMode(IdleMode.kCoast);
-            MAIN_SHOOTER_CONFIG.inverted(false);
-            MAIN_SHOOTER_CONFIG.closedLoop.pid(kShooterP, kShooterI, kShooterD);
-            MAIN_SHOOTER_CONFIG.closedLoop.outputRange(0, 1); // No moving backwards
-            MAIN_SHOOTER_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-            MAIN_SHOOTER_CONFIG.closedLoop.feedForward.sva(kShooterS, kShooterV, kShooterA);
+            MAIN_SHOOTER_MOTOR_CONFIG.idleMode(IdleMode.kCoast);
+            MAIN_SHOOTER_MOTOR_CONFIG.inverted(false);
+            MAIN_SHOOTER_MOTOR_CONFIG.closedLoop.pid(kShooterP, kShooterI, kShooterD);
+            MAIN_SHOOTER_MOTOR_CONFIG.closedLoop.outputRange(0, 1); // No moving backwards
+            MAIN_SHOOTER_MOTOR_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+            MAIN_SHOOTER_MOTOR_CONFIG.closedLoop.feedForward.sva(kShooterS, kShooterV, kShooterA);
         }
 
-        public static final SparkFlexConfig AUX_SHOOTER_CONFIG = new SparkFlexConfig();
+        public static final SparkFlexConfig AUX_MOTOR_SHOOTER_CONFIG = new SparkFlexConfig();
         static {
-            AUX_SHOOTER_CONFIG.idleMode(IdleMode.kCoast);
-            AUX_SHOOTER_CONFIG.follow(CANConstants.RIGHT_SHOOT_MOTOR_CAN_ID, true);
+            AUX_MOTOR_SHOOTER_CONFIG.idleMode(IdleMode.kCoast);
+            AUX_MOTOR_SHOOTER_CONFIG.follow(CANConstants.RIGHT_SHOOT_MOTOR_CAN_ID, true);
         }
 
-        public static final SparkFlexConfig HOOD_CONFIG = new SparkFlexConfig();
+        public static final SparkFlexConfig HOOD_MOTOR_CONFIG = new SparkFlexConfig();
         static {
-            HOOD_CONFIG.idleMode(IdleMode.kBrake);
-            HOOD_CONFIG.inverted(false);
-            HOOD_CONFIG.closedLoop.outputRange(-0.05, 1.0);
-            HOOD_CONFIG.closedLoop.pid(kHoodP, kHoodI, kHoodD);
-            HOOD_CONFIG.closedLoop.positionWrappingEnabled(false);
-            HOOD_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-            HOOD_CONFIG.closedLoop.maxMotion.cruiseVelocity(1000);
-            HOOD_CONFIG.closedLoop.maxMotion.maxAcceleration(10000);
-            HOOD_CONFIG.closedLoop.maxMotion.positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
+            HOOD_MOTOR_CONFIG.idleMode(IdleMode.kBrake);
+            HOOD_MOTOR_CONFIG.inverted(false);
+            HOOD_MOTOR_CONFIG.closedLoop.outputRange(-0.05, 1.0);
+            HOOD_MOTOR_CONFIG.closedLoop.pid(kHoodP, kHoodI, kHoodD);
+            HOOD_MOTOR_CONFIG.closedLoop.positionWrappingEnabled(false);
+            HOOD_MOTOR_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+            HOOD_MOTOR_CONFIG.closedLoop.maxMotion.cruiseVelocity(1000);
+            HOOD_MOTOR_CONFIG.closedLoop.maxMotion.maxAcceleration(10000);
+            HOOD_MOTOR_CONFIG.closedLoop.maxMotion.positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
         }
 
-        public static final SparkFlexConfig FEED_CONFIG = new SparkFlexConfig();
+        public static final SparkFlexConfig FEEDER_MOTOR_CONFIG = new SparkFlexConfig();
         static {
-            FEED_CONFIG.idleMode(IdleMode.kBrake);
-            FEED_CONFIG.inverted(false);
-            FEED_CONFIG.closedLoop.pid(kFeedP, kFeedI, kFeedD);
+            FEEDER_MOTOR_CONFIG.idleMode(IdleMode.kBrake);
+            FEEDER_MOTOR_CONFIG.inverted(false);
+            FEEDER_MOTOR_CONFIG.closedLoop.pid(kFeedP, kFeedI, kFeedD);
         }
 
-        public static final SparkFlexConfig CONVEYOR_CONFIG = new SparkFlexConfig();
+        public static final SparkFlexConfig CONVEYOR_MOTOR_CONFIG = new SparkFlexConfig();
         static {
-            CONVEYOR_CONFIG.inverted(true);
-            CONVEYOR_CONFIG.idleMode(IdleMode.kCoast);
+            CONVEYOR_MOTOR_CONFIG.inverted(true);
+            CONVEYOR_MOTOR_CONFIG.idleMode(IdleMode.kCoast);
         }
 
     }
 
     public static final class IntakeConstants {
-        public static final double kDefaultIntakeSpeed = 2800;
 
-        public static final double kIntakeP = 0.0003;
+        public static final double kDefaultIntakeSpeed = 2700;
+
+        public static final double kIntakeP = 0.0;
         public static final double kIntakeI = 0.0;
-        public static final double kIntakeD = 0.03;
-        public static final double kIntakeS = 0.6;
-        public static final double kIntakeV = 0.00171;
+        public static final double kIntakeD = 0.0;
+        public static final double kIntakeS = 0.0;
+        public static final double kIntakeV = 0.001888;
         public static final double kIntakeA = 0.0;
 
-        public static final SparkFlexConfig kIntakeMotorConfig = new SparkFlexConfig();
+        public static final SparkFlexConfig INTAKE_MOTOR_CONFIG = new SparkFlexConfig();
         static {
-            kIntakeMotorConfig.inverted(false);
-            kIntakeMotorConfig.idleMode(IdleMode.kCoast);
-            kIntakeMotorConfig.closedLoop.pid(kIntakeP, kIntakeI, kIntakeD);
-            kIntakeMotorConfig.closedLoop.outputRange(0, 1); // No moving backwards
-            kIntakeMotorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-            kIntakeMotorConfig.closedLoop.feedForward.sva(kIntakeS, kIntakeV, kIntakeA);
+            INTAKE_MOTOR_CONFIG.inverted(false);
+            INTAKE_MOTOR_CONFIG.idleMode(IdleMode.kCoast);
+            INTAKE_MOTOR_CONFIG.closedLoop.pid(kIntakeP, kIntakeI, kIntakeD);
+            INTAKE_MOTOR_CONFIG.closedLoop.outputRange(0, 1); // No moving backwards
+            INTAKE_MOTOR_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+            INTAKE_MOTOR_CONFIG.closedLoop.feedForward.sva(kIntakeS, kIntakeV, kIntakeA);
         }
 
-        public static final SparkFlexConfig kBasketMotorConfig = new SparkFlexConfig();
+        public static final SparkFlexConfig HOPPER_MOTOR_CONFIG = new SparkFlexConfig();
         static {
-            kBasketMotorConfig.inverted(false);
-            kBasketMotorConfig.idleMode(IdleMode.kBrake);
+            HOPPER_MOTOR_CONFIG.inverted(false);
+            HOPPER_MOTOR_CONFIG.idleMode(IdleMode.kBrake);
         }
 
     }
@@ -251,20 +257,20 @@ public final class Constants {
         public static final double kMaxSpeed = 0.0; // TODO calibrate
         public static final double kTargetRPM = 700.0;
 
-        public static final SparkFlexConfig kLeftMotorConfig = new SparkFlexConfig();
+        public static final SparkFlexConfig LEFT_MOTOR_CONFIG = new SparkFlexConfig();
         static {
-            kLeftMotorConfig.inverted(true);
-            kLeftMotorConfig.idleMode(IdleMode.kBrake);
-            kLeftMotorConfig.closedLoop.pid(kLeftP, kLeftI, kLeftD);
-            kLeftMotorConfig.closedLoop.feedForward.sva(kLeftS, kLeftV, kLeftA);
+            LEFT_MOTOR_CONFIG.inverted(true);
+            LEFT_MOTOR_CONFIG.idleMode(IdleMode.kBrake);
+            LEFT_MOTOR_CONFIG.closedLoop.pid(kLeftP, kLeftI, kLeftD);
+            LEFT_MOTOR_CONFIG.closedLoop.feedForward.sva(kLeftS, kLeftV, kLeftA);
         }
 
-        public static final SparkFlexConfig kRightMotorConfig = new SparkFlexConfig();
+        public static final SparkFlexConfig RIGHT_MOTOR_CONFIG = new SparkFlexConfig();
         static {
-            kRightMotorConfig.inverted(false);
-            kRightMotorConfig.idleMode(IdleMode.kBrake);
-            kRightMotorConfig.closedLoop.pid(kRightP, kRightI, kRightD);
-            kRightMotorConfig.closedLoop.feedForward.sva(kRightS, kRightV, kRightA);
+            RIGHT_MOTOR_CONFIG.inverted(false);
+            RIGHT_MOTOR_CONFIG.idleMode(IdleMode.kBrake);
+            RIGHT_MOTOR_CONFIG.closedLoop.pid(kRightP, kRightI, kRightD);
+            RIGHT_MOTOR_CONFIG.closedLoop.feedForward.sva(kRightS, kRightV, kRightA);
         }
 
     }

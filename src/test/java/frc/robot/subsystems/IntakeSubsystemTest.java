@@ -41,7 +41,7 @@ class IntakeSubsystemTest {
         subsystem = new IntakeSubsystem();
 
         m_intakeSim = new SparkFlexSim(subsystem.m_intakeMotor, null);
-        m_basketSim = new SparkFlexSim(subsystem.m_basketMotor, null);
+        m_basketSim = new SparkFlexSim(subsystem.m_hopperMotor, null);
         m_intakeEncoderSim = new SparkRelativeEncoderSim(subsystem.m_intakeMotor);
     }
 
@@ -64,7 +64,7 @@ class IntakeSubsystemTest {
     @Test
     void testMotorsInitialized() {
         assertNotNull(subsystem.m_intakeMotor);
-        assertNotNull(subsystem.m_basketMotor);
+        assertNotNull(subsystem.m_hopperMotor);
     }
 
     @Test
@@ -100,7 +100,7 @@ class IntakeSubsystemTest {
     @Test
     void testStopAll() {
         subsystem.setIntake(0.6);
-        subsystem.setBasket(0.4);
+        subsystem.setHopper(0.4);
         step();
 
         subsystem.stopAll();
@@ -118,10 +118,10 @@ class IntakeSubsystemTest {
     @Test
     void testSetBasketOpenLoop() {
         double speed = -0.4;
-        subsystem.setBasket(speed);
+        subsystem.setHopper(speed);
         step();
 
-        assertEquals(speed, subsystem.m_basketMotor.get(), TOLERANCE);
+        assertEquals(speed, subsystem.m_hopperMotor.get(), TOLERANCE);
     }
 
     /**
@@ -131,13 +131,13 @@ class IntakeSubsystemTest {
      */
     @Test
     void testStopBasket() {
-        subsystem.setBasket(0.7);
+        subsystem.setHopper(0.7);
         step();
 
-        subsystem.stopBasket();
+        subsystem.stopHopper();
         step();
 
-        assertEquals(0.0, subsystem.m_basketMotor.get(), TOLERANCE);
+        assertEquals(0.0, subsystem.m_hopperMotor.get(), TOLERANCE);
     }
 
     /**

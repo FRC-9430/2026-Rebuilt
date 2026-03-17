@@ -130,15 +130,15 @@ public class ShooterSubsystemTest {
 
             // Verify that configure was called with the correct config object from
             // Constants
-            Mockito.verify(rightShooter).configure(Mockito.eq(ShooterConstants.MAIN_SHOOTER_CONFIG),
+            Mockito.verify(rightShooter).configure(Mockito.eq(ShooterConstants.MAIN_SHOOTER_MOTOR_CONFIG),
                     Mockito.eq(ResetMode.kResetSafeParameters), Mockito.eq(PersistMode.kPersistParameters));
-            Mockito.verify(leftTopShooter).configure(Mockito.eq(ShooterConstants.AUX_SHOOTER_CONFIG),
+            Mockito.verify(leftTopShooter).configure(Mockito.eq(ShooterConstants.AUX_MOTOR_SHOOTER_CONFIG),
                     Mockito.eq(ResetMode.kResetSafeParameters), Mockito.eq(PersistMode.kPersistParameters));
-            Mockito.verify(leftBotShooter).configure(Mockito.eq(ShooterConstants.AUX_SHOOTER_CONFIG),
+            Mockito.verify(leftBotShooter).configure(Mockito.eq(ShooterConstants.AUX_MOTOR_SHOOTER_CONFIG),
                     Mockito.eq(ResetMode.kResetSafeParameters), Mockito.eq(PersistMode.kPersistParameters));
-            Mockito.verify(hoodMotor).configure(Mockito.eq(ShooterConstants.HOOD_CONFIG),
+            Mockito.verify(hoodMotor).configure(Mockito.eq(ShooterConstants.HOOD_MOTOR_CONFIG),
                     Mockito.eq(ResetMode.kResetSafeParameters), Mockito.eq(PersistMode.kPersistParameters));
-            Mockito.verify(feedMotor).configure(Mockito.eq(ShooterConstants.FEED_CONFIG),
+            Mockito.verify(feedMotor).configure(Mockito.eq(ShooterConstants.FEEDER_MOTOR_CONFIG),
                     Mockito.eq(ResetMode.kResetSafeParameters), Mockito.eq(PersistMode.kPersistParameters));
         }
     }

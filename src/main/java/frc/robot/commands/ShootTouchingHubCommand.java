@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -31,7 +30,7 @@ public class ShootTouchingHubCommand extends Command {
   @Override
   public void initialize() {
     System.out.println("Shoot&Touch Command Init");
-    intake.setBasket(0.08);
+    intake.setHopper(0.08);
     bumpTimer = Timer.getFPGATimestamp();
     uptime = Timer.getFPGATimestamp();
   }
@@ -40,7 +39,7 @@ public class ShootTouchingHubCommand extends Command {
   @Override
   public void execute() {
     shoot.setShooterRPM(2750);
-    shoot.setHoodPosition(0.415);
+    shoot.setHoodPosition(0.425);
     if (shoot.isShooterReady() && Timer.getFPGATimestamp() < uptime + 0.6) {
       shoot.startFeeder();
       shoot.startConveyorDefault();
@@ -51,9 +50,9 @@ public class ShootTouchingHubCommand extends Command {
 
     double cur = Timer.getFPGATimestamp();
     if (cur - bumpTimer < 0.25) {
-      intake.setBasket(0.12);
+      intake.setHopper(0.12);
     } else if (cur - bumpTimer < 0.5) {
-      intake.setBasket(-0.12);
+      intake.setHopper(-0.12);
     } else {
       bumpTimer = Timer.getFPGATimestamp();
     }
@@ -67,7 +66,7 @@ public class ShootTouchingHubCommand extends Command {
     shoot.stopConveyor();
     shoot.stopFeeder();
     shoot.stopShooter();
-    intake.stopBasket();
+    intake.stopHopper();
     intake.stopIntake();
     System.out.println("End Shoot&Touch Command: " + interrupted);
 

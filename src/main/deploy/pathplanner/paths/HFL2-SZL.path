@@ -9,7 +9,7 @@
       "prevControl": null,
       "nextControl": {
         "x": 8.243923396497614,
-        "y": 7.423183467155375
+        "y": 7.423183467155374
       },
       "isLocked": false,
       "linkedName": "HFL2"
@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 2.023220035778175,
-        "y": 6.265992844364937
+        "x": 2.9156171735241503,
+        "y": 6.736529516994633
       },
       "prevControl": {
-        "x": 2.0713496982495947,
-        "y": 7.363848069128096
+        "x": 2.834490161001789,
+        "y": 7.158389982110911
       },
       "nextControl": null,
       "isLocked": false,
@@ -69,15 +69,15 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.5,
-    "maxAcceleration": 3.5,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 460.0,
-    "maxAngularAcceleration": 600.0,
+    "maxAngularAcceleration": 575.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -40.74934542534879
+    "rotation": -57.685414291658766
   },
   "reversed": false,
   "folder": null,

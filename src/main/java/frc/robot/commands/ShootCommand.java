@@ -37,7 +37,7 @@ public class ShootCommand extends Command {
   @Override
   public void initialize() {
     System.out.println("Shoot Command Init");
-    intake.setBasket(0.08);
+    intake.setHopper(0.08);
     bumpTimer = Timer.getFPGATimestamp();
     uptime = Timer.getFPGATimestamp();
   }
@@ -57,9 +57,9 @@ public class ShootCommand extends Command {
 
     double cur = Timer.getFPGATimestamp();
     if (cur - bumpTimer < 0.25) {
-      intake.setBasket(0.12);
+      intake.setHopper(0.16);
     } else if (cur - bumpTimer < 0.5) {
-      intake.setBasket(-0.12);
+      intake.setHopper(-0.16);
     } else {
       bumpTimer = Timer.getFPGATimestamp();
     }
@@ -73,7 +73,7 @@ public class ShootCommand extends Command {
     shoot.stopConveyor();
     shoot.stopFeeder();
     shoot.stopShooter();
-    intake.stopBasket();
+    intake.stopHopper();
     intake.stopIntake();
     System.out.println("End Shoot Command: " + interrupted);
 
@@ -82,6 +82,6 @@ public class ShootCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (DriverStation.isAutonomous() && Timer.getFPGATimestamp() > uptime + 5);
+    return (DriverStation.isAutonomous() && Timer.getFPGATimestamp() > uptime + 4);
   }
 }

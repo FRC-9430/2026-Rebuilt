@@ -7,19 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SPR-BER"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Eject Basket"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "BER-IFR"
+            "pathName": "SPR-IFR+EH"
           }
         },
         {
@@ -49,10 +37,9 @@
         {
           "type": "named",
           "data": {
-            "name": "Aim & Shoot 5s"
+            "name": "Aim & Shoot + Timeout"
           }
-        }
-        ,
+        },
         {
           "type": "path",
           "data": {
@@ -86,7 +73,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Aim & Shoot 5s"
+            "name": "Aim & Shoot + Timeout"
           }
         }
       ]

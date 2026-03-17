@@ -79,7 +79,7 @@ public class PolarSubsystem extends SubsystemBase {
    */
   public double getShootVelocity() {
     if (mode == Mode.VOLLEY)
-      return 3000.0;
+      return 2750.0;
 
     double vRadial = getRadialV();
     double r = getRadius();
@@ -254,38 +254,41 @@ public class PolarSubsystem extends SubsystemBase {
 
     // If robot is left of the field (< 4.6) -> target blue hub. If right of field
     // (> 11.9) -> target red hub.
-    if (x < 4.6) {
-      target = BLUE_HUB_LOC;
-      mode = Mode.HUB;
-      SmartDashboard.putString("Polar/Target", "BLUE_HUB");
-    } else if (x > 11.9) {
-      target = RED_HUB_LOC;
-      mode = Mode.HUB;
-      SmartDashboard.putString("Polar/Target", "RED_HUB");
-    } else {
-      // Robot is in-field between the hubs; pick a volley location based on alliance
-      // and Y
-      var alliance = DriverStation.getAlliance();
-      if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
-        if (y > 4.0) {
-          target = BLUE_LEFT_VOLLY_LOC;
-          mode = Mode.VOLLEY;
-          SmartDashboard.putString("Polar/Target", "BLUE_LEFT_VOLLEY");
-        } else {
-          target = BLUE_RIGHT_VOLLY_LOC;
-          mode = Mode.VOLLEY;
-          SmartDashboard.putString("Polar/Target", "BLUE_RIGHT_VOLLEY");
-        }
+    var alliance1 = DriverStation.getAlliance();
+    if (alliance1.isPresent()) {
+      if (x < 4.6 && alliance1.get() == Alliance.Blue) {
+        target = BLUE_HUB_LOC;
+        mode = Mode.HUB;
+        SmartDashboard.putString("Polar/Target", "BLUE_HUB");
+      } else if (x > 11.9 && alliance1.get() == Alliance.Red) {
+        target = RED_HUB_LOC;
+        mode = Mode.HUB;
+        SmartDashboard.putString("Polar/Target", "RED_HUB");
       } else {
-        // For red alliance choose the volley side according to the requested mapping
-        if (y < 4.0) {
-          target = RED_RIGHT_VOLLY_LOC;
-          mode = Mode.VOLLEY;
-          SmartDashboard.putString("Polar/Target", "RED_RIGHT_VOLLEY");
+        // Robot is in-field between the hubs; pick a volley location based on alliance
+        // and Y
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
+          if (y > 4.0) {
+            target = BLUE_LEFT_VOLLY_LOC;
+            mode = Mode.VOLLEY;
+            SmartDashboard.putString("Polar/Target", "BLUE_LEFT_VOLLEY");
+          } else {
+            target = BLUE_RIGHT_VOLLY_LOC;
+            mode = Mode.VOLLEY;
+            SmartDashboard.putString("Polar/Target", "BLUE_RIGHT_VOLLEY");
+          }
         } else {
-          target = RED_LEFT_VOLLY_LOC;
-          mode = Mode.VOLLEY;
-          SmartDashboard.putString("Polar/Target", "RED_LEFT_VOLLEY");
+          // For red alliance choose the volley side according to the requested mapping
+          if (y < 4.0) {
+            target = RED_RIGHT_VOLLY_LOC;
+            mode = Mode.VOLLEY;
+            SmartDashboard.putString("Polar/Target", "RED_RIGHT_VOLLEY");
+          } else {
+            target = RED_LEFT_VOLLY_LOC;
+            mode = Mode.VOLLEY;
+            SmartDashboard.putString("Polar/Target", "RED_LEFT_VOLLEY");
+          }
         }
       }
     }
@@ -352,7 +355,7 @@ public class PolarSubsystem extends SubsystemBase {
       // Use a P-controller plus a small feedforward term derived from the
       // commanded tangential speed to account for rotational rate while
       // orbiting: phi_dot ≈ -vTangential / r. Tune kP and kFF as needed.
-      double kP = 6.0;
+      double kP = 25.0;
       double kFF = 0.9;
       double ff = 0.0;
       if (Math.abs(r) > kEpsilon) {
@@ -373,18 +376,30 @@ public class PolarSubsystem extends SubsystemBase {
     }
 
     public static double getEstHoodPosFrmR(double r) {
-      double pos = -0.00447476 * Math.pow(r, 2)
-          + 0.102495 * r
-          + (-0.080651 + Constants.ShooterConstants.kHoodMinPosition);
-      SmartDashboard.putNumber("Calc Hood Pos", pos);
+      // Value for slow low shot
+      // double pos = -0.00447476 * Math.pow(r, 2)
+      // + 0.102495 * r
+      // + (-0.080651 + Constants.ShooterConstants.kHoodMinPosition);
+
+      double pos = (0.292958 / (1 + Math.pow(Math.E, -1 * (0.477807 * r + -1.5966))))
+          + (0.6866 - Constants.ShooterConstants.kHoodMinPosition);
+
+      SmartDashboard.putNumber("Polar/Calc Hood Pos", pos);
       return pos;
     }
 
     public static double getEstShootVelFrmR(double r) {
-      double rpm = 20.00902 * Math.pow(r, 2)
-          + -2.92682 * r
-          + 2625;
-      SmartDashboard.putNumber("Calc Shoot V", rpm);
+      // Values for slow low shot
+      // double rpm = 20.00902 * Math.pow(r, 2)
+      // + -2.92682 * r
+      // + 2625;
+
+      // Values for Lob Shot
+      double rpm = -33.21617 * Math.pow(r, 2)
+          + 366.72357 * r
+          + 2657.10459;
+
+      SmartDashboard.putNumber("Polar/Calc Shoot V", rpm);
       return rpm;
     }
   }
