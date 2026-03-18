@@ -355,7 +355,7 @@ public class PolarSubsystem extends SubsystemBase {
       // Use a P-controller plus a small feedforward term derived from the
       // commanded tangential speed to account for rotational rate while
       // orbiting: phi_dot ≈ -vTangential / r. Tune kP and kFF as needed.
-      double kP = 25.0;
+      double kP = 20.0;
       double kFF = 0.9;
       double ff = 0.0;
       if (Math.abs(r) > kEpsilon) {
