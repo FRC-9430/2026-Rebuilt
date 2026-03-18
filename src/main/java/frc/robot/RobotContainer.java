@@ -69,6 +69,8 @@ public class RobotContainer {
         configureNamedCommands();
         dash.initAutoChooser();
         configureBindings();
+
+        // Prevent the CTRE Phoenix Status Logger from creating logs
         StatusLogger.disableAutoLogging();
     }
 
@@ -78,27 +80,6 @@ public class RobotContainer {
      * other operator controls.
      */
     private void configureBindings() {
-
-        // drivetrain.setDefaultCommand(
-        // drivetrain.applyRequestWithCondition(
-        // () -> drive.withVelocityX((!controller.getHID().getRightBumperButton()
-        // ? -controller.getLeftY()
-        // : -controller.getLeftY() / 3) * MaxSpeed)
-        // .withVelocityY((!controller.getHID().getRightBumperButton()
-        // ? -controller.getLeftX()
-        // : -controller.getLeftX() / 3) * MaxSpeed)
-        // .withRotationalRate(-controller.getRightX() * MaxAngularRate),
-        // () -> aim.withSpeeds(polar.getPolarDriveSpeeds(drivetrain.getState().Pose,
-        // (Math.abs(controller.getLeftY()) > 0.06 ? controller.getLeftY() : 0.0) //
-        // Clamp Input
-        // / (shootCommand.isScheduled() && polar.targetIsHub() ? 5.0 : 1.0), // Slow
-        // When
-        // // Shooting
-        // (Math.abs(controller.getLeftX()) > 0.06 ? controller.getLeftX() : 0.0)
-        // / (shootCommand.isScheduled() && polar.targetIsHub() ? 10.0 : 1.0),
-        // MaxSpeed, MaxAngularRate,
-        // (shootCommand.isScheduled()))), // Lead only when shooting
-        // () -> isCartesian()));
 
         drivetrain.setDefaultCommand(
                 drivetrain.applyRequestWithCondition(
@@ -250,7 +231,6 @@ public class RobotContainer {
         namedCommands.put("Stop Intake", new InstantCommand(() -> intake.stopIntake()));
         namedCommands.put("Engage Polar", new InstantCommand(() -> setPolar()));
         namedCommands.put("Engage Cartesian", new InstantCommand(() -> setCartesian()));
-        namedCommands.put("Start Aim and Shoot", new InstantCommand(() -> startAimAndShootAutonCommand()));
         namedCommands.put("Aim & Shoot + Timeout", new AimAndShootCommand(drivetrain, shooter, intake, polar));
         namedCommands.put("Stop Aim and Shoot", new InstantCommand(() -> aimAndShootCommand.cancel()));
         namedCommands.put("Stow Hood", new InstantCommand(() -> shooter.stowHood()));
@@ -275,16 +255,6 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         return dash.getAutoChooser();
-    }
-
-    /**
-     * Schedule the aim-and-shoot autonomous command when in Polar mode
-     * during the autonomous period.
-     */
-    public void startAimAndShootAutonCommand() {
-
-        CommandScheduler.getInstance().schedule(aimAndShootCommand);
-
     }
 
 }
