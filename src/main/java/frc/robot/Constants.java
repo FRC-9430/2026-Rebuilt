@@ -159,10 +159,10 @@ public final class Constants {
             MAIN_SHOOTER_MOTOR_CONFIG.closedLoop.feedForward.sva(kShooterS, kShooterV, kShooterA);
         }
 
-        public static final SparkFlexConfig AUX_MOTOR_SHOOTER_CONFIG = new SparkFlexConfig();
+        public static final SparkFlexConfig AUX_SHOOTER_MOTOR_CONFIG = new SparkFlexConfig();
         static {
-            AUX_MOTOR_SHOOTER_CONFIG.idleMode(IdleMode.kCoast);
-            AUX_MOTOR_SHOOTER_CONFIG.follow(CANConstants.RIGHT_SHOOT_MOTOR_CAN_ID, true);
+            AUX_SHOOTER_MOTOR_CONFIG.idleMode(IdleMode.kCoast);
+            AUX_SHOOTER_MOTOR_CONFIG.follow(CANConstants.RIGHT_SHOOT_MOTOR_CAN_ID, true);
         }
 
         public static final SparkFlexConfig HOOD_MOTOR_CONFIG = new SparkFlexConfig();

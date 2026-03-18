@@ -55,9 +55,9 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
 
         m_RightShooterMotor.configure(MAIN_SHOOTER_MOTOR_CONFIG, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
-        m_LeftTopShoooterMotor.configure(AUX_MOTOR_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
+        m_LeftTopShoooterMotor.configure(AUX_SHOOTER_MOTOR_CONFIG, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
-        m_LeftBotShoooterMotor.configure(AUX_MOTOR_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
+        m_LeftBotShoooterMotor.configure(AUX_SHOOTER_MOTOR_CONFIG, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
 
         m_hoodMotor.configure(HOOD_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
