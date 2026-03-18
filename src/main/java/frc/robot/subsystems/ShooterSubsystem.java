@@ -62,7 +62,8 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
 
         m_hoodMotor.configure(HOOD_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         m_feedMotor.configure(FEEDER_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        m_conveyorMotor.configure(CONVEYOR_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_conveyorMotor.configure(CONVEYOR_MOTOR_CONFIG, ResetMode.kResetSafeParameters,
+                PersistMode.kPersistParameters);
 
         m_shooterEncoder = m_RightShooterMotor.getEncoder();
         m_hoodEncoder = m_hoodMotor.getAbsoluteEncoder();
