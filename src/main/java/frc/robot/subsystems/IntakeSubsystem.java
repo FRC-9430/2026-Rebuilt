@@ -77,13 +77,13 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     }
 
     /**
-   * Gets the intake RPM
-   */
-  public double getIntakeV() {
-    return m_intakeEncoder.getVelocity();
-  }
+     * Gets the intake RPM
+     */
+    public double getIntakeV() {
+        return m_intakeEncoder.getVelocity();
+    }
 
-  /**
+    /**
      * Runs the hopper motor at a specified speed
      *
      * @param speed The speed to run the hopper motor at
