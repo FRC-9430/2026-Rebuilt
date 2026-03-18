@@ -36,17 +36,23 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
         }
 
         for (var fiducial : est.rawFiducials) {
-            if (fiducial.ambiguity < 0.3) { // Decent Abmiguity required
+            if (fiducial.ambiguity > 0.2) { // Decent Abmiguity required
                 break;
             }
-            return;
+            if (fiducial == est.rawFiducials[est.rawFiducials.length - 1]) {
+                if (fiducial.ambiguity > 0.2) { // Decent Abmiguity required
+                    break;
+                } else {
+                    return;
+                }
+            }
         }
 
         if (Math.abs(state.Speeds.omegaRadiansPerSecond) > 1.5) {
             return;
         }
 
-        if (Math.abs(est.pose.getRotation().getDegrees() - state.Pose.getRotation().getDegrees()) > 1) { 
+        if (Math.abs(est.pose.getRotation().getDegrees() - state.Pose.getRotation().getDegrees()) > 1) {
             // If estimated position is greater than 1 degree off from detected
             if (Math.abs(state.Speeds.omegaRadiansPerSecond) < 0.05 &&
                     Math.abs(state.Speeds.vxMetersPerSecond) < 0.05 &&
