@@ -1,6 +1,6 @@
 name: Feature Request
 description: Propose new functionality that has not been implemented.
-title: "New Feature: [Brief Description]"
+title: "New Feature:"
 labels: ["signal/needs spec"]
 body:
   - type: markdown

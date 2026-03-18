@@ -1,6 +1,6 @@
 name: Internal Programming Task
 description: Maintenance, Refactoring, or Infra (Programming Team Only).
-title: "Task: [Brief Description]"
+title: ""
 body:
 
   - type: checkboxes

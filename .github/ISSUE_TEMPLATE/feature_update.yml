@@ -1,6 +1,6 @@
 name: Feature Update
 description: Tweak or rework functionality that currently works as intended.
-title: "Update: [Brief Description]"
+title: "Update:"
 labels: ["signal/needs spec"]
 body:
   - type: markdown

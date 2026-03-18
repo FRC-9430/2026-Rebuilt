@@ -1,6 +1,6 @@
 name: Bug Report
 description: Something is not working as intended or approved.
-title: "BUG: [Brief Description]"
+title: "BUG:"
 labels: ["work/bug"]
 body:
   

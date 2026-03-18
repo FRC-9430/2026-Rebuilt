@@ -1,6 +1,6 @@
 name: Research Spike
 description: Investigation or prototype work to build understanding.
-title: "Spike: [Topic]"
+title: "Spike:"
 labels: ["learn/knowledge", "signal/hold"]
 body:
   - type: textarea
