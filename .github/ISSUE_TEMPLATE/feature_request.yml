@@ -1,0 +1,88 @@
+name: Feature Request
+description: Propose new functionality that has not been implemented.
+title: "New Feature: [Brief Description]"
+labels: ["signal/needs spec"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Elaboration Phase
+        All new features start in **Elaboration**. Please define the work type and the target area of focus.
+  - type: checkboxes
+    id: work-selector
+    attributes:
+      label: Select Work Type
+      description: Choose the label that BEST describes the work being performed.
+      options:
+        - label: work/feature
+        - label: work/tuning
+        - label: work/test
+        - label: work/documentation
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: area-selector
+    attributes:
+      label: Select Primary Area of Focus
+      description: Choose the label that BEST describes WHERE the focus of the work will be.
+      options:
+        - label: area/auto
+        - label: area/drivetrain
+        - label: area/superstructure
+        - label: area/sensor
+        - label: area/oi
+        - label: area/logic
+        - label: area/infra
+        - label: area/comm
+        - label: area/performance
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-story
+    attributes:
+      label: Problem Summary
+      description: "As a [role], I want to [action] so that [result]."
+      placeholder: "As a driver, I want a button to auto-align to the speaker so that I can score faster."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment Requirement
+      options: ["env/sim", "env/hardware"]
+    validations:
+      required: true
+  
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Acceptance Criteria
+      description: List the conditions that must be true to mark this "Completed."
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes: 
+        label: Constraints
+        description: Share useful information that must be considered to limit unintentional functionality. Include necessary specifications.
+  
+  - type: checkboxes
+    id: learn-tags
+    attributes:
+      label: Learning & Strategy
+      options:
+        - label: "This is a good task for a Rookie (learn/beginner)"
+        - label: "This is a High-Risk task (learn/pair-only)"
+        - label: "This is a Prototype (learn/prototype)"
+  
+  - type: checkboxes
+    id: add-ons
+    attributes:
+      label: Additional Tags
+      options:
+        - label: "Requires deep research (learn/knowledge)"
+        - label: "This requires extra attention (signal/help wanted)"
+        - label: "This is a prototype request (learn/prototype)"

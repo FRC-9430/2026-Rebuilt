@@ -1,0 +1,48 @@
+name: Bug Report
+description: Something is not working as intended or approved.
+title: "BUG: [Brief Description]"
+labels: ["work/bug"]
+body:
+  
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Execution Environment
+      description: Where was the bug observed? (use env/hardware if observing robot behavior, otherwise use env/sim)
+      options: ["env/sim", "env/hardware"]
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: area-selector
+    attributes:
+      label: Select Primary Area
+      description: Choose the label that BEST describes WHERE the focus of the work will be.
+      options:
+        - label: area/auto
+        - label: area/drivetrain
+        - label: area/superstructure
+        - label: area/sensor
+        - label: area/oi
+        - label: area/logic
+        - label: area/infra
+        - label: area/comm
+        - label: area/performance
+    validations:
+      required: true
+  
+  - type: textarea
+    id: discrepancy
+    attributes:
+      label: Approved vs. Observed Behavior
+      description: Contrast what was *supposed* to happen with what *actually* happened. Provide sources for approved functionality. 
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: signals
+    attributes:
+      label: Optional Flags
+      options:
+        - label: signal/help wanted
+        - label: signal/needs spec

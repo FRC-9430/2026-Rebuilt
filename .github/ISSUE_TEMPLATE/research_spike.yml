@@ -1,0 +1,17 @@
+name: Research Spike
+description: Investigation or prototype work to build understanding.
+title: "Spike: [Topic]"
+labels: ["learn/knowledge", "signal/hold"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: The Research Question
+      description: What are you trying to understand or prove?
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Expected Output
+      description: What is your planned deliverable to demonstrate conceptual understanding? (code, write-up, knowledge share, goal, etc)

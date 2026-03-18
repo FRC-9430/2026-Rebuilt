@@ -1,0 +1,95 @@
+name: Feature Update
+description: Tweak or rework functionality that currently works as intended.
+title: "Update: [Brief Description]"
+labels: ["signal/needs spec"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Process Reminder
+        An update is a change to **existing** approved behavior. 
+        Select a **Work Type** and a **Primary Area of Focus**.
+  
+  - type: checkboxes
+    id: work-selector
+    attributes:
+      label: Select Work Type
+      description: Choose the label that BEST describes the work being performed.
+      options:
+        - label: work/feature
+        - label: work/tuning
+        - label: work/test
+        - label: work/documentation
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: area-selector
+    attributes:
+      label: Select Primary Area
+      description: Choose the label that BEST describes WHERE the work will be focused.
+      options:
+        - label: area/auto
+        - label: area/drivetrain
+        - label: area/superstructure
+        - label: area/sensor
+        - label: area/oi
+        - label: area/logic
+        - label: area/infra
+        - label: area/comm
+        - label: area/performance
+    validations:
+      required: true
+        
+  - type: textarea
+    id: original-context
+    attributes:
+      label: Original Feature Context
+      description: Link to the original issue/PR and summarize the current approved behavior.
+    validations:
+      required: true
+  
+  - type: textarea
+    id: changes
+    attributes:
+      label: Proposed Changes
+      description: What specifically needs to change and what defines this update completed?
+      placeholder: "Update speed of XYZ from (A) to (B)." 
+    validations:
+      required: true
+  
+  - type: textarea
+    id: acceptance-criteria
+    attributes: 
+        label: Acceptance Criteria
+        description: Specify any changes to existing acceptance criteria
+        placeholder: if no changes, "Validate existing acceptance criteria" 
+    validations:
+      required: true
+  
+  - type: textarea
+    id: constraints
+    attributes:
+        label: Constraints
+        description: Provide any changes to existing constraints
+        placeholder: if no changes, "Existing constraints apply"
+    validations:
+      required: true
+  
+  - type: checkboxes
+    id: learn-tags
+    attributes:
+      label: Learning & Strategy
+      options:
+        - label: "This is a good task for a Rookie (learn/beginner)"
+        - label: "This is a High-Risk task (learn/pair-only)"
+        - label: "This is a Prototype (learn/prototype)"
+  
+  - type: checkboxes
+    id: add-ons
+    attributes:
+      label: Additional Tags
+      options:
+        - label: "Requires deep research (learn/knowledge)"
+        - label: "This requires extra attention (signal/help wanted)"
+        - label: "This is a prototype request (learn/prototype)"

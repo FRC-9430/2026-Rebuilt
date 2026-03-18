@@ -1,0 +1,41 @@
+name: Internal Programming Task
+description: Maintenance, Refactoring, or Infra (Programming Team Only).
+title: "Task: [Brief Description]"
+body:
+
+  - type: checkboxes
+    id: work-selector
+    attributes:
+      label: Select Work Type
+      description: Choose the label that BEST describes the work being performed.
+      options:
+        - label: work/feature
+        - label: work/tuning
+        - label: work/refactor
+        - label: work/test
+        - label: work/documentation
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: area-selector
+    attributes:
+      label: Select Primary Area
+      description: Choose the label that BEST describes WHERE the focus of the work will be.
+      options:
+        - label: area/auto
+        - label: area/drivetrain
+        - label: area/superstructure
+        - label: area/sensor
+        - label: area/oi
+        - label: area/logic
+        - label: area/infra
+        - label: area/comm
+        - label: area/performance
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Change Summary
