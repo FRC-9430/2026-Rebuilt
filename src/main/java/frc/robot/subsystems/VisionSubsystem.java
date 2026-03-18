@@ -24,6 +24,12 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
         return LimelightHelpers.getBotPoseEstimate_wpiBlue(camNames[0]);
     }
 
+    /**
+     * Adds vision measurements to the drivetrain's pose estimation system.
+     * The estimation from the Limelight camera is used to correct the robot's pose
+     * if certain conditions are met, such as low ambiguity in detected fiducials
+     * and the robot being relatively still.
+     */
     public void addVisionMeasurements() {
 
         var state = drive.getState();
@@ -46,7 +52,7 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
             return;
         }
 
-        if (Math.abs(est.pose.getRotation().getDegrees() - state.Pose.getRotation().getDegrees()) > 1) { 
+        if (Math.abs(est.pose.getRotation().getDegrees() - state.Pose.getRotation().getDegrees()) > 1) {
             // If estimated position is greater than 1 degree off from detected
             if (Math.abs(state.Speeds.omegaRadiansPerSecond) < 0.05 &&
                     Math.abs(state.Speeds.vxMetersPerSecond) < 0.05 &&
@@ -65,6 +71,12 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
 
     }
 
+    /**
+     * Logs vision data to the SmartDashboard for debugging purposes.
+     * 
+     * @param est The pose estimate from the Limelight camera, containing
+     *            information about the robot's position and detected fiducials.
+     */
     private void logVisionData(LimelightHelpers.PoseEstimate est) {
         SmartDashboard.putNumber("Vision/Robot Pose Cam Est X", est.pose.getX());
         SmartDashboard.putNumber("Vision/Robot Pose Cam Est Y", est.pose.getY());
