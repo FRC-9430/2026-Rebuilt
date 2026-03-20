@@ -1,6 +1,6 @@
 name: Internal Programming Task
-description: Maintenance, Refactoring, or Infra (Programming Team Only).
-title: "Change: "
+description: Maintenance, Refactoring, Infra, or Config (Programming Team Only).
+title: "Task: "
 body:
 
   - type: dropdown
@@ -37,4 +37,4 @@ body:
   - type: textarea
     id: notes
     attributes:
-      label: Change Summary
+      label: Task Summary
