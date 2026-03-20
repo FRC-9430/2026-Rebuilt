@@ -7,40 +7,40 @@ body:
     attributes:
       value: |
         ### Process Reminder
-        An update is a change to **existing** approved behavior. 
+        An update is a change to **existing** approved behavior.
         Select a **Work Type** and a **Primary Area of Focus**.
-  
-  - type: checkboxes
+
+  - type: dropdown
     id: work-selector
     attributes:
       label: Select Work Type
       description: Choose the label that BEST describes the work being performed.
       options:
-        - label: work/feature
-        - label: work/tuning
-        - label: work/test
-        - label: work/documentation
+        - work/feature
+        - work/tuning
+        - work/test
+        - work/documentation
     validations:
       required: true
 
-  - type: checkboxes
+  - type: dropdown
     id: area-selector
     attributes:
       label: Select Primary Area
       description: Choose the label that BEST describes WHERE the work will be focused.
       options:
-        - label: area/auto
-        - label: area/drivetrain
-        - label: area/superstructure
-        - label: area/sensor
-        - label: area/oi
-        - label: area/logic
-        - label: area/infra
-        - label: area/comm
-        - label: area/performance
+        - area/auto
+        - area/drivetrain
+        - area/superstructure
+        - area/sensor
+        - area/oi
+        - area/logic
+        - area/infra
+        - area/comm
+        - area/performance
     validations:
       required: true
-        
+
   - type: textarea
     id: original-context
     attributes:
@@ -48,25 +48,25 @@ body:
       description: Link to the original issue/PR and summarize the current approved behavior.
     validations:
       required: true
-  
+
   - type: textarea
     id: changes
     attributes:
       label: Proposed Changes
       description: What specifically needs to change and what defines this update completed?
-      placeholder: "Update speed of XYZ from (A) to (B)." 
+      placeholder: "Update speed of XYZ from (A) to (B)."
     validations:
       required: true
-  
+
   - type: textarea
     id: acceptance-criteria
-    attributes: 
+    attributes:
         label: Acceptance Criteria
         description: Specify any changes to existing acceptance criteria
-        placeholder: if no changes, "Validate existing acceptance criteria" 
+        placeholder: if no changes, "Validate existing acceptance criteria"
     validations:
       required: true
-  
+
   - type: textarea
     id: constraints
     attributes:
@@ -75,7 +75,7 @@ body:
         placeholder: if no changes, "Existing constraints apply"
     validations:
       required: true
-  
+
   - type: checkboxes
     id: learn-tags
     attributes:
@@ -83,13 +83,12 @@ body:
       options:
         - label: "This is a good task for a Rookie (learn/beginner)"
         - label: "This is a High-Risk task (learn/pair-only)"
-        - label: "This is a Prototype (learn/prototype)"
-  
+        - label: "This is a prototype request (learn/prototype)"
+        - label: "Requires deep research (learn/knowledge)"
+
   - type: checkboxes
     id: add-ons
     attributes:
       label: Additional Tags
       options:
-        - label: "Requires deep research (learn/knowledge)"
         - label: "This requires extra attention (signal/help wanted)"
-        - label: "This is a prototype request (learn/prototype)"

@@ -3,7 +3,7 @@ description: Something is not working as intended or approved.
 title: "BUG:"
 labels: ["work/bug"]
 body:
-  
+
   - type: dropdown
     id: environment
     attributes:
@@ -13,29 +13,29 @@ body:
     validations:
       required: true
 
-  - type: checkboxes
+  - type: dropdown
     id: area-selector
     attributes:
       label: Select Primary Area
-      description: Choose the label that BEST describes WHERE the focus of the work will be.
+      description: Choose the label that BEST describes WHERE the work will be focused.
       options:
-        - label: area/auto
-        - label: area/drivetrain
-        - label: area/superstructure
-        - label: area/sensor
-        - label: area/oi
-        - label: area/logic
-        - label: area/infra
-        - label: area/comm
-        - label: area/performance
+        - area/auto
+        - area/drivetrain
+        - area/superstructure
+        - area/sensor
+        - area/oi
+        - area/logic
+        - area/infra
+        - area/comm
+        - area/performance
     validations:
       required: true
-  
+
   - type: textarea
     id: discrepancy
     attributes:
       label: Approved vs. Observed Behavior
-      description: Contrast what was *supposed* to happen with what *actually* happened. Provide sources for approved functionality. 
+      description: Contrast what was *supposed* to happen with what *actually* happened. Provide sources for approved functionality.
     validations:
       required: true
 
@@ -44,5 +44,5 @@ body:
     attributes:
       label: Optional Flags
       options:
-        - label: signal/help wanted
-        - label: signal/needs spec
+        - label: Urgent request (signal/needs help)
+        - label: Needs more analysis (signal/needs spec)

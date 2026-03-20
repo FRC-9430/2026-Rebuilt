@@ -8,34 +8,34 @@ body:
       value: |
         ### Elaboration Phase
         All new features start in **Elaboration**. Please define the work type and the target area of focus.
-  - type: checkboxes
+  - type: dropdown
     id: work-selector
     attributes:
       label: Select Work Type
       description: Choose the label that BEST describes the work being performed.
       options:
-        - label: work/feature
-        - label: work/tuning
-        - label: work/test
-        - label: work/documentation
+        - work/feature
+        - work/tuning
+        - work/test
+        - work/documentation
     validations:
       required: true
 
-  - type: checkboxes
+  - type: dropdown
     id: area-selector
     attributes:
-      label: Select Primary Area of Focus
-      description: Choose the label that BEST describes WHERE the focus of the work will be.
+      label: Select Primary Area
+      description: Choose the label that BEST describes WHERE the work will be focused.
       options:
-        - label: area/auto
-        - label: area/drivetrain
-        - label: area/superstructure
-        - label: area/sensor
-        - label: area/oi
-        - label: area/logic
-        - label: area/infra
-        - label: area/comm
-        - label: area/performance
+        - area/auto
+        - area/drivetrain
+        - area/superstructure
+        - area/sensor
+        - area/oi
+        - area/logic
+        - area/infra
+        - area/comm
+        - area/performance
     validations:
       required: true
 
@@ -52,10 +52,12 @@ body:
     id: environment
     attributes:
       label: Environment Requirement
-      options: ["env/sim", "env/hardware"]
+      options:
+        - This requires access to hardware to complete (env/hardware)
+        - This can be completed entirely remote or within a simulation (env/sim)
     validations:
       required: true
-  
+
   - type: textarea
     id: criteria
     attributes:
@@ -65,10 +67,10 @@ body:
       required: true
   - type: textarea
     id: constraints
-    attributes: 
+    attributes:
         label: Constraints
         description: Share useful information that must be considered to limit unintentional functionality. Include necessary specifications.
-  
+
   - type: checkboxes
     id: learn-tags
     attributes:
@@ -77,12 +79,11 @@ body:
         - label: "This is a good task for a Rookie (learn/beginner)"
         - label: "This is a High-Risk task (learn/pair-only)"
         - label: "This is a Prototype (learn/prototype)"
-  
+        - label: "Requires deep research (learn/knowledge)"
+
   - type: checkboxes
     id: add-ons
     attributes:
       label: Additional Tags
       options:
-        - label: "Requires deep research (learn/knowledge)"
         - label: "This requires extra attention (signal/help wanted)"
-        - label: "This is a prototype request (learn/prototype)"
