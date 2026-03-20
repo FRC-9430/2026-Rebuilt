@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -44,6 +45,18 @@ class PolarSubsystemTest {
         try (MockedStatic<DriverStation> ds = mockStatic(DriverStation.class)) {
             ds.when(DriverStation::getAlliance).thenReturn(Optional.of(Alliance.Blue));
             polarSubsystem = new PolarSubsystem(mockDrivetrain);
+        }
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (polarSubsystem != null) {
+            try {
+                polarSubsystem.close();
+            } catch (Exception e) {
+                // Ignore errors during standard close
+            }
+            polarSubsystem = null;
         }
     }
 

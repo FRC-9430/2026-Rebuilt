@@ -15,7 +15,7 @@ import frc.robot.Constants;
 
 import static frc.robot.Constants.FieldConstants.*;
 
-public class PolarSubsystem extends SubsystemBase {
+public class PolarSubsystem extends SubsystemBase implements AutoCloseable {
 
   public final CommandSwerveDrivetrain driveTrain;
 
@@ -402,4 +402,8 @@ public class PolarSubsystem extends SubsystemBase {
       return rpm;
     }
   }
+
+public void close() {
+    driveTrain.close();
+}
 }
