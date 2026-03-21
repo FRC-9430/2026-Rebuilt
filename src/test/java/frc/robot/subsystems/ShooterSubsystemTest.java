@@ -118,27 +118,36 @@ public class ShooterSubsystemTest {
             m_shooter = new ShooterSubsystem();
 
             List<SparkFlex> constructed = mockedSparkFlex.constructed();
-            // Ensure we have the expected number of motors (6 total in constructor)
-            assertEquals(6, constructed.size());
+            // Ensure we have the expected number of motors (8 total in constructor)
+            assertEquals(8, constructed.size());
 
             // Retrieve mocks based on instantiation order in ShooterSubsystem constructor
-            SparkFlex rightShooter = constructed.get(0);
-            SparkFlex leftTopShooter = constructed.get(1);
-            SparkFlex leftBotShooter = constructed.get(2);
-            SparkFlex hoodMotor = constructed.get(3);
-            SparkFlex feedMotor = constructed.get(4);
+            SparkFlex rightTopShooter = constructed.get(0);
+            SparkFlex rightBottomShooter = constructed.get(1);
+            SparkFlex leftTopShooter = constructed.get(2);
+            SparkFlex leftBotShooter = constructed.get(3);
+            SparkFlex hoodMotor = constructed.get(4);
+            SparkFlex rightFeedMotor = constructed.get(5);
+            SparkFlex leftFeedMotor = constructed.get(6);
+            SparkFlex conveyorMotor = constructed.get(7);
 
             // Verify that configure was called with the correct config object from
             // Constants
-            Mockito.verify(rightShooter).configure(Mockito.eq(ShooterConstants.MAIN_SHOOTER_MOTOR_CONFIG),
+            Mockito.verify(rightTopShooter).configure(Mockito.eq(ShooterConstants.MAIN_SHOOTER_MOTOR_CONFIG),
                     Mockito.eq(ResetMode.kResetSafeParameters), Mockito.eq(PersistMode.kPersistParameters));
-            Mockito.verify(leftTopShooter).configure(Mockito.eq(ShooterConstants.AUX_MOTOR_SHOOTER_CONFIG),
+            Mockito.verify(rightBottomShooter).configure(Mockito.eq(ShooterConstants.AUX_NONINVERTED_SHOOTER_MOTOR_CONFIG),
                     Mockito.eq(ResetMode.kResetSafeParameters), Mockito.eq(PersistMode.kPersistParameters));
-            Mockito.verify(leftBotShooter).configure(Mockito.eq(ShooterConstants.AUX_MOTOR_SHOOTER_CONFIG),
+            Mockito.verify(leftTopShooter).configure(Mockito.eq(ShooterConstants.AUX_INVERTED_MOTOR_SHOOTER_CONFIG),
+                    Mockito.eq(ResetMode.kResetSafeParameters), Mockito.eq(PersistMode.kPersistParameters));
+            Mockito.verify(leftBotShooter).configure(Mockito.eq(ShooterConstants.AUX_INVERTED_MOTOR_SHOOTER_CONFIG),
                     Mockito.eq(ResetMode.kResetSafeParameters), Mockito.eq(PersistMode.kPersistParameters));
             Mockito.verify(hoodMotor).configure(Mockito.eq(ShooterConstants.HOOD_MOTOR_CONFIG),
                     Mockito.eq(ResetMode.kResetSafeParameters), Mockito.eq(PersistMode.kPersistParameters));
-            Mockito.verify(feedMotor).configure(Mockito.eq(ShooterConstants.FEEDER_MOTOR_CONFIG),
+            Mockito.verify(rightFeedMotor).configure(Mockito.eq(ShooterConstants.MAIN_FEEDER_MOTOR_CONFIG),
+                    Mockito.eq(ResetMode.kResetSafeParameters), Mockito.eq(PersistMode.kPersistParameters));
+            Mockito.verify(leftFeedMotor).configure(Mockito.eq(ShooterConstants.AUX_FEEDER_MOTOR_CONFIG),
+                    Mockito.eq(ResetMode.kResetSafeParameters), Mockito.eq(PersistMode.kPersistParameters));
+            Mockito.verify(conveyorMotor).configure(Mockito.eq(ShooterConstants.CONVEYOR_MOTOR_CONFIG),
                     Mockito.eq(ResetMode.kResetSafeParameters), Mockito.eq(PersistMode.kPersistParameters));
         }
     }
@@ -374,7 +383,7 @@ public class ShooterSubsystemTest {
     void testStopAll() {
         m_shooter = new ShooterSubsystem();
         SparkFlexSim m_mainShooterMotorSim = new SparkFlexSim(m_shooter.getMainShooterMotor(), null);
-        SparkFlexSim m_feederSim = new SparkFlexSim(m_shooter.getFeedMotor(), null);
+        SparkFlexSim m_feederSim = new SparkFlexSim(m_shooter.getMainFeedMotor(), null);
         SparkFlexSim m_hoodSim = new SparkFlexSim(m_shooter.getHoodMotor(), null);
 
         m_shooter.setShooterRPM(TEST_RPM);
