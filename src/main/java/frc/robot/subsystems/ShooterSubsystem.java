@@ -128,7 +128,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
      */
     public void startFeeder() {
         m_rightFeedMotor.set(kDefaultFeederSpeed);
-        m_leftFeedMotor.set(kDefaultConveyorSpeed);
+        m_leftFeedMotor.set(kDefaultFeederSpeed);
     }
 
     /**
