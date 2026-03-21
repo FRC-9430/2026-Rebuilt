@@ -158,7 +158,7 @@ public class RobotContainer {
         controller.leftTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
             // Operate shooter motor at 0.5 percent output
             shooter.getMainShooterMotor().set(0.5);
-            shooter.setFeederPercent(0.5);
+            shooter.startFeeder();
         }))).onFalse(new InstantCommand(() -> {
             shooter.stopShooter();
             shooter.stopFeeder();
