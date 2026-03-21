@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANConstants;
@@ -30,17 +31,17 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
     private final SparkFlex m_LeftBotShoooterMotor;
 
     private final SparkFlex m_hoodMotor;
-    private final SparkFlex m_rightFeedMotor;
-    private final SparkFlex m_leftFeedMotor;
+    private final TalonFX m_rightFeedMotor;
+    private final TalonFX m_leftFeedMotor;
     private final SparkFlex m_conveyorMotor;
 
     private final RelativeEncoder m_shooterEncoder;
     private final AbsoluteEncoder m_hoodEncoder;
-    private final RelativeEncoder m_feedEncoder;
+    // private final RelativeEncoder m_feedEncoder;
 
     private final SparkClosedLoopController m_shooterController;
     private final SparkClosedLoopController m_hoodController;
-    private final SparkClosedLoopController m_feedController;
+    // private final SparkClosedLoopController m_feedController;
 
     /**
      * Creates a new ShooterSubsystem and configures motors, encoders, and
@@ -53,8 +54,8 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
         m_LeftBotShoooterMotor = new SparkFlex(CANConstants.LEFT_BOTTOM_SHOOT_MOTOR_CAN_ID, MotorType.kBrushless);
 
         m_hoodMotor = new SparkFlex(CANConstants.HOOD_MOTOR_CAN_ID, MotorType.kBrushless);
-        m_rightFeedMotor = new SparkFlex(CANConstants.RIGHT_FEEDER_MOTOR_CAN_ID, MotorType.kBrushless);
-        m_leftFeedMotor = new SparkFlex(CANConstants.LEFT_FEEDER_MOTOR_CAN_ID, MotorType.kBrushless);
+        m_rightFeedMotor = new TalonFX(CANConstants.LEFT_FEEDER_MOTOR_CAN_ID);
+        m_leftFeedMotor = new TalonFX(CANConstants.LEFT_FEEDER_MOTOR_CAN_ID);
         m_conveyorMotor = new SparkFlex(CANConstants.CONVEYOR_MOTOR_CAN_ID, MotorType.kBrushless);
 
         m_RightTopShooterMotor.configure(MAIN_SHOOTER_MOTOR_CONFIG, ResetMode.kResetSafeParameters,
@@ -67,17 +68,17 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
                 PersistMode.kPersistParameters);
 
         m_hoodMotor.configure(HOOD_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        m_rightFeedMotor.configure(MAIN_FEEDER_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        m_leftFeedMotor.configure(AUX_FEEDER_MOTOR_CONFIG,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        // m_rightFeedMotor.configure(MAIN_FEEDER_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        // m_leftFeedMotor.configure(AUX_FEEDER_MOTOR_CONFIG,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         m_conveyorMotor.configure(CONVEYOR_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         m_shooterEncoder = m_RightTopShooterMotor.getEncoder();
         m_hoodEncoder = m_hoodMotor.getAbsoluteEncoder();
-        m_feedEncoder = m_rightFeedMotor.getEncoder();
+        // m_feedEncoder = m_rightFeedMotor.getEncoder();
 
         m_shooterController = m_RightTopShooterMotor.getClosedLoopController();
         m_hoodController = m_hoodMotor.getClosedLoopController();
-        m_feedController = m_rightFeedMotor.getClosedLoopController();
+        // m_feedController = m_rightFeedMotor.getClosedLoopController();
     }
 
     /**
@@ -131,14 +132,6 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
         m_leftFeedMotor.set(kDefaultFeederSpeed);
     }
 
-    /**
-     * Set the feeder closed-loop target in RPM.
-     *
-     * @param rpm target feeder RPM
-     */
-    public void setFeederRPM(double rpm) {
-        m_feedController.setSetpoint(rpm, ControlType.kVelocity);
-    }
 
     /**
      * Set the feeder motor output as a percent (-1.0 to 1.0).
@@ -155,14 +148,6 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
         m_rightFeedMotor.stopMotor();
     }
 
-    /**
-     * Get the current feeder RPM from the encoder.
-     *
-     * @return feeder RPM
-     */
-    public double getFeederRPM() {
-        return m_feedEncoder.getVelocity();
-    }
 
     /** Start the conveyor at the default configured speed. */
     public void startConveyorDefault() {
@@ -321,16 +306,17 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
      * @author Brady Bontrager, bbontrager
      *         * @return SparkFlex feed motor from shooter subsystem.
      */
-    public SparkFlex getMainFeedMotor() {
+    public TalonFX getMainFeedMotor() {
         return this.m_rightFeedMotor;
+    }
+
+    public TalonFX getAltFeedMotor() {
+        return this.m_leftFeedMotor;
     }
 
     public SparkClosedLoopController getShooterPID(String pidController) {
         if (pidController.equals("shoot")) {
             return m_shooterController;
-        }
-        if (pidController.equals("feed")) {
-            return m_feedController;
         }
         if (pidController.equals("hood")) {
             return m_hoodController;
