@@ -164,7 +164,8 @@ public final class Constants {
         public static final SparkFlexConfig AUX_MOTOR_SHOOTER_CONFIG = new SparkFlexConfig();
         static {
             AUX_MOTOR_SHOOTER_CONFIG.idleMode(IdleMode.kCoast);
-            AUX_MOTOR_SHOOTER_CONFIG.follow(CANConstants.RIGHT_SHOOT_MOTOR_CAN_ID, true);
+            AUX_MOTOR_SHOOTER_CONFIG.follow(CANConstants.RIGHT_TOP_SHOOT_MOTOR_CAN_ID, true);
+            AUX_MOTOR_SHOOTER_CONFIG.follow(CANConstants.RIGHT_BOTTOM_SHOOT_MOTOR_CAN_ID, true);
         }
 
         public static final SparkFlexConfig HOOD_MOTOR_CONFIG = new SparkFlexConfig();
