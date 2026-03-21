@@ -45,12 +45,14 @@ public final class Constants {
         public static final int FL_SWERVE_DRIVING_CAN_ID = 17;
 
         // Shooter Subsystem Motors
-        public static final int HOOD_MOTOR_CAN_ID = 20;
-        public static final int FEEDER_MOTOR_CAN_ID = 21;
-        public static final int RIGHT_SHOOT_MOTOR_CAN_ID = 22;
-        public static final int LEFT_TOP_SHOOT_MOTOR_CAN_ID = 23;
-        public static final int LEFT_BOTTOM_SHOOT_MOTOR_CAN_ID = 24;
-        public static final int CONVEYOR_MOTOR_CAN_ID = 26;
+        public static final int HOOD_MOTOR_CAN_ID = 40;
+        public static final int RIGHT_FEEDER_MOTOR_CAN_ID = 41;
+        public static final int LEFT_FEEDER_MOTOR_CAN_ID = 42;
+        public static final int RIGHT_TOP_SHOOT_MOTOR_CAN_ID = 43;
+        public static final int RIGHT_BOTTOM_SHOOT_MOTOR_CAN_ID = 44;
+        public static final int LEFT_TOP_SHOOT_MOTOR_CAN_ID = 45;
+        public static final int LEFT_BOTTOM_SHOOT_MOTOR_CAN_ID = 46;
+        public static final int CONVEYOR_MOTOR_CAN_ID = 47;
 
         // Intake Subsystem Motors
         public static final int INTAKE_MOTOR_CAN_ID = 27;
