@@ -24,12 +24,14 @@ import static frc.robot.Constants.ShooterConstants.*;
  */
 public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
 
-    private final SparkFlex m_RightShooterMotor;
+    private final SparkFlex m_RightTopShooterMotor;
+    private final SparkFlex m_RightBottomShooterMotor;
     private final SparkFlex m_LeftTopShoooterMotor;
     private final SparkFlex m_LeftBotShoooterMotor;
 
     private final SparkFlex m_hoodMotor;
-    private final SparkFlex m_feedMotor;
+    private final SparkFlex m_rightFeedMotor;
+    private final SparkFlex m_leftFeedMotor;
     private final SparkFlex m_conveyorMotor;
 
     private final RelativeEncoder m_shooterEncoder;
@@ -45,32 +47,37 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
      * closed-loop controllers.
      */
     public ShooterSubsystem() {
-        m_RightShooterMotor = new SparkFlex(CANConstants.RIGHT_TOP_SHOOT_MOTOR_CAN_ID, MotorType.kBrushless);
+        m_RightTopShooterMotor = new SparkFlex(CANConstants.RIGHT_TOP_SHOOT_MOTOR_CAN_ID, MotorType.kBrushless);
+        m_RightBottomShooterMotor = new SparkFlex(CANConstants.RIGHT_BOTTOM_SHOOT_MOTOR_CAN_ID, MotorType.kBrushless);
         m_LeftTopShoooterMotor = new SparkFlex(CANConstants.LEFT_TOP_SHOOT_MOTOR_CAN_ID, MotorType.kBrushless);
         m_LeftBotShoooterMotor = new SparkFlex(CANConstants.LEFT_BOTTOM_SHOOT_MOTOR_CAN_ID, MotorType.kBrushless);
 
         m_hoodMotor = new SparkFlex(CANConstants.HOOD_MOTOR_CAN_ID, MotorType.kBrushless);
-        m_feedMotor = new SparkFlex(CANConstants.RIGHT_FEEDER_MOTOR_CAN_ID, MotorType.kBrushless);
+        m_rightFeedMotor = new SparkFlex(CANConstants.RIGHT_FEEDER_MOTOR_CAN_ID, MotorType.kBrushless);
+        m_leftFeedMotor = new SparkFlex(CANConstants.LEFT_FEEDER_MOTOR_CAN_ID, MotorType.kBrushless);
         m_conveyorMotor = new SparkFlex(CANConstants.CONVEYOR_MOTOR_CAN_ID, MotorType.kBrushless);
 
-        m_RightShooterMotor.configure(MAIN_SHOOTER_MOTOR_CONFIG, ResetMode.kResetSafeParameters,
+        m_RightTopShooterMotor.configure(MAIN_SHOOTER_MOTOR_CONFIG, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
-        m_LeftTopShoooterMotor.configure(AUX_MOTOR_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
+        m_RightBottomShooterMotor.configure(AUX_NONINVERTED_SHOOTER_MOTOR_CONFIG, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
-        m_LeftBotShoooterMotor.configure(AUX_MOTOR_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
+        m_LeftTopShoooterMotor.configure(AUX_INVERTED_MOTOR_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
+                PersistMode.kPersistParameters);
+        m_LeftBotShoooterMotor.configure(AUX_INVERTED_MOTOR_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
 
         m_hoodMotor.configure(HOOD_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        m_feedMotor.configure(FEEDER_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_rightFeedMotor.configure(MAIN_FEEDER_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_leftFeedMotor.configure(AUX_FEEDER_MOTOR_CONFIG,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         m_conveyorMotor.configure(CONVEYOR_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        m_shooterEncoder = m_RightShooterMotor.getEncoder();
+        m_shooterEncoder = m_RightTopShooterMotor.getEncoder();
         m_hoodEncoder = m_hoodMotor.getAbsoluteEncoder();
-        m_feedEncoder = m_feedMotor.getEncoder();
+        m_feedEncoder = m_rightFeedMotor.getEncoder();
 
-        m_shooterController = m_RightShooterMotor.getClosedLoopController();
+        m_shooterController = m_RightTopShooterMotor.getClosedLoopController();
         m_hoodController = m_hoodMotor.getClosedLoopController();
-        m_feedController = m_feedMotor.getClosedLoopController();
+        m_feedController = m_rightFeedMotor.getClosedLoopController();
     }
 
     /**
@@ -91,7 +98,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
 
     /** Stop the shooter motors immediately (open-loop stop). */
     public void stopShooter() {
-        m_RightShooterMotor.stopMotor();
+        m_RightTopShooterMotor.stopMotor();
     }
 
     /**
@@ -120,7 +127,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
      * Start the feeder motor at the default configured speed.
      */
     public void startFeeder() {
-        m_feedMotor.set(kDefaultFeederSpeed);
+        m_rightFeedMotor.set(kDefaultFeederSpeed);
     }
 
     /**
@@ -138,12 +145,12 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
      * @param percent motor output percent
      */
     public void setFeederPercent(double percent) {
-        m_feedMotor.set(percent);
+        m_rightFeedMotor.set(percent);
     }
 
     /** Stop the feeder motor. */
     public void stopFeeder() {
-        m_feedMotor.stopMotor();
+        m_rightFeedMotor.stopMotor();
     }
 
     /**
@@ -262,7 +269,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
      *         * @return SparkFlex Returns main shooter motor in Shooter subsystem
      */
     public SparkFlex getMainShooterMotor() {
-        return this.m_RightShooterMotor;
+        return this.m_RightTopShooterMotor;
     }
 
     /**
@@ -312,8 +319,8 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
      * @author Brady Bontrager, bbontrager
      *         * @return SparkFlex feed motor from shooter subsystem.
      */
-    public SparkFlex getFeedMotor() {
-        return this.m_feedMotor;
+    public SparkFlex getMainFeedMotor() {
+        return this.m_rightFeedMotor;
     }
 
     public SparkClosedLoopController getShooterPID(String pidController) {
@@ -352,19 +359,21 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
     /** Stops all motors in the subsystem. */
     public void stopAll() {
 
-        m_RightShooterMotor.stopMotor();
+        m_RightTopShooterMotor.stopMotor();
         m_hoodMotor.stopMotor();
-        m_feedMotor.stopMotor();
+        m_rightFeedMotor.stopMotor();
         m_conveyorMotor.stopMotor();
 
     }
 
     @Override
     public void close() {
-        m_RightShooterMotor.close();
+        m_RightTopShooterMotor.close();
+        m_RightBottomShooterMotor.close();
         m_LeftTopShoooterMotor.close();
         m_LeftBotShoooterMotor.close();
         m_hoodMotor.close();
-        m_feedMotor.close();
+        m_rightFeedMotor.close();
+        m_leftFeedMotor.close();
     }
 }

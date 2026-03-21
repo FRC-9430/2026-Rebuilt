@@ -161,11 +161,16 @@ public final class Constants {
             MAIN_SHOOTER_MOTOR_CONFIG.closedLoop.feedForward.sva(kShooterS, kShooterV, kShooterA);
         }
 
-        public static final SparkFlexConfig AUX_MOTOR_SHOOTER_CONFIG = new SparkFlexConfig();
+        public static final SparkFlexConfig AUX_NONINVERTED_SHOOTER_MOTOR_CONFIG = new SparkFlexConfig();
         static {
-            AUX_MOTOR_SHOOTER_CONFIG.idleMode(IdleMode.kCoast);
-            AUX_MOTOR_SHOOTER_CONFIG.follow(CANConstants.RIGHT_TOP_SHOOT_MOTOR_CAN_ID, true);
-            AUX_MOTOR_SHOOTER_CONFIG.follow(CANConstants.RIGHT_BOTTOM_SHOOT_MOTOR_CAN_ID, true);
+            AUX_NONINVERTED_SHOOTER_MOTOR_CONFIG.idleMode(IdleMode.kCoast);
+            AUX_NONINVERTED_SHOOTER_MOTOR_CONFIG.follow(CANConstants.RIGHT_TOP_SHOOT_MOTOR_CAN_ID);
+        }
+
+        public static final SparkFlexConfig AUX_INVERTED_MOTOR_SHOOTER_CONFIG = new SparkFlexConfig();
+        static {
+            AUX_INVERTED_MOTOR_SHOOTER_CONFIG.idleMode(IdleMode.kCoast);
+            AUX_INVERTED_MOTOR_SHOOTER_CONFIG.follow(CANConstants.RIGHT_TOP_SHOOT_MOTOR_CAN_ID, true);
         }
 
         public static final SparkFlexConfig HOOD_MOTOR_CONFIG = new SparkFlexConfig();
@@ -181,11 +186,17 @@ public final class Constants {
             HOOD_MOTOR_CONFIG.closedLoop.maxMotion.positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
         }
 
-        public static final SparkFlexConfig FEEDER_MOTOR_CONFIG = new SparkFlexConfig();
+        public static final SparkFlexConfig MAIN_FEEDER_MOTOR_CONFIG = new SparkFlexConfig();
         static {
-            FEEDER_MOTOR_CONFIG.idleMode(IdleMode.kBrake);
-            FEEDER_MOTOR_CONFIG.inverted(false);
-            FEEDER_MOTOR_CONFIG.closedLoop.pid(kFeedP, kFeedI, kFeedD);
+            MAIN_FEEDER_MOTOR_CONFIG.idleMode(IdleMode.kBrake);
+            MAIN_FEEDER_MOTOR_CONFIG.inverted(false);
+            MAIN_FEEDER_MOTOR_CONFIG.closedLoop.pid(kFeedP, kFeedI, kFeedD);
+        }
+
+        public static final SparkFlexConfig AUX_FEEDER_MOTOR_CONFIG = new SparkFlexConfig();
+        static {
+            AUX_FEEDER_MOTOR_CONFIG.idleMode(IdleMode.kBrake);
+            AUX_FEEDER_MOTOR_CONFIG.follow(CANConstants.RIGHT_FEEDER_MOTOR_CAN_ID, true);
         }
 
         public static final SparkFlexConfig CONVEYOR_MOTOR_CONFIG = new SparkFlexConfig();
