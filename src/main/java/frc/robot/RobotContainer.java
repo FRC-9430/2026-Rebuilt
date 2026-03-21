@@ -155,8 +155,14 @@ public class RobotContainer {
         }));
 
         // Shoot
-        controller.leftTrigger(0.05).onTrue(shootCommand)
-                .onFalse(new InstantCommand(() -> shootCommand.cancel()));
+        controller.leftTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
+            // Operate shooter motor at 0.5 percent output
+            shooter.getMainShooterMotor().set(0.5);
+            shooter.setFeederPercent(0.5);
+        }))).onFalse(new InstantCommand(() -> {
+            shooter.stopShooter();
+            shooter.stopFeeder();
+        }));
 
         // Intake
         controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
@@ -209,7 +215,7 @@ public class RobotContainer {
 
     /**
      * Returns true when the current drive mode is Cartesian.
-     * 
+     *
      * @return true if Cartesian drive mode is active
      */
     public boolean isCartesian() {
@@ -218,7 +224,7 @@ public class RobotContainer {
 
     /**
      * Returns true when the current drive mode is Polar.
-     * 
+     *
      * @return true if Polar drive mode is active
      */
     public boolean isPolar() {
@@ -270,7 +276,7 @@ public class RobotContainer {
     /**
      * Returns the currently selected autonomous command from the dashboard
      * chooser.
-     * 
+     *
      * @return the selected autonomous Command
      */
     public Command getAutonomousCommand() {
