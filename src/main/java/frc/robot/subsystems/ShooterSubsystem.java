@@ -1,7 +1,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.revrobotics.AbsoluteEncoder;
@@ -37,8 +38,12 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
 
     private final TalonFX m_hoodMotor;
 
+    private final PositionVoltage HoodPV = new PositionVoltage(0).withSlot(0);
+
     private final TalonFX m_rightFeedMotor;
     private final TalonFX m_leftFeedMotor;
+
+    private final VelocityVoltage FeedVV = new VelocityVoltage(0).withSlot(0);
 
     private final SparkFlex m_conveyorMotor;
 
@@ -138,7 +143,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
      * Start the feeder motor at the default configured speed.
      */
     public void startFeeder() {
-        m_rightFeedMotor.set(kDefaultFeederSpeed);
+        m_rightFeedMotor.setControl(FeedVV.withVelocity(kDefaultFeederSpeed));
     }
 
     /**
@@ -147,16 +152,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
      * @param rpm target feeder RPM
      */
     public void setFeederRPM(double rpm) {
-        m_rightFeedMotor.setControl(new VelocityDutyCycle(rpm));
-    }
-
-    /**
-     * Set the feeder motor output as a percent (-1.0 to 1.0).
-     *
-     * @param percent motor output percent
-     */
-    public void setFeederPercent(double percent) {
-        m_rightFeedMotor.set(percent);
+        m_rightFeedMotor.setControl(FeedVV.withVelocity(rpm));
     }
 
     /** Stop the feeder motor. */
@@ -204,15 +200,6 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
     /** Move the hood to its stowed position. */
     public void stowHood() {
         setHoodPosition(kHoodStowedPosition);
-    }
-
-    /**
-     * Manually control the hood motor output.
-     *
-     * @param percent motor output percent (-1.0 to 1.0)
-     */
-    public void manualHood(double percent) {
-        m_hoodMotor.set(percent);
     }
 
     /** Stop the hood motor. */
@@ -360,7 +347,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
 
         SmartDashboard.putNumber("Hood Pos", m_hoodEncoder.getPosition());
 
-        m_hoodMotor.set(m_hoodController.calculate(m_hoodEncoder.getPosition()));
+        m_hoodMotor.setControl(HoodPV.withPosition(m_hoodController.calculate(m_hoodEncoder.getPosition())));
 
     }
 
