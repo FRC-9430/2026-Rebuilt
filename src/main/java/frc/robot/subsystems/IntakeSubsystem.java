@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
@@ -22,6 +22,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     final TalonFX m_intakeMotor;
     final SparkFlex m_hopperMotor;
 
+    final VelocityVoltage IntakeVV = new VelocityVoltage(0).withSlot(0);
 
     public IntakeSubsystem() {
         m_intakeMotor = new TalonFX(CANConstants.INTAKE_MOTOR_CAN_ID);
@@ -35,17 +36,8 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     /**
      * Runs the intake at the default speed
      */
-    public void setIntake() {
-        m_intakeMotor.setControl(new VelocityDutyCycle(kDefaultIntakeSpeed));
-    }
-
-    /**
-     * Runs the intake at a specified speed
-     *
-     * @param speed The speed to run the intake at
-     */
-    public void setIntake(double speed) {
-        m_intakeMotor.set(speed);
+    public void startIntake() {
+        m_intakeMotor.setControl(IntakeVV.withVelocity(kDefaultIntakeSpeed));
     }
 
     /**
@@ -54,7 +46,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
      * @param RPM The RPM to run the intake at
      */
     public void setIntakeRPM(double RPM) {
-        m_intakeMotor.setControl(new VelocityDutyCycle(RPM));
+        m_intakeMotor.setControl(IntakeVV.withVelocity(RPM));
     }
 
     /**
@@ -65,13 +57,13 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     }
 
     /**
-   * Gets the intake RPM
-   */
-  public double getIntakeV() {
-    return m_intakeMotor.getVelocity().getValueAsDouble();
-  }
+     * Gets the intake RPM
+     */
+    public double getIntakeV() {
+        return m_intakeMotor.getVelocity().getValueAsDouble();
+    }
 
-  /**
+    /**
      * Runs the hopper motor at a specified speed
      *
      * @param speed The speed to run the hopper motor at

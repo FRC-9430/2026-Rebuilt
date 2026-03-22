@@ -160,7 +160,7 @@ public class RobotContainer {
 
         // Intake
         controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            intake.setIntake();
+            intake.startIntake();
         }))).onFalse(new InstantCommand(() -> {
             intake.stopAll();
         }));
@@ -246,7 +246,7 @@ public class RobotContainer {
 
         namedCommands.put("Eject Hopper", new EjectHopperCommand(intake));
         namedCommands.put("Retract Hopper", new RetractHopperCommand(intake));
-        namedCommands.put("Start Intake", new InstantCommand(() -> intake.setIntake()));
+        namedCommands.put("Start Intake", new InstantCommand(() -> intake.startIntake()));
         namedCommands.put("Stop Intake", new InstantCommand(() -> intake.stopIntake()));
         namedCommands.put("Engage Polar", new InstantCommand(() -> setPolar()));
         namedCommands.put("Engage Cartesian", new InstantCommand(() -> setCartesian()));

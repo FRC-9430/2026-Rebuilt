@@ -165,7 +165,7 @@ class IntakeSubsystemTest {
     void testSetIntakeDefaultUsesController() {
         SparkClosedLoopController intakeController = subsystem.m_intakeController;
 
-        subsystem.setIntake();
+        subsystem.startIntake();
         step();
 
         assertEquals(ControlType.kVelocity, intakeController.getControlType());
