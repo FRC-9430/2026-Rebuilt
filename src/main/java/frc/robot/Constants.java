@@ -235,7 +235,7 @@ public final class Constants {
 
         public static final SparkFlexConfig HOPPER_MOTOR_CONFIG = new SparkFlexConfig();
         static {
-            HOPPER_MOTOR_CONFIG.inverted(false);
+            HOPPER_MOTOR_CONFIG.inverted(true);
             HOPPER_MOTOR_CONFIG.idleMode(IdleMode.kBrake);
         }
 
