@@ -1,10 +1,10 @@
 package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -46,12 +46,15 @@ public final class Constants {
 
         // Shooter Subsystem Motors
         public static final int HOOD_MOTOR_CAN_ID = 40;
+
         public static final int RIGHT_FEEDER_MOTOR_CAN_ID = 41;
         public static final int LEFT_FEEDER_MOTOR_CAN_ID = 42;
+
         public static final int RIGHT_TOP_SHOOT_MOTOR_CAN_ID = 43;
         public static final int RIGHT_BOTTOM_SHOOT_MOTOR_CAN_ID = 44;
         public static final int LEFT_TOP_SHOOT_MOTOR_CAN_ID = 45;
         public static final int LEFT_BOTTOM_SHOOT_MOTOR_CAN_ID = 46;
+
         public static final int CONVEYOR_MOTOR_CAN_ID = 47;
 
         // Intake Subsystem Motors
@@ -131,9 +134,12 @@ public final class Constants {
         public static final double kHoodD = 0.0;
 
         // Feed PID TODO tune feeder
-        public static final double kFeedP = 0.1;
+        public static final double kFeedP = 0.0;
         public static final double kFeedI = 0.0;
         public static final double kFeedD = 0.0;
+        public static final double kFeedS = 0.0;
+        public static final double kFeedV = 0.001888;
+        public static final double kFeedA = 0.0;
 
         // Setpoints
         public static final double kShooterIdleRPM = 1000.0;
@@ -173,30 +179,30 @@ public final class Constants {
             AUX_INVERTED_MOTOR_SHOOTER_CONFIG.follow(CANConstants.RIGHT_TOP_SHOOT_MOTOR_CAN_ID, true);
         }
 
-        public static final SparkFlexConfig HOOD_MOTOR_CONFIG = new SparkFlexConfig();
+        public static final TalonFXConfiguration HOOD_MOTOR_CONFIG = new TalonFXConfiguration();
         static {
-            HOOD_MOTOR_CONFIG.idleMode(IdleMode.kBrake);
-            HOOD_MOTOR_CONFIG.inverted(false);
-            HOOD_MOTOR_CONFIG.closedLoop.outputRange(-0.05, 1.0);
-            HOOD_MOTOR_CONFIG.closedLoop.pid(kHoodP, kHoodI, kHoodD);
-            HOOD_MOTOR_CONFIG.closedLoop.positionWrappingEnabled(false);
-            HOOD_MOTOR_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-            HOOD_MOTOR_CONFIG.closedLoop.maxMotion.cruiseVelocity(1000);
-            HOOD_MOTOR_CONFIG.closedLoop.maxMotion.maxAcceleration(10000);
-            HOOD_MOTOR_CONFIG.closedLoop.maxMotion.positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
         }
 
-        public static final SparkFlexConfig MAIN_FEEDER_MOTOR_CONFIG = new SparkFlexConfig();
+        public static final TalonFXConfiguration MAIN_FEEDER_MOTOR_CONFIG = new TalonFXConfiguration();
         static {
-            MAIN_FEEDER_MOTOR_CONFIG.idleMode(IdleMode.kBrake);
-            MAIN_FEEDER_MOTOR_CONFIG.inverted(false);
-            MAIN_FEEDER_MOTOR_CONFIG.closedLoop.pid(kFeedP, kFeedI, kFeedD);
+            MAIN_FEEDER_MOTOR_CONFIG.ClosedLoopGeneral.ContinuousWrap = true;
+            MAIN_FEEDER_MOTOR_CONFIG.Slot0.kP = kFeedP;
+            MAIN_FEEDER_MOTOR_CONFIG.Slot0.kI = kFeedI;
+            MAIN_FEEDER_MOTOR_CONFIG.Slot0.kD = kFeedD;
+            MAIN_FEEDER_MOTOR_CONFIG.Slot0.kS = kFeedS;
+            MAIN_FEEDER_MOTOR_CONFIG.Slot0.kV = kFeedV;
+            MAIN_FEEDER_MOTOR_CONFIG.Slot0.kA = kFeedA;
         }
 
-        public static final SparkFlexConfig AUX_FEEDER_MOTOR_CONFIG = new SparkFlexConfig();
+        public static final TalonFXConfiguration AUX_FEEDER_MOTOR_CONFIG = new TalonFXConfiguration();
         static {
-            AUX_FEEDER_MOTOR_CONFIG.idleMode(IdleMode.kBrake);
-            AUX_FEEDER_MOTOR_CONFIG.follow(CANConstants.RIGHT_FEEDER_MOTOR_CAN_ID, true);
+            AUX_FEEDER_MOTOR_CONFIG.ClosedLoopGeneral.ContinuousWrap = true;
+            AUX_FEEDER_MOTOR_CONFIG.Slot0.kP = kFeedP;
+            AUX_FEEDER_MOTOR_CONFIG.Slot0.kI = kFeedI;
+            AUX_FEEDER_MOTOR_CONFIG.Slot0.kD = kFeedD;
+            AUX_FEEDER_MOTOR_CONFIG.Slot0.kS = kFeedS;
+            AUX_FEEDER_MOTOR_CONFIG.Slot0.kV = kFeedV;
+            AUX_FEEDER_MOTOR_CONFIG.Slot0.kA = kFeedA;
         }
 
         public static final SparkFlexConfig CONVEYOR_MOTOR_CONFIG = new SparkFlexConfig();

@@ -1,10 +1,16 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.spark.SparkFlex;
@@ -29,18 +35,18 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
     private final SparkFlex m_LeftTopShoooterMotor;
     private final SparkFlex m_LeftBotShoooterMotor;
 
-    private final SparkFlex m_hoodMotor;
-    private final SparkFlex m_rightFeedMotor;
-    private final SparkFlex m_leftFeedMotor;
+    private final TalonFX m_hoodMotor;
+
+    private final TalonFX m_rightFeedMotor;
+    private final TalonFX m_leftFeedMotor;
+
     private final SparkFlex m_conveyorMotor;
 
     private final RelativeEncoder m_shooterEncoder;
     private final AbsoluteEncoder m_hoodEncoder;
-    private final RelativeEncoder m_feedEncoder;
 
     private final SparkClosedLoopController m_shooterController;
-    private final SparkClosedLoopController m_hoodController;
-    private final SparkClosedLoopController m_feedController;
+    private final PIDController m_hoodController;
 
     /**
      * Creates a new ShooterSubsystem and configures motors, encoders, and
@@ -52,9 +58,11 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
         m_LeftTopShoooterMotor = new SparkFlex(CANConstants.LEFT_TOP_SHOOT_MOTOR_CAN_ID, MotorType.kBrushless);
         m_LeftBotShoooterMotor = new SparkFlex(CANConstants.LEFT_BOTTOM_SHOOT_MOTOR_CAN_ID, MotorType.kBrushless);
 
-        m_hoodMotor = new SparkFlex(CANConstants.HOOD_MOTOR_CAN_ID, MotorType.kBrushless);
-        m_rightFeedMotor = new SparkFlex(CANConstants.RIGHT_FEEDER_MOTOR_CAN_ID, MotorType.kBrushless);
-        m_leftFeedMotor = new SparkFlex(CANConstants.LEFT_FEEDER_MOTOR_CAN_ID, MotorType.kBrushless);
+        m_hoodMotor = new TalonFX(CANConstants.HOOD_MOTOR_CAN_ID);
+
+        m_rightFeedMotor = new TalonFX(CANConstants.RIGHT_FEEDER_MOTOR_CAN_ID);
+        m_leftFeedMotor = new TalonFX(CANConstants.LEFT_FEEDER_MOTOR_CAN_ID);
+
         m_conveyorMotor = new SparkFlex(CANConstants.CONVEYOR_MOTOR_CAN_ID, MotorType.kBrushless);
 
         m_RightTopShooterMotor.configure(MAIN_SHOOTER_MOTOR_CONFIG, ResetMode.kResetSafeParameters,
@@ -66,18 +74,21 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
         m_LeftBotShoooterMotor.configure(AUX_INVERTED_MOTOR_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
 
-        m_hoodMotor.configure(HOOD_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        m_rightFeedMotor.configure(MAIN_FEEDER_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        m_leftFeedMotor.configure(AUX_FEEDER_MOTOR_CONFIG,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_hoodMotor.getConfigurator().apply(HOOD_MOTOR_CONFIG);
+
+        m_rightFeedMotor.getConfigurator().apply(MAIN_FEEDER_MOTOR_CONFIG);
+        m_leftFeedMotor.getConfigurator().apply(AUX_FEEDER_MOTOR_CONFIG);
+        m_leftFeedMotor.setControl(new Follower(CANConstants.RIGHT_FEEDER_MOTOR_CAN_ID, MotorAlignmentValue.Opposed));
+
         m_conveyorMotor.configure(CONVEYOR_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         m_shooterEncoder = m_RightTopShooterMotor.getEncoder();
-        m_hoodEncoder = m_hoodMotor.getAbsoluteEncoder();
-        m_feedEncoder = m_rightFeedMotor.getEncoder();
+        m_hoodEncoder = m_LeftTopShoooterMotor.getAbsoluteEncoder();
 
         m_shooterController = m_RightTopShooterMotor.getClosedLoopController();
-        m_hoodController = m_hoodMotor.getClosedLoopController();
-        m_feedController = m_rightFeedMotor.getClosedLoopController();
+        m_hoodController = new PIDController(kHoodP, kHoodI, kHoodD);
+
+
     }
 
     /**
@@ -136,7 +147,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
      * @param rpm target feeder RPM
      */
     public void setFeederRPM(double rpm) {
-        m_feedController.setSetpoint(rpm, ControlType.kVelocity);
+        m_rightFeedMotor.setControl(new VelocityDutyCycle(rpm));
     }
 
     /**
@@ -159,7 +170,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
      * @return feeder RPM
      */
     public double getFeederRPM() {
-        return m_feedEncoder.getVelocity();
+        return m_rightFeedMotor.getVelocity().getValueAsDouble();
     }
 
     /** Start the conveyor at the default configured speed. */
@@ -187,7 +198,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
      * @param position target hood position
      */
     public void setHoodPosition(double position) {
-        m_hoodController.setSetpoint(position, ControlType.kMAXMotionPositionControl);
+        m_hoodController.setSetpoint(position);
     }
 
     /** Move the hood to its stowed position. */
@@ -303,40 +314,40 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
         }
     }
 
-    /**
-     * Get hood motor from shooter subsystem
-     *
-     * @author Brady Bontrager, bbontrager
-     *         * @return SparkFlex hood motor from shooter subsystem.
-     */
-    public SparkFlex getHoodMotor() {
-        return this.m_hoodMotor;
-    }
+    // /**
+    //  * Get hood motor from shooter subsystem
+    //  *
+    //  * @author Brady Bontrager, bbontrager
+    //  *         * @return SparkFlex hood motor from shooter subsystem.
+    //  */
+    // public SparkFlex getHoodMotor() {
+    //     return this.m_hoodMotor;
+    // }
 
-    /**
-     * Get feed motor from shooter subsystem
-     *
-     * @author Brady Bontrager, bbontrager
-     *         * @return SparkFlex feed motor from shooter subsystem.
-     */
-    public SparkFlex getMainFeedMotor() {
-        return this.m_rightFeedMotor;
-    }
+    // /**
+    //  * Get feed motor from shooter subsystem
+    //  *
+    //  * @author Brady Bontrager, bbontrager
+    //  *         * @return SparkFlex feed motor from shooter subsystem.
+    //  */
+    // public SparkFlex getMainFeedMotor() {
+    //     return this.m_rightFeedMotor;
+    // }
 
     public SparkClosedLoopController getShooterPID(String pidController) {
-        if (pidController.equals("shoot")) {
-            return m_shooterController;
-        }
-        if (pidController.equals("feed")) {
-            return m_feedController;
-        }
-        if (pidController.equals("hood")) {
-            return m_hoodController;
-        }
-        Exception e = new java.lang.IllegalArgumentException("Illegal argument in getShooterPID()");
-        System.err.println(e.getMessage());
-        System.err.println(e.getStackTrace());
-        System.err.println("Using null instead");
+        // if (pidController.equals("shoot")) {
+        //     return m_shooterController;
+        // }
+        // // if (pidController.equals("feed")) {
+        // //     return m_feedController;
+        // }
+        // // if (pidController.equals("hood")) {
+        // //     return m_hoodController;
+        // // }
+        // Exception e = new java.lang.IllegalArgumentException("Illegal argument in getShooterPID()");
+        // System.err.println(e.getMessage());
+        // System.err.println(e.getStackTrace());
+        // System.err.println("Using null instead");
         return null;
     }
 
@@ -349,10 +360,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
 
         SmartDashboard.putNumber("Hood Pos", m_hoodEncoder.getPosition());
 
-        // When the hood is stowed, turn the motor off
-        if (isHoodStowed() && m_hoodController.getMAXMotionSetpointPosition() == kHoodStowedPosition) {
-            m_hoodMotor.stopMotor();
-        }
+        m_hoodMotor.set(m_hoodController.calculate(m_hoodEncoder.getPosition()));
 
     }
 
@@ -374,6 +382,6 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
         m_LeftBotShoooterMotor.close();
         m_hoodMotor.close();
         m_rightFeedMotor.close();
-        m_leftFeedMotor.close();
+        // m_leftFeedMotor.close();
     }
 }
