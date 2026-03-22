@@ -4,12 +4,11 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.PersistMode;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,35 +19,24 @@ import static frc.robot.Constants.IntakeConstants.*;
 
 public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
-    final SparkFlex m_intakeMotor;
+    final TalonFX m_intakeMotor;
     final SparkFlex m_hopperMotor;
 
-    final SparkClosedLoopController m_intakeController;
-    final RelativeEncoder m_intakeEncoder;
 
-    /** Creates a new IntakeSubsystem. */
     public IntakeSubsystem() {
-        this(new SparkFlex(CANConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless),
-                new SparkFlex(CANConstants.HOPPER_MOTOR_CAN_ID, MotorType.kBrushless));
-    }
+        m_intakeMotor = new TalonFX(CANConstants.INTAKE_MOTOR_CAN_ID);
+        m_hopperMotor = new SparkFlex(CANConstants.HOPPER_MOTOR_CAN_ID, MotorType.kBrushless);
 
-    // Overloading constructor to make testing easier
-    IntakeSubsystem(SparkFlex intakeMotor, SparkFlex hopperMotor) {
-        m_intakeMotor = intakeMotor;
-        m_hopperMotor = hopperMotor;
-
-        m_intakeMotor.configure(INTAKE_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_intakeMotor.getConfigurator().apply(INTAKE_MOTOR_CONFIG);
         m_hopperMotor.configure(HOPPER_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        m_intakeController = m_intakeMotor.getClosedLoopController();
-        m_intakeEncoder = m_intakeMotor.getEncoder();
     }
 
     /**
      * Runs the intake at the default speed
      */
     public void setIntake() {
-        m_intakeController.setSetpoint(kDefaultIntakeSpeed, ControlType.kVelocity);
+        m_intakeMotor.setControl(new VelocityDutyCycle(kDefaultIntakeSpeed));
     }
 
     /**
@@ -66,7 +54,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
      * @param RPM The RPM to run the intake at
      */
     public void setIntakeRPM(double RPM) {
-        m_intakeController.setSetpoint(RPM, ControlType.kVelocity);
+        m_intakeMotor.setControl(new VelocityDutyCycle(RPM));
     }
 
     /**
@@ -80,7 +68,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    * Gets the intake RPM
    */
   public double getIntakeV() {
-    return m_intakeEncoder.getVelocity();
+    return m_intakeMotor.getVelocity().getValueAsDouble();
   }
 
   /**
@@ -110,7 +98,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        SmartDashboard.putNumber("Intake V", m_intakeEncoder.getVelocity());
+        SmartDashboard.putNumber("Intake V", getIntakeV());
     }
 
     @Override

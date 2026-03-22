@@ -2,6 +2,7 @@ package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkFlexConfig;
@@ -185,7 +186,6 @@ public final class Constants {
 
         public static final TalonFXConfiguration MAIN_FEEDER_MOTOR_CONFIG = new TalonFXConfiguration();
         static {
-            MAIN_FEEDER_MOTOR_CONFIG.ClosedLoopGeneral.ContinuousWrap = true;
             MAIN_FEEDER_MOTOR_CONFIG.Slot0.kP = kFeedP;
             MAIN_FEEDER_MOTOR_CONFIG.Slot0.kI = kFeedI;
             MAIN_FEEDER_MOTOR_CONFIG.Slot0.kD = kFeedD;
@@ -196,7 +196,6 @@ public final class Constants {
 
         public static final TalonFXConfiguration AUX_FEEDER_MOTOR_CONFIG = new TalonFXConfiguration();
         static {
-            AUX_FEEDER_MOTOR_CONFIG.ClosedLoopGeneral.ContinuousWrap = true;
             AUX_FEEDER_MOTOR_CONFIG.Slot0.kP = kFeedP;
             AUX_FEEDER_MOTOR_CONFIG.Slot0.kI = kFeedI;
             AUX_FEEDER_MOTOR_CONFIG.Slot0.kD = kFeedD;
@@ -224,14 +223,14 @@ public final class Constants {
         public static final double kIntakeV = 0.001888;
         public static final double kIntakeA = 0.0;
 
-        public static final SparkFlexConfig INTAKE_MOTOR_CONFIG = new SparkFlexConfig();
+        public static final TalonFXConfiguration INTAKE_MOTOR_CONFIG = new TalonFXConfiguration();
         static {
-            INTAKE_MOTOR_CONFIG.inverted(false);
-            INTAKE_MOTOR_CONFIG.idleMode(IdleMode.kCoast);
-            INTAKE_MOTOR_CONFIG.closedLoop.pid(kIntakeP, kIntakeI, kIntakeD);
-            INTAKE_MOTOR_CONFIG.closedLoop.outputRange(0, 1); // No moving backwards
-            INTAKE_MOTOR_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-            INTAKE_MOTOR_CONFIG.closedLoop.feedForward.sva(kIntakeS, kIntakeV, kIntakeA);
+            INTAKE_MOTOR_CONFIG.Slot0.kP = kIntakeP;
+            INTAKE_MOTOR_CONFIG.Slot0.kI = kIntakeI;
+            INTAKE_MOTOR_CONFIG.Slot0.kD = kIntakeD;
+            INTAKE_MOTOR_CONFIG.Slot0.kS = kIntakeS;
+            INTAKE_MOTOR_CONFIG.Slot0.kV = kIntakeV;
+            INTAKE_MOTOR_CONFIG.Slot0.kA = kIntakeA;
         }
 
         public static final SparkFlexConfig HOPPER_MOTOR_CONFIG = new SparkFlexConfig();
