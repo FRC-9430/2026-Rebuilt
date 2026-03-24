@@ -32,7 +32,7 @@ public class BumpHopperCommand extends Command {
   @Override
   public void initialize() {
     intake.setHopper(0.08);
-    intake.setIntakeRPM(1000);
+    intake.setIntakeRPS(1000);
     startTime = Timer.getFPGATimestamp();
     bumps = 0;
     System.out.println("Bump Init");
