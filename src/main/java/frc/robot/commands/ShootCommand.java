@@ -32,10 +32,10 @@ public class ShootCommand extends Command {
     this.shoot = shoot;
     this.polar = polar;
     this.intake = intake;
-    SmartDashboard.putNumber("Set Shoot V", 3600);
-    SmartDashboard.putNumber("Set Hood Pos", 0.82);
-    SmartDashboard.putNumber("Set Feed V", 70);
-    SmartDashboard.putNumber("Set Convey V", 1000);
+    SmartDashboard.putNumber("Set Shoot V", 3800);
+    SmartDashboard.putNumber("Set Hood Pos", 0.85);
+    SmartDashboard.putNumber("Set Feed V", 83);
+    SmartDashboard.putNumber("Set Convey V", 2000);
   }
 
   // Called when the command is initially scheduled.
@@ -52,7 +52,9 @@ public class ShootCommand extends Command {
   public void execute() {
     shoot.setShooterRPM(SmartDashboard.getNumber("Set Shoot V", 4000));
     shoot.setHoodPosition(SmartDashboard.getNumber("Set Hood Pos", 0.97));
-    shoot.setFeederRPS(SmartDashboard.getNumber("Set Feed V", 60));
+    if (Timer.getFPGATimestamp() > uptime + 0.3) {
+      shoot.setFeederRPS(SmartDashboard.getNumber("Set Feed V", 60));
+    }
     if (Timer.getFPGATimestamp() > uptime + 0.4) {
       shoot.setConveyorRPM(SmartDashboard.getNumber("Set Convey V", 1000));
     }
@@ -74,7 +76,7 @@ public class ShootCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shoot.stowHood();
+    shoot.stopHood();
     shoot.stopConveyor();
     shoot.stopFeeder();
     shoot.stopShooter();
