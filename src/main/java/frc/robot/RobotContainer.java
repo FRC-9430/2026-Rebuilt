@@ -167,15 +167,15 @@ public class RobotContainer {
 
         // Climber
         controller.x().whileTrue(new RepeatCommand(new InstantCommand(() -> {
-
+            shooter.setHoodDutyCycle(0.06);
         }))).onFalse(new InstantCommand(() -> {
-
+            shooter.stopHood();
         }));
 
         controller.y().whileTrue(new RepeatCommand(new InstantCommand(() -> {
-
+            shooter.setHoodPosition(0.7);
         }))).onFalse(new InstantCommand(() -> {
-
+            shooter.stopHood();
         }));
 
         // Force Stow Hood
@@ -185,11 +185,11 @@ public class RobotContainer {
             shooter.stopHood();
         }));
 
-        controller.x()
-                .onTrue(new ShootTouchingHubCommand(shooter, intake))
-                .onFalse(new InstantCommand(() -> CommandScheduler.getInstance().cancelAll()));
+        // controller.x()
+        //         .onTrue(new ShootTouchingHubCommand(shooter, intake))
+        //         .onFalse(new InstantCommand(() -> CommandScheduler.getInstance().cancelAll()));
 
-        controller.y().onTrue(new InstantCommand(() -> CommandScheduler.getInstance().cancelAll()));
+        // controller.y().onTrue(new InstantCommand(() -> CommandScheduler.getInstance().cancelAll()));
 
         // Eject Hopper
         controller.start().onTrue(new EjectHopperCommand(intake));
