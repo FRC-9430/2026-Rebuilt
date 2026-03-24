@@ -42,11 +42,11 @@ public class ShootTouchingHubCommand extends Command {
     shoot.setHoodPosition(0.425);
     if (shoot.isShooterReady() && Timer.getFPGATimestamp() < uptime + 0.6) {
       shoot.startFeeder();
-      shoot.startConveyorDefault();
+      shoot.startConveyor();
     }
 
     if (intake.getIntakeV() < 1000)
-      intake.setIntakeRPM(1000);
+      intake.setIntakeRPS(1000);
 
     double cur = Timer.getFPGATimestamp();
     if (cur - bumpTimer < 0.25) {
