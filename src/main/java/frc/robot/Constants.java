@@ -2,6 +2,9 @@ package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkFlexConfig;
@@ -55,7 +58,7 @@ public final class Constants {
         public static final int LEFT_TOP_SHOOT_MOTOR_CAN_ID = 45;
         public static final int LEFT_BOTTOM_SHOOT_MOTOR_CAN_ID = 46;
 
-        public static final int CONVEYOR_MOTOR_CAN_ID = 47;
+        public static final int CONVEYOR_MOTOR_CAN_ID = 26;
 
         // Intake Subsystem Motors
         public static final int INTAKE_MOTOR_CAN_ID = 27;
@@ -121,7 +124,7 @@ public final class Constants {
 
     public static final class ShooterConstants {
         // Shooter PID
-        public static final double kShooterP = 0.0;
+        public static final double kShooterP = 0.0001;
         public static final double kShooterI = 0.0;
         public static final double kShooterD = 0.0;
         public static final double kShooterS = 0.0;
@@ -129,33 +132,44 @@ public final class Constants {
         public static final double kShooterA = 0.0;
 
         // Hood PID
-        public static final double kHoodP = 25.0;
+        public static final double kHoodP = 1.0;
         public static final double kHoodI = 0.0;
         public static final double kHoodD = 0.0;
+        public static final double kHoodS = 0.0;
+        public static final double kHoodV = 0.0001;
+        public static final double kHoodA = 0.0;
 
         // Feed PID TODO tune feeder
-        public static final double kFeedP = 0.0;
+        public static final double kFeedP = 0.0005;
         public static final double kFeedI = 0.0;
         public static final double kFeedD = 0.0;
         public static final double kFeedS = 0.0;
-        public static final double kFeedV = 0.001888;
+        public static final double kFeedV = 0.13;
         public static final double kFeedA = 0.0;
+
+        // Conveyor PID
+        public static final double kConveyorP = 0.0001;
+        public static final double kConveyorI = 0.0;
+        public static final double kConveyorD = 0.0;
+        public static final double kConveyorS = 0.0;
+        public static final double kConveyorV = 0.00205;
+        public static final double kConveyorA = 0.0;
 
         // Setpoints
         public static final double kShooterIdleRPM = 1000.0;
         public static final double kShooterToleranceRPM = 100.0;
 
-        public static final double kDefaultConveyorSpeed = 0.2;
+        public static final double kDefaultConveyorSpeed = 1000;
 
-        public static final double kHoodStowedPosition = 0.350;
+        public static final double kHoodStowedPosition = 0.96;
 
-        public static final double kDefaultFeederSpeed = 0.5;
+        public static final double kDefaultFeederSpeed = 75;
 
         // Hood limits
-        public static final double kHoodMinPosition = 0.3433;
-        public static final double kHoodMinSafePosition = 0.350;
-        public static final double kHoodMaxSafePosition = 0.875;
-        public static final double kHoodPositionTolerance = 0.1;
+        public static final double kHoodMinPosition = 0.975;
+        public static final double kHoodMinSafePosition = 0.6;
+        public static final double kHoodMaxSafePosition = 0.96;
+        public static final double kHoodPositionTolerance = 0.05;
 
         public static final SparkFlexConfig MAIN_SHOOTER_MOTOR_CONFIG = new SparkFlexConfig();
         static {
@@ -165,22 +179,36 @@ public final class Constants {
             MAIN_SHOOTER_MOTOR_CONFIG.closedLoop.outputRange(0, 1); // No moving backwards
             MAIN_SHOOTER_MOTOR_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
             MAIN_SHOOTER_MOTOR_CONFIG.closedLoop.feedForward.sva(kShooterS, kShooterV, kShooterA);
+            MAIN_SHOOTER_MOTOR_CONFIG.absoluteEncoder.inverted(true);
         }
 
         public static final SparkFlexConfig AUX_NONINVERTED_SHOOTER_MOTOR_CONFIG = new SparkFlexConfig();
         static {
             AUX_NONINVERTED_SHOOTER_MOTOR_CONFIG.idleMode(IdleMode.kCoast);
             AUX_NONINVERTED_SHOOTER_MOTOR_CONFIG.follow(CANConstants.RIGHT_TOP_SHOOT_MOTOR_CAN_ID);
+            MAIN_SHOOTER_MOTOR_CONFIG.absoluteEncoder.inverted(true);
         }
 
         public static final SparkFlexConfig AUX_INVERTED_MOTOR_SHOOTER_CONFIG = new SparkFlexConfig();
         static {
             AUX_INVERTED_MOTOR_SHOOTER_CONFIG.idleMode(IdleMode.kCoast);
             AUX_INVERTED_MOTOR_SHOOTER_CONFIG.follow(CANConstants.RIGHT_TOP_SHOOT_MOTOR_CAN_ID, true);
+            MAIN_SHOOTER_MOTOR_CONFIG.absoluteEncoder.inverted(true);
         }
 
         public static final TalonFXConfiguration HOOD_MOTOR_CONFIG = new TalonFXConfiguration();
         static {
+            HOOD_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+            HOOD_MOTOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+            HOOD_MOTOR_CONFIG.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+            HOOD_MOTOR_CONFIG.Voltage.PeakForwardVoltage = 0;
+            HOOD_MOTOR_CONFIG.Voltage.PeakReverseVoltage = 1;
+            HOOD_MOTOR_CONFIG.Slot0.kP = kHoodP;
+            HOOD_MOTOR_CONFIG.Slot0.kI = kHoodI;
+            HOOD_MOTOR_CONFIG.Slot0.kD = kHoodD;
+            HOOD_MOTOR_CONFIG.Slot0.kS = kHoodS;
+            HOOD_MOTOR_CONFIG.Slot0.kV = kHoodV;
+            HOOD_MOTOR_CONFIG.Slot0.kA = kHoodA;
         }
 
         public static final TalonFXConfiguration MAIN_FEEDER_MOTOR_CONFIG = new TalonFXConfiguration();
@@ -191,6 +219,8 @@ public final class Constants {
             MAIN_FEEDER_MOTOR_CONFIG.Slot0.kS = kFeedS;
             MAIN_FEEDER_MOTOR_CONFIG.Slot0.kV = kFeedV;
             MAIN_FEEDER_MOTOR_CONFIG.Slot0.kA = kFeedA;
+            MAIN_FEEDER_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+            
         }
 
         public static final TalonFXConfiguration AUX_FEEDER_MOTOR_CONFIG = new TalonFXConfiguration();
@@ -205,21 +235,25 @@ public final class Constants {
 
         public static final SparkFlexConfig CONVEYOR_MOTOR_CONFIG = new SparkFlexConfig();
         static {
-            CONVEYOR_MOTOR_CONFIG.inverted(true);
+            CONVEYOR_MOTOR_CONFIG.inverted(false);
             CONVEYOR_MOTOR_CONFIG.idleMode(IdleMode.kCoast);
+            CONVEYOR_MOTOR_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+            CONVEYOR_MOTOR_CONFIG.closedLoop.outputRange(0, 1);
+            CONVEYOR_MOTOR_CONFIG.closedLoop.pid(kConveyorP, kConveyorI, kConveyorD);
+            CONVEYOR_MOTOR_CONFIG.closedLoop.feedForward.sva(kShooterS, kConveyorV, kConveyorA);
         }
 
     }
 
     public static final class IntakeConstants {
 
-        public static final double kDefaultIntakeSpeed = 2700;
+        public static final double kDefaultIntakeSpeed = 50;
 
         public static final double kIntakeP = 0.0;
         public static final double kIntakeI = 0.0;
         public static final double kIntakeD = 0.0;
         public static final double kIntakeS = 0.0;
-        public static final double kIntakeV = 0.001888;
+        public static final double kIntakeV = 0.13;
         public static final double kIntakeA = 0.0;
 
         public static final TalonFXConfiguration INTAKE_MOTOR_CONFIG = new TalonFXConfiguration();
@@ -234,7 +268,7 @@ public final class Constants {
 
         public static final SparkFlexConfig HOPPER_MOTOR_CONFIG = new SparkFlexConfig();
         static {
-            HOPPER_MOTOR_CONFIG.inverted(true);
+            HOPPER_MOTOR_CONFIG.inverted(false);
             HOPPER_MOTOR_CONFIG.idleMode(IdleMode.kBrake);
         }
 
