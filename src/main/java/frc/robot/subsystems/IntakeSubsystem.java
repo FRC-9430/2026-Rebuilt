@@ -41,12 +41,12 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     }
 
     /**
-     * Target the intake at a specified RPM
+     * Target the intake at a specified RPS
      *
-     * @param RPM The RPM to run the intake at
+     * @param RPS The RPM to run the intake at
      */
-    public void setIntakeRPM(double RPM) {
-        m_intakeMotor.setControl(IntakeVV.withVelocity(RPM));
+    public void setIntakeRPS(double RPS) {
+        m_intakeMotor.setControl(IntakeVV.withVelocity(RPS));
     }
 
     /**
