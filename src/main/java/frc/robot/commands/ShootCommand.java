@@ -61,9 +61,9 @@ public class ShootCommand extends Command {
       intake.setIntakeRPS(15);
 
     double cur = Timer.getFPGATimestamp();
-    if (cur - bumpTimer < 0.25) {
+    if (cur - bumpTimer < 0.3) {
       intake.setHopper(0.16);
-    } else if (cur - bumpTimer < 0.5) {
+    } else if (cur - bumpTimer < 0.6) {
       intake.setHopper(-0.16);
     } else {
       bumpTimer = Timer.getFPGATimestamp();
