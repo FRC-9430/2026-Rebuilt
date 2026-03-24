@@ -167,7 +167,7 @@ public class RobotContainer {
 
         // Climber
         controller.x().whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            shooter.setHoodDutyCycle(0.06);
+            shooter.setHoodPosition(0.8);
         }))).onFalse(new InstantCommand(() -> {
             shooter.stopHood();
         }));
