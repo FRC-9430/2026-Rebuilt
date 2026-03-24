@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -12,7 +13,9 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.spark.SparkFlex;
@@ -56,7 +59,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
     private final SparkClosedLoopController m_shooterController;
     private final SparkClosedLoopController m_conveyorController;
 
-    private final PIDController m_hoodController;
+    private final ProfiledPIDController m_hoodController;
     private final SimpleMotorFeedforward m_hoodFFController;
 
     /**
@@ -101,12 +104,10 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
 
         m_shooterController = m_RightTopShooterMotor.getClosedLoopController();
         m_conveyorController = m_conveyorMotor.getClosedLoopController();
-        m_hoodController = new PIDController(kHoodP, kHoodI, kHoodD, 0.002);
+        m_hoodController = new ProfiledPIDController(kHoodP, kHoodI, kHoodD, new Constraints(0, 0), 0.002);
         // m_hoodController.setTolerance(kHoodPositionTolerance);
 
         m_hoodFFController = new SimpleMotorFeedforward(kHoodS, kHoodV, kHoodA, 0.002);
-
-        m_hoodController.setSetpoint(m_hoodEncoder.getPosition());
 
     }
 
@@ -224,6 +225,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
     public void stopHood() {
         m_hoodMotor.stopMotor();
         hoodSetPoint = null;
+        m_hoodMotor.setControl(new StaticBrake());
     }
 
     /**
@@ -276,7 +278,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
      * @return true if the mechanism is ready to fire
      */
     public boolean isShooterReady() {
-        return isShooterAtSpeed() && isHoodAtPosition(m_hoodController.getSetpoint());
+        return isShooterAtSpeed() && isHoodAtPosition(m_hoodController.getSetpoint().position);
     }
 
     /**
@@ -373,7 +375,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
             double in = -m_hoodController.calculate(m_hoodEncoder.getPosition(), hoodSetPoint);
 
             if (in > 0) {
-                in = Math.min(in, 0.15);
+                in = Math.min(in, 0.5);
             } else {
                 in = Math.max(in, -0.001);
             }
