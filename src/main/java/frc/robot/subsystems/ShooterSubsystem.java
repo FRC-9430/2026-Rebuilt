@@ -101,10 +101,10 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
 
         m_shooterController = m_RightTopShooterMotor.getClosedLoopController();
         m_conveyorController = m_conveyorMotor.getClosedLoopController();
-        m_hoodController = new PIDController(kHoodP, kHoodI, kHoodD);
-        m_hoodController.setTolerance(kHoodPositionTolerance);
+        m_hoodController = new PIDController(kHoodP, kHoodI, kHoodD, 0.002);
+        // m_hoodController.setTolerance(kHoodPositionTolerance);
 
-        m_hoodFFController = new SimpleMotorFeedforward(kHoodS, kHoodV, kHoodA);
+        m_hoodFFController = new SimpleMotorFeedforward(kHoodS, kHoodV, kHoodA, 0.002);
 
         m_hoodController.setSetpoint(m_hoodEncoder.getPosition());
 
@@ -146,7 +146,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
      * @return true if shooter RPM is at the requested setpoint
      */
     public boolean isShooterAtSpeed() {
-        return Math.abs(getShooterRPM() - m_shooterController.getSetpoint()) <= kShooterToleranceRPM;
+        return getShooterRPM() >= m_shooterController.getSetpoint() - kShooterToleranceRPM;
     }
 
     public boolean isShooterAtSpeed(double rpm, double setpoint) {
@@ -373,15 +373,15 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
             double in = -m_hoodController.calculate(m_hoodEncoder.getPosition(), hoodSetPoint);
 
             if (in > 0) {
-                in = Math.min(in, 0.2);
+                in = Math.min(in, 0.15);
             } else {
-                in = Math.max(in, 0.0);
+                in = Math.max(in, -0.001);
             }
 
             double FF = -m_hoodFFController.calculate(m_hoodEncoder.getVelocity());
 
             if (FF > 0) {
-                FF = Math.min(FF, 0.15);
+                FF = Math.min(FF, 0.05);
             } else {
                 FF = Math.max(FF, 0.0);
             }
@@ -390,6 +390,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
             SmartDashboard.putNumber("Hood FF Input", FF);
 
             m_hoodMotor.set(in + FF);
+            
 
         }
 
