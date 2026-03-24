@@ -144,7 +144,7 @@ public final class Constants {
         public static final double kFeedI = 0.0;
         public static final double kFeedD = 0.0;
         public static final double kFeedS = 0.0;
-        public static final double kFeedV = 0.13;
+        public static final double kFeedV = 0.161;
         public static final double kFeedA = 0.0;
 
         // Conveyor PID
@@ -159,7 +159,7 @@ public final class Constants {
         public static final double kShooterIdleRPM = 1000.0;
         public static final double kShooterToleranceRPM = 100.0;
 
-        public static final double kDefaultConveyorSpeed = 1000;
+        public static final double kDefaultConveyorSpeed = 2000;
 
         public static final double kHoodStowedPosition = 0.96;
 
@@ -169,7 +169,7 @@ public final class Constants {
         public static final double kHoodMinPosition = 0.975;
         public static final double kHoodMinSafePosition = 0.6;
         public static final double kHoodMaxSafePosition = 0.96;
-        public static final double kHoodPositionTolerance = 0.05;
+        public static final double kHoodPositionTolerance = 0.02;
 
         public static final SparkFlexConfig MAIN_SHOOTER_MOTOR_CONFIG = new SparkFlexConfig();
         static {
