@@ -132,9 +132,9 @@ public final class Constants {
         public static final double kShooterA = 0.0;
 
         // Hood PID
-        public static final double kHoodP = 1.0;
+        public static final double kHoodP = 2.0;
         public static final double kHoodI = 0.0;
-        public static final double kHoodD = 0.0;
+        public static final double kHoodD = 0.01;
         public static final double kHoodS = 0.0;
         public static final double kHoodV = 0.0;
         public static final double kHoodA = 0.0;
