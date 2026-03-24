@@ -136,7 +136,7 @@ public final class Constants {
         public static final double kHoodI = 0.0;
         public static final double kHoodD = 0.0;
         public static final double kHoodS = 0.0;
-        public static final double kHoodV = 0.0001;
+        public static final double kHoodV = 0.0;
         public static final double kHoodA = 0.0;
 
         // Feed PID TODO tune feeder
@@ -159,14 +159,14 @@ public final class Constants {
         public static final double kShooterIdleRPM = 1000.0;
         public static final double kShooterToleranceRPM = 100.0;
 
-        public static final double kDefaultConveyorSpeed = 2000;
+        public static final double kDefaultConveyorSpeed = 1000;
 
         public static final double kHoodStowedPosition = 0.96;
 
         public static final double kDefaultFeederSpeed = 75;
 
         // Hood limits
-        public static final double kHoodMinPosition = 0.975;
+        public static final double kHoodMinPosition = 0.968;
         public static final double kHoodMinSafePosition = 0.6;
         public static final double kHoodMaxSafePosition = 0.96;
         public static final double kHoodPositionTolerance = 0.02;
@@ -247,7 +247,7 @@ public final class Constants {
 
     public static final class IntakeConstants {
 
-        public static final double kDefaultIntakeSpeed = 50;
+        public static final double kDefaultIntakeSpeed = 75;
 
         public static final double kIntakeP = 0.0;
         public static final double kIntakeI = 0.0;
