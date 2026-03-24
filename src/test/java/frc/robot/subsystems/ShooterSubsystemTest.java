@@ -388,7 +388,7 @@ public class ShooterSubsystemTest {
 
         m_shooter.setShooterRPM(TEST_RPM);
         m_shooter.manualHood(MANUAL_HOOD_CONTROL_SPEED);
-        m_shooter.setFeederRPM(TEST_RPM / 4);
+        m_shooter.setFeederRPS(TEST_RPM / 4);
         step();
 
         m_shooter.stopAll();
@@ -409,7 +409,7 @@ public class ShooterSubsystemTest {
         m_shooter = new ShooterSubsystem();
         SparkClosedLoopController m_feedController = m_shooter.getShooterPID("feed");
 
-        m_shooter.setFeederRPM(TEST_RPM);
+        m_shooter.setFeederRPS(TEST_RPM);
         step();
 
         assertEquals(ControlType.kVelocity, m_feedController.getControlType());

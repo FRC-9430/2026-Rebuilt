@@ -149,7 +149,7 @@ class IntakeSubsystemTest {
     void testSetIntakeRPMUpdatesController() {
         SparkClosedLoopController intakeController = subsystem.m_intakeController;
 
-        subsystem.setIntakeRPM(TEST_RPM);
+        subsystem.setIntakeRPS(TEST_RPM);
         step();
 
         assertEquals(ControlType.kVelocity, intakeController.getControlType());
