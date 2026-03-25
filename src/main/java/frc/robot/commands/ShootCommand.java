@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PolarSubsystem;
@@ -32,10 +31,10 @@ public class ShootCommand extends Command {
     this.shoot = shoot;
     this.polar = polar;
     this.intake = intake;
-    SmartDashboard.putNumber("Set Shoot V", 3800);
-    SmartDashboard.putNumber("Set Hood Pos", 0.85);
-    SmartDashboard.putNumber("Set Feed V", 83);
-    SmartDashboard.putNumber("Set Convey V", 2000);
+    // SmartDashboard.putNumber("Set Shoot V", 3800);
+    // SmartDashboard.putNumber("Set Hood Pos", 0.85);
+    // SmartDashboard.putNumber("Set Feed V", 83);
+    // SmartDashboard.putNumber("Set Convey V", 1000);
   }
 
   // Called when the command is initially scheduled.
@@ -50,13 +49,17 @@ public class ShootCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shoot.setShooterRPM(SmartDashboard.getNumber("Set Shoot V", 4000));
-    shoot.setHoodPosition(SmartDashboard.getNumber("Set Hood Pos", 0.97));
+    // shoot.setShooterRPM(SmartDashboard.getNumber("Set Shoot V", 4000));
+    // shoot.setHoodPosition(SmartDashboard.getNumber("Set Hood Pos", 0.97));
+    shoot.setShooterRPM(polar.getShootVelocity());
+    shoot.setHoodPosition(polar.getHoodPosition());
     if (Timer.getFPGATimestamp() > uptime + 0.3) {
-      shoot.setFeederRPS(SmartDashboard.getNumber("Set Feed V", 60));
+      // shoot.setFeederRPS(SmartDashboard.getNumber("Set Feed V", 60));
+      shoot.startFeeder();
     }
     if (Timer.getFPGATimestamp() > uptime + 0.4) {
-      shoot.setConveyorRPM(SmartDashboard.getNumber("Set Convey V", 1000));
+      // shoot.setConveyorRPM(SmartDashboard.getNumber("Set Convey V", 1000));
+      shoot.startConveyor();
     }
 
     if (intake.getIntakeV() < 15)
@@ -64,9 +67,9 @@ public class ShootCommand extends Command {
 
     double cur = Timer.getFPGATimestamp();
     if (cur - bumpTimer < 0.3) {
-      intake.setHopper(0.16);
+      intake.setHopper(0.18);
     } else if (cur - bumpTimer < 0.6) {
-      intake.setHopper(-0.16);
+      intake.setHopper(-0.18);
     } else {
       bumpTimer = Timer.getFPGATimestamp();
     }
