@@ -297,6 +297,10 @@ public class PolarSubsystem extends SubsystemBase {
 
   public class PolarUtils {
 
+    // Previous angle error and timestamp for derivative calculation (PD controller)
+    private static double prevAngleError = 0.0;
+    private static long prevTimeNs = System.nanoTime();
+
     public static ChassisSpeeds getPolarDriveSpeeds(Pose2d estPose, Translation2d target, double radialIn,
         double orbitalIn, double MaxSpeed, double MaxAngularRate, double leadSeconds) {
 
@@ -352,17 +356,30 @@ public class PolarSubsystem extends SubsystemBase {
       // Normalize angle error to [-pi, pi]
       double angleError = Math.atan2(Math.sin(desiredAngle - currentAngle), Math.cos(desiredAngle - currentAngle));
 
-      // Use a P-controller plus a small feedforward term derived from the
+      // Use a PD-controller plus a small feedforward term derived from the
       // commanded tangential speed to account for rotational rate while
-      // orbiting: phi_dot ≈ -vTangential / r. Tune kP and kFF as needed.
+      // orbiting: phi_dot ≈ -vTangential / r. Tune kP, kD and kFF as needed.
       double kP = 25.0;
+      double kD = 0.5; // added derivative gain as requested
       double kFF = 0.9;
       double ff = 0.0;
       if (Math.abs(r) > kEpsilon) {
         ff = -vTangential / r * kFF;
       }
 
-      double omega = kP * angleError + ff;
+      // Discrete derivative of angle error (rate of change)
+      long nowNs = System.nanoTime();
+      double dt = (nowNs - prevTimeNs) / 1e9; // seconds
+      if (dt <= 0.0) {
+        dt = 1e-6; // guard against zero or negative dt
+      }
+      double derivative = (angleError - prevAngleError) / dt;
+
+      double omega = kP * angleError + kD * derivative + ff;
+
+      // Update previous values for next call
+      prevAngleError = angleError;
+      prevTimeNs = nowNs;
 
       // Clamp angular rate to configured maximum
       omega = Math.max(-MaxAngularRate, Math.min(MaxAngularRate, omega));
