@@ -169,7 +169,7 @@ public final class Constants {
         public static final double kDefaultFeederSpeed = 75;
 
         // Hood limits
-        public static final double kHoodMinPosition = 0.071;
+        public static final double kHoodMinPosition = 0.069;
         public static final double kHoodMinSafePosition = 0.1;
         public static final double kHoodMaxSafePosition = 0.375;
         public static final double kHoodPositionTolerance = 0.02;
@@ -257,7 +257,7 @@ public final class Constants {
 
     public static final class IntakeConstants {
 
-        public static final double kDefaultIntakeSpeed = 75;
+        public static final double kDefaultIntakeSpeed = 83;
 
         public static final double kIntakeP = 0.0;
         public static final double kIntakeI = 0.0;
@@ -278,7 +278,7 @@ public final class Constants {
 
         public static final SparkFlexConfig HOPPER_MOTOR_CONFIG = new SparkFlexConfig();
         static {
-            HOPPER_MOTOR_CONFIG.inverted(false);
+            HOPPER_MOTOR_CONFIG.inverted(true);
             HOPPER_MOTOR_CONFIG.idleMode(IdleMode.kBrake);
         }
 
