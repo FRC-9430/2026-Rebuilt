@@ -28,6 +28,7 @@ public class RetractHopperCommand extends Command {
     startTime = Timer.getFPGATimestamp();
 
     intake.setHopper(0.5);
+    intake.setIntakeRPS(10);
     
   }
 
@@ -39,6 +40,7 @@ public class RetractHopperCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     intake.stopHopper();
+    intake.stopIntake();
     System.out.println("Hopper Retracted");
   }
 
