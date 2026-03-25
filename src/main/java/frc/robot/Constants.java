@@ -132,7 +132,7 @@ public final class Constants {
         public static final double kShooterA = 0.0;
 
         // Hood PID
-        public static final double kHoodP = 2.0;
+        public static final double kHoodP = 1.8;
         public static final double kHoodI = 0.0;
         public static final double kHoodD = 0.01;
         public static final double kHoodS = 0.0;
@@ -166,7 +166,7 @@ public final class Constants {
         public static final double kDefaultFeederSpeed = 75;
 
         // Hood limits
-        public static final double kHoodMinPosition = 0.968;
+        public static final double kHoodMinPosition = 0.97;
         public static final double kHoodMinSafePosition = 0.6;
         public static final double kHoodMaxSafePosition = 0.96;
         public static final double kHoodPositionTolerance = 0.02;
