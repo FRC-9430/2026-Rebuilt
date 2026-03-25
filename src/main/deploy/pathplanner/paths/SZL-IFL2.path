@@ -24,7 +24,7 @@
         "y": 7.6127012522361355
       },
       "nextControl": {
-        "x": 5.111981130312282,
+        "x": 5.111973166368515,
         "y": 7.6127012522361355
       },
       "isLocked": false,
@@ -63,18 +63,18 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1,
-      "rotationDegrees": 180.0
+      "rotationDegrees": 0.0
     },
     {
       "waypointRelativePos": 2,
-      "rotationDegrees": 180.0
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.640677966101695,
-      "maxWaypointRelativePos": 1.0169491525423726,
+      "minWaypointRelativePos": 0.3966101694915253,
+      "maxWaypointRelativePos": 0.6203389830508472,
       "constraints": {
         "maxVelocity": 2.0,
         "maxAcceleration": 3.5,
@@ -86,7 +86,19 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Eject Hopper",
+      "waypointRelativePos": 1.0169491525423722,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Eject Hopper"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.5,
     "maxAcceleration": 5.0,

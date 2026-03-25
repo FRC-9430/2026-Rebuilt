@@ -49,12 +49,6 @@
         {
           "type": "named",
           "data": {
-            "name": "Eject Hopper"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "Start Intake"
           }
         },

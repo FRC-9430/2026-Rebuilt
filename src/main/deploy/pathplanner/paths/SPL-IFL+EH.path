@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "Eject Hopper",
-      "waypointRelativePos": 0.39661016949152555,
+      "waypointRelativePos": 0.20677966101694917,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
