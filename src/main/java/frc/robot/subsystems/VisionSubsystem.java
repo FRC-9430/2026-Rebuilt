@@ -49,6 +49,10 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
                 continue;
             }
 
+            if (est.avgTagDist > 2.7) {
+                continue;
+            }
+
             boolean rejectEstimate = true;
 
             for (var fiducial : est.rawFiducials) {
