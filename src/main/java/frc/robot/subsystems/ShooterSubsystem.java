@@ -92,6 +92,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
         m_shooterEncoder = m_RightTopShooterMotor.getEncoder();
         m_conveyorEncoder = m_conveyorMotor.getEncoder();
         m_hoodEncoder = new CANcoder(CANConstants.HOOD_ENCODER_CAN_ID);
+        m_hoodEncoder.getConfigurator().apply(HOOD_CANCODER_CONFIG);
 
         m_shooterController = m_RightTopShooterMotor.getClosedLoopController();
         m_conveyorController = m_conveyorMotor.getClosedLoopController();

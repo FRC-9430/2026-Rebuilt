@@ -167,20 +167,20 @@ public class RobotContainer {
 
         // Climber
         controller.x().whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            shooter.setHoodPosition(0.8);
+            shooter.setHoodPosition(0.3);
         }))).onFalse(new InstantCommand(() -> {
             shooter.stopHood();
         }));
 
         controller.y().whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            shooter.setHoodPosition(0.7);
+            shooter.setHoodPosition(0.35);
         }))).onFalse(new InstantCommand(() -> {
             shooter.stopHood();
         }));
 
         // Force Stow Hood
         controller.a().onTrue(new InstantCommand(() -> {
-            shooter.setHoodPosition(0.9);
+            shooter.setHoodPosition(0.2);
         })).onFalse(new InstantCommand(() -> {
             shooter.stopHood();
         }));

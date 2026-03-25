@@ -1,10 +1,12 @@
 package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkFlexConfig;
@@ -133,9 +135,9 @@ public final class Constants {
         public static final double kShooterA = 0.0;
 
         // Hood PID
-        public static final double kHoodP = 1.8;
+        public static final double kHoodP = 25.8;
         public static final double kHoodI = 0.0;
-        public static final double kHoodD = 0.01;
+        public static final double kHoodD = 0.5;
         public static final double kHoodS = 0.0;
         public static final double kHoodV = 0.0;
         public static final double kHoodA = 0.0;
@@ -162,14 +164,14 @@ public final class Constants {
 
         public static final double kDefaultConveyorSpeed = 1000;
 
-        public static final double kHoodStowedPosition = 0.96;
+        public static final double kHoodStowedPosition = 0.1;
 
         public static final double kDefaultFeederSpeed = 75;
 
         // Hood limits
-        public static final double kHoodMinPosition = 0.97;
-        public static final double kHoodMinSafePosition = 0.6;
-        public static final double kHoodMaxSafePosition = 0.96;
+        public static final double kHoodMinPosition = 0.071;
+        public static final double kHoodMinSafePosition = 0.1;
+        public static final double kHoodMaxSafePosition = 0.375;
         public static final double kHoodPositionTolerance = 0.02;
 
         public static final SparkFlexConfig MAIN_SHOOTER_MOTOR_CONFIG = new SparkFlexConfig();
@@ -203,12 +205,20 @@ public final class Constants {
             HOOD_MOTOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
             HOOD_MOTOR_CONFIG.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
             HOOD_MOTOR_CONFIG.Feedback.FeedbackRemoteSensorID = CANConstants.HOOD_ENCODER_CAN_ID;
+            HOOD_MOTOR_CONFIG.ClosedLoopGeneral.ContinuousWrap = false;
             HOOD_MOTOR_CONFIG.Slot0.kP = kHoodP;
             HOOD_MOTOR_CONFIG.Slot0.kI = kHoodI;
             HOOD_MOTOR_CONFIG.Slot0.kD = kHoodD;
             HOOD_MOTOR_CONFIG.Slot0.kS = kHoodS;
             HOOD_MOTOR_CONFIG.Slot0.kV = kHoodV;
             HOOD_MOTOR_CONFIG.Slot0.kA = kHoodA;
+        }
+
+        public static final CANcoderConfiguration HOOD_CANCODER_CONFIG = new CANcoderConfiguration();
+        static {
+            HOOD_CANCODER_CONFIG.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1.0;
+            HOOD_CANCODER_CONFIG.MagnetSensor.MagnetOffset = 0.2;
+            HOOD_CANCODER_CONFIG.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
         }
 
         public static final TalonFXConfiguration MAIN_FEEDER_MOTOR_CONFIG = new TalonFXConfiguration();
