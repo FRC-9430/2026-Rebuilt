@@ -210,6 +210,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
      */
     public void setHoodPosition(double position) {
         hoodSetPoint = position;
+        // m_hoodController.reset(m_hoodEncoder.getPosition());
     }
 
     public void setHoodDutyCycle(double speed) {
@@ -225,7 +226,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
     public void stopHood() {
         m_hoodMotor.stopMotor();
         hoodSetPoint = null;
-        m_hoodMotor.setControl(new StaticBrake());
+        //m_hoodController.reset(m_hoodEncoder.getPosition());
     }
 
     /**
@@ -375,7 +376,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
             double in = -m_hoodController.calculate(m_hoodEncoder.getPosition(), hoodSetPoint);
 
             if (in > 0) {
-                in = Math.min(in, 0.5);
+                in = Math.min(in, 1);
             } else {
                 in = Math.max(in, -0.001);
             }
