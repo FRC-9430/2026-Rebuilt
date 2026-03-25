@@ -48,6 +48,7 @@ public final class Constants {
         public static final int FL_SWERVE_DRIVING_CAN_ID = 17;
 
         // Shooter Subsystem Motors
+        public static final int HOOD_ENCODER_CAN_ID = 39;
         public static final int HOOD_MOTOR_CAN_ID = 40;
 
         public static final int RIGHT_FEEDER_MOTOR_CAN_ID = 41;
@@ -200,9 +201,8 @@ public final class Constants {
         static {
             HOOD_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
             HOOD_MOTOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-            HOOD_MOTOR_CONFIG.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-            HOOD_MOTOR_CONFIG.Voltage.PeakForwardVoltage = 0;
-            HOOD_MOTOR_CONFIG.Voltage.PeakReverseVoltage = 1;
+            HOOD_MOTOR_CONFIG.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+            HOOD_MOTOR_CONFIG.Feedback.FeedbackRemoteSensorID = CANConstants.HOOD_ENCODER_CAN_ID;
             HOOD_MOTOR_CONFIG.Slot0.kP = kHoodP;
             HOOD_MOTOR_CONFIG.Slot0.kI = kHoodI;
             HOOD_MOTOR_CONFIG.Slot0.kD = kHoodD;

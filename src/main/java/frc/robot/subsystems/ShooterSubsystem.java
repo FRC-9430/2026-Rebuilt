@@ -2,20 +2,15 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.spark.SparkFlex;
@@ -43,7 +38,6 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
     private final TalonFX m_hoodMotor;
 
     private final PositionVoltage HoodPV = new PositionVoltage(0).withSlot(0);
-    private Double hoodSetPoint = null;
 
     private final TalonFX m_rightFeedMotor;
     private final TalonFX m_leftFeedMotor;
@@ -54,13 +48,10 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
 
     private final RelativeEncoder m_shooterEncoder;
     private final RelativeEncoder m_conveyorEncoder;
-    private final AbsoluteEncoder m_hoodEncoder;
+    private final CANcoder m_hoodEncoder;
 
     private final SparkClosedLoopController m_shooterController;
     private final SparkClosedLoopController m_conveyorController;
-
-    private final ProfiledPIDController m_hoodController;
-    private final SimpleMotorFeedforward m_hoodFFController;
 
     /**
      * Creates a new ShooterSubsystem and configures motors, encoders, and
@@ -100,14 +91,10 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
 
         m_shooterEncoder = m_RightTopShooterMotor.getEncoder();
         m_conveyorEncoder = m_conveyorMotor.getEncoder();
-        m_hoodEncoder = m_LeftTopShoooterMotor.getAbsoluteEncoder();
+        m_hoodEncoder = new CANcoder(CANConstants.HOOD_ENCODER_CAN_ID);
 
         m_shooterController = m_RightTopShooterMotor.getClosedLoopController();
         m_conveyorController = m_conveyorMotor.getClosedLoopController();
-        m_hoodController = new ProfiledPIDController(kHoodP, kHoodI, kHoodD, new Constraints(0, 0), 0.002);
-        // m_hoodController.setTolerance(kHoodPositionTolerance);
-
-        m_hoodFFController = new SimpleMotorFeedforward(kHoodS, kHoodV, kHoodA, 0.002);
 
     }
 
@@ -209,8 +196,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
      * @param position target hood position
      */
     public void setHoodPosition(double position) {
-        hoodSetPoint = position;
-        // m_hoodController.reset(m_hoodEncoder.getPosition());
+        m_hoodMotor.setControl(HoodPV.withPosition(position));
     }
 
     public void setHoodDutyCycle(double speed) {
@@ -225,8 +211,6 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
     /** Stop the hood motor. */
     public void stopHood() {
         m_hoodMotor.stopMotor();
-        hoodSetPoint = null;
-        //m_hoodController.reset(m_hoodEncoder.getPosition());
     }
 
     /**
@@ -269,7 +253,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
 
     /** Get the current hood encoder position. */
     public double getHoodPosition() {
-        return m_hoodEncoder.getPosition();
+        return m_hoodEncoder.getPosition().getValueAsDouble();
     }
 
     /**
@@ -279,7 +263,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
      * @return true if the mechanism is ready to fire
      */
     public boolean isShooterReady() {
-        return isShooterAtSpeed() && isHoodAtPosition(m_hoodController.getSetpoint().position);
+        return isShooterAtSpeed() && isHoodAtPosition(getHoodPosition());
     }
 
     /**
@@ -365,37 +349,12 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
     @Override
     public void periodic() {
 
-        SmartDashboard.putNumber("Hood V", m_hoodEncoder.getVelocity());
+        SmartDashboard.putNumber("Hood V", m_hoodEncoder.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("Shooter V", m_shooterEncoder.getVelocity());
         SmartDashboard.putNumber("Convey V", m_conveyorEncoder.getVelocity());
         SmartDashboard.putNumber("Feed V", m_rightFeedMotor.getVelocity().getValue().magnitude());
 
-        SmartDashboard.putNumber("Hood Pos", m_hoodEncoder.getPosition());
-
-        if (hoodSetPoint != null) {
-            double in = -m_hoodController.calculate(m_hoodEncoder.getPosition(), hoodSetPoint);
-
-            if (in > 0) {
-                in = Math.min(in, 1);
-            } else {
-                in = Math.max(in, -0.001);
-            }
-
-            double FF = -m_hoodFFController.calculate(m_hoodEncoder.getVelocity());
-
-            if (FF > 0) {
-                FF = Math.min(FF, 0.05);
-            } else {
-                FF = Math.max(FF, 0.0);
-            }
-
-            SmartDashboard.putNumber("Hood PID Input", in);
-            SmartDashboard.putNumber("Hood FF Input", FF);
-
-            m_hoodMotor.set(in + FF);
-            
-
-        }
+        SmartDashboard.putNumber("Hood Pos", getHoodPosition());
 
     }
 
