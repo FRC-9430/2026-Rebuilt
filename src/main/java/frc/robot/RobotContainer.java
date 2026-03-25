@@ -180,7 +180,7 @@ public class RobotContainer {
 
         // Force Stow Hood
         controller.a().onTrue(new InstantCommand(() -> {
-            shooter.stowHood();
+            shooter.setHoodPosition(0.9);
         })).onFalse(new InstantCommand(() -> {
             shooter.stopHood();
         }));
