@@ -9,7 +9,7 @@
       "prevControl": null,
       "nextControl": {
         "x": 7.789025230393367,
-        "y": 1.876558155504737
+        "y": 1.8765581555047368
       },
       "isLocked": false,
       "linkedName": "IFR"
@@ -25,7 +25,7 @@
       },
       "nextControl": {
         "x": 7.829119158080926,
-        "y": 2.313597971455729
+        "y": 2.3135979714557293
       },
       "isLocked": false,
       "linkedName": null
@@ -37,7 +37,7 @@
       },
       "prevControl": {
         "x": 7.810516259281806,
-        "y": 1.9520394728281835
+        "y": 1.9520394728281836
       },
       "nextControl": null,
       "isLocked": false,
@@ -65,8 +65,8 @@
   "globalConstraints": {
     "maxVelocity": 3.5,
     "maxAcceleration": 5.0,
-    "maxAngularVelocity": 460.0,
-    "maxAngularAcceleration": 575.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 450.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

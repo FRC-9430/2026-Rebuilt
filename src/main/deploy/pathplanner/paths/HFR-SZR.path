@@ -9,7 +9,7 @@
       "prevControl": null,
       "nextControl": {
         "x": 7.880590339892665,
-        "y": 0.6682289803220049
+        "y": 0.668228980322005
       },
       "isLocked": false,
       "linkedName": "HFR"
@@ -25,7 +25,7 @@
       },
       "nextControl": {
         "x": 3.3699284436493735,
-        "y": 0.6195527728085871
+        "y": 0.6195527728085874
       },
       "isLocked": false,
       "linkedName": null
@@ -37,7 +37,7 @@
       },
       "prevControl": {
         "x": 2.8669409660107337,
-        "y": 0.392397137745975
+        "y": 0.39239713774597496
       },
       "nextControl": null,
       "isLocked": false,
@@ -56,8 +56,8 @@
   "globalConstraints": {
     "maxVelocity": 3.5,
     "maxAcceleration": 5.0,
-    "maxAngularVelocity": 460.0,
-    "maxAngularAcceleration": 575.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 450.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
