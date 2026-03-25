@@ -45,14 +45,14 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
             LimelightHelpers.PoseEstimate est = LimelightHelpers.getBotPoseEstimate_wpiBlue(camNames[i]);
             logVisionData(est, camNames[i]);
 
-            if (est == null || est.tagCount == 0 || state.Speeds.omegaRadiansPerSecond > 30) {
+            if (est == null || est.tagCount == 0) {
                 continue;
             }
 
             boolean rejectEstimate = true;
 
             for (var fiducial : est.rawFiducials) {
-                if (fiducial.ambiguity < 0.3) { // Decent Abmiguity required
+                if (fiducial.ambiguity < 0.3) { // Decent Ambiguity required
                     rejectEstimate = false;
                 }
             }
@@ -69,7 +69,6 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
                 for (var fiducial : est.rawFiducials) {
                     if (fiducial.ambiguity < 0.07) { // Low Tag Ambiguity
                         drive.resetRotation(est.pose.getRotation()); // Force Robot Rotation
-                        drive.resetPose(est.pose); // Force Robot Pose
                         break;
                     }
                 }
