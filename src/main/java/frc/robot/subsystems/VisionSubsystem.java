@@ -28,57 +28,68 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
 
         var state = drive.getState();
 
+        if (Math.abs(state.Speeds.omegaRadiansPerSecond) > 1.5) {
+            return;
+        }
+
+        if (Math.abs(state.Speeds.vxMetersPerSecond) > 0.5) {
+            return;
+        }
+
+        if (Math.abs(state.Speeds.vyMetersPerSecond) > 0.5) {
+            return;
+        }
+
         for (int i = 0; i <= 2; i++) {
 
             LimelightHelpers.PoseEstimate est = LimelightHelpers.getBotPoseEstimate_wpiBlue(camNames[i]);
             logVisionData(est, camNames[i]);
 
             if (est == null || est.tagCount == 0 || state.Speeds.omegaRadiansPerSecond > 30) {
-                return;
+                continue;
             }
+
+            boolean rejectEstimate = true;
 
             for (var fiducial : est.rawFiducials) {
                 if (fiducial.ambiguity < 0.3) { // Decent Abmiguity required
-                    break;
+                    rejectEstimate = false;
                 }
-                return;
             }
 
-            if (Math.abs(state.Speeds.omegaRadiansPerSecond) > 1.5) {
-                return;
+            if (rejectEstimate) {
+                continue;
             }
 
-            if (Math.abs(est.pose.getRotation().getDegrees() - state.Pose.getRotation().getDegrees()) > 1) {
-                // If estimated position is greater than 1 degree off from detected
-                if (Math.abs(state.Speeds.omegaRadiansPerSecond) < 0.05 &&
-                        Math.abs(state.Speeds.vxMetersPerSecond) < 0.05 &&
-                        Math.abs(state.Speeds.vyMetersPerSecond) < 0.05) { // Robot is still
-                    for (var fiducial : est.rawFiducials) {
-                        if (fiducial.ambiguity < 0.07) { // Low Tag Ambiguity
-                            drive.resetRotation(est.pose.getRotation()); // Force Robot Rotation
-                            drive.resetPose(est.pose); // Force Robot Pose
-                            break;
-                        }
+            drive.addVisionMeasurement(est.pose, est.timestampSeconds);
+
+            if (Math.abs(state.Speeds.omegaRadiansPerSecond) < 0.05 &&
+                    Math.abs(state.Speeds.vxMetersPerSecond) < 0.05 &&
+                    Math.abs(state.Speeds.vyMetersPerSecond) < 0.05) { // Robot is still
+                for (var fiducial : est.rawFiducials) {
+                    if (fiducial.ambiguity < 0.07) { // Low Tag Ambiguity
+                        drive.resetRotation(est.pose.getRotation()); // Force Robot Rotation
+                        drive.resetPose(est.pose); // Force Robot Pose
+                        break;
                     }
                 }
             }
 
-            drive.addVisionMeasurement(est.pose, est.timestampSeconds);
         }
 
     }
 
     private void logVisionData(LimelightHelpers.PoseEstimate est, String camName) {
-        SmartDashboard.putNumber("Vision/"+camName+"/Robot Pose Cam Est X", est.pose.getX());
-        SmartDashboard.putNumber("Vision/"+camName+"/Robot Pose Cam Est Y", est.pose.getY());
-        SmartDashboard.putNumber("Vision/"+camName+"/avgTagDist", est.avgTagDist);
-        SmartDashboard.putNumber("Vision/"+camName+"/tagCount", est.tagCount);
-        
+        SmartDashboard.putNumber("Vision/" + camName + "/Robot Pose Cam Est X", est.pose.getX());
+        SmartDashboard.putNumber("Vision/" + camName + "/Robot Pose Cam Est Y", est.pose.getY());
+        SmartDashboard.putNumber("Vision/" + camName + "/avgTagDist", est.avgTagDist);
+        SmartDashboard.putNumber("Vision/" + camName + "/tagCount", est.tagCount);
+
         if (est.tagCount == 0)
             return;
 
         for (var fiducial : est.rawFiducials) {
-            SmartDashboard.putNumber("Vision/"+camName+"/Tag/ " + fiducial.id + " Ambiguity", fiducial.ambiguity);
+            SmartDashboard.putNumber("Vision/" + camName + "/Tag/ " + fiducial.id + " Ambiguity", fiducial.ambiguity);
         }
 
     }
