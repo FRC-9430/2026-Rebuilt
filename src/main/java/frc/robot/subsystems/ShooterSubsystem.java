@@ -197,6 +197,10 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
      * @param position target hood position
      */
     public void setHoodPosition(double position) {
+        if (position < kHoodMinSafePosition ||
+                position > kHoodMaxSafePosition)
+            return;
+
         m_hoodMotor.setControl(HoodPV.withPosition(position));
     }
 
