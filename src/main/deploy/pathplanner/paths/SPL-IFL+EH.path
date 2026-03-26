@@ -42,6 +42,17 @@
           "name": "Eject Hopper"
         }
       }
+    },
+    {
+      "name": "Start Intake",
+      "waypointRelativePos": 0.5830508474576266,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Start Intake"
+        }
+      }
     }
   ],
   "globalConstraints": {
