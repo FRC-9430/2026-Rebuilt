@@ -41,6 +41,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Eject Hopper"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "SZL-DEP+INTAKE"

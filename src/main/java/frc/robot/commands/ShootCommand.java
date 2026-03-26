@@ -88,7 +88,10 @@ public class ShootCommand extends Command {
     intake.stopHopper();
     intake.stopIntake();
 
-    CommandScheduler.getInstance().schedule(new EjectHopperCommand(intake));
+    if (DriverStation.isTeleop()) {
+      CommandScheduler.getInstance().schedule(new EjectHopperCommand(intake));
+
+    }
 
     System.out.println("End Shoot Command: " + interrupted);
 
