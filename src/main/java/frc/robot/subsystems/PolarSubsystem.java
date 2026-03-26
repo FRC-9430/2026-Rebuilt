@@ -15,7 +15,7 @@ import frc.robot.Constants;
 
 import static frc.robot.Constants.FieldConstants.*;
 
-public class PolarSubsystem extends SubsystemBase {
+public class PolarSubsystem extends SubsystemBase implements AutoCloseable {
 
   public final CommandSwerveDrivetrain driveTrain;
 
@@ -53,7 +53,7 @@ public class PolarSubsystem extends SubsystemBase {
 
   /**
    * Sets the robots polar target
-   * 
+   *
    * @param newTarget Translation2d of new target
    */
   public void setTarget(Translation2d newTarget) {
@@ -62,7 +62,7 @@ public class PolarSubsystem extends SubsystemBase {
 
   /**
    * Returns when the robot is moving < 0.1 Rad/s
-   * 
+   *
    * @return slow rotation
    */
   public boolean Angled() {
@@ -74,7 +74,7 @@ public class PolarSubsystem extends SubsystemBase {
    * When in Volley mode always returns 3000 RPM.
    * Else if the robot is stationary returns the RPM from the derived equation.
    * Else if moving radially to target calculate RPM using an estimated shot lead.
-   * 
+   *
    * @return Target Shooter RPM
    */
   public double getShootVelocity() {
@@ -104,7 +104,7 @@ public class PolarSubsystem extends SubsystemBase {
    * equation.
    * Else if moving radially to target calculate position using an estimated shot
    * lead.
-   * 
+   *
    * @return Target Hood Position
    */
   public double getHoodPosition() {
@@ -129,7 +129,7 @@ public class PolarSubsystem extends SubsystemBase {
 
   /**
    * Returns the radius to target
-   * 
+   *
    * @return radius
    */
   public double getRadius() {
@@ -141,7 +141,7 @@ public class PolarSubsystem extends SubsystemBase {
   /**
    * Calculates and return the radial velocity of the robot around the target hub.
    * Positive when moving away from target.
-   * 
+   *
    * @return Radial Velocity
    */
   public double getRadialV() {
@@ -165,9 +165,8 @@ public class PolarSubsystem extends SubsystemBase {
   }
 
   /**
-   * Calculates and return the orbital velocity of the robot around the target
-   * hub.
-   * 
+   * Calculates and return the orbital velocity of the robot around the target hub.
+   *
    * @return Orbital Velocity
    */
   public double getOrbitalV() {
@@ -410,4 +409,8 @@ public class PolarSubsystem extends SubsystemBase {
       return rpm;
     }
   }
+
+public void close() {
+    driveTrain.close();
+}
 }
