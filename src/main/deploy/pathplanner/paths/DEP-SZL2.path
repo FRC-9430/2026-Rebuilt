@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.0983720930232552,
-        "y": 5.844132379248658
+        "x": 1.0010196779964218,
+        "y": 5.892808586762076
       },
       "isLocked": false,
       "linkedName": "DEP"
     },
     {
       "anchor": {
-        "x": 1.6175849731663683,
-        "y": 5.406046511627907
+        "x": 1.6338103756708402,
+        "y": 5.909033989266548
       },
       "prevControl": {
-        "x": 1.1308228980322008,
-        "y": 5.616976744186046
+        "x": 1.2606261180679779,
+        "y": 5.99016100178891
       },
       "nextControl": null,
       "isLocked": false,
@@ -35,14 +35,14 @@
   "globalConstraints": {
     "maxVelocity": 3.5,
     "maxAcceleration": 5.0,
-    "maxAngularVelocity": 360.0,
-    "maxAngularAcceleration": 450.0,
+    "maxAngularVelocity": 460.0,
+    "maxAngularAcceleration": 575.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -25.050977816442888
+    "rotation": -31.920876219933184
   },
   "reversed": false,
   "folder": null,

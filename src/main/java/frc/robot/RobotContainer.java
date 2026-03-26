@@ -24,6 +24,7 @@ import frc.robot.commands.EjectHopperCommand;
 import frc.robot.commands.RetractHopperCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.commands.ShootTouchingHubCommand;
+import frc.robot.commands.VolleyShootCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.ElasticDashboard;
@@ -58,7 +59,10 @@ public class RobotContainer {
     public DriveMode driveMode = DriveMode.CARTESIAN;
 
     public AimAndShootCommand aimAndShootCommand = new AimAndShootCommand(drivetrain, shooter, intake, polar);
+
     public ShootCommand shootCommand = new ShootCommand(shooter, polar, intake);
+    public VolleyShootCommand volleyCommand = new VolleyShootCommand(shooter, polar, intake);
+    public ShootTouchingHubCommand shootTouchingHubCommand = new ShootTouchingHubCommand(shooter, intake);
 
     /**
      * Construct and configure the robot: set up the drivetrain, dashboard,
@@ -155,41 +159,51 @@ public class RobotContainer {
         }));
 
         // Shoot
-        controller.leftTrigger(0.05).onTrue(shootCommand)
-                .onFalse(new InstantCommand(() -> shootCommand.cancel()));
+        
+        // controller.leftTrigger(0.05).onTrue((polar.targetIsHub()? shootCommand : volleyCommand))
+        //         .onFalse(new InstantCommand(() -> shootCommand.cancel()));
+
+        controller.leftTrigger(0.05).onTrue(new InstantCommand(()->{
+            if (polar.targetIsHub()) {
+                CommandScheduler.getInstance().schedule(shootCommand);
+            } else {
+                CommandScheduler.getInstance().schedule(volleyCommand);
+            }
+        })).onFalse(new InstantCommand(()->{
+            CommandScheduler.getInstance().cancel(shootCommand, volleyCommand);
+        }));
 
         // Intake
         controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            intake.setIntake();
+            intake.startIntake();
         }))).onFalse(new InstantCommand(() -> {
             intake.stopAll();
         }));
 
         // Climber
-        controller.x().whileTrue(new RepeatCommand(new InstantCommand(() -> {
-
-        }))).onFalse(new InstantCommand(() -> {
-
+        controller.x().onTrue(new InstantCommand(() -> {
+            CommandScheduler.getInstance().schedule(shootTouchingHubCommand);
+        })).onFalse(new InstantCommand(() -> {
+            CommandScheduler.getInstance().cancel(shootTouchingHubCommand);
         }));
 
         controller.y().whileTrue(new RepeatCommand(new InstantCommand(() -> {
-
+            CommandScheduler.getInstance().cancelAll();
         }))).onFalse(new InstantCommand(() -> {
-
         }));
 
         // Force Stow Hood
         controller.a().onTrue(new InstantCommand(() -> {
-            shooter.stowHood();
+            shooter.setHoodPosition(0.08);
         })).onFalse(new InstantCommand(() -> {
             shooter.stopHood();
         }));
 
-        controller.x()
-                .onTrue(new ShootTouchingHubCommand(shooter, intake))
-                .onFalse(new InstantCommand(() -> CommandScheduler.getInstance().cancelAll()));
+        // controller.x()
+        //         .onTrue(new ShootTouchingHubCommand(shooter, intake))
+        //         .onFalse(new InstantCommand(() -> CommandScheduler.getInstance().cancelAll()));
 
-        controller.y().onTrue(new InstantCommand(() -> CommandScheduler.getInstance().cancelAll()));
+        // controller.y().onTrue(new InstantCommand(() -> CommandScheduler.getInstance().cancelAll()));
 
         // Eject Hopper
         controller.start().onTrue(new EjectHopperCommand(intake));
@@ -246,7 +260,7 @@ public class RobotContainer {
 
         namedCommands.put("Eject Hopper", new EjectHopperCommand(intake));
         namedCommands.put("Retract Hopper", new RetractHopperCommand(intake));
-        namedCommands.put("Start Intake", new InstantCommand(() -> intake.setIntake()));
+        namedCommands.put("Start Intake", new InstantCommand(() -> intake.startIntake()));
         namedCommands.put("Stop Intake", new InstantCommand(() -> intake.stopIntake()));
         namedCommands.put("Engage Polar", new InstantCommand(() -> setPolar()));
         namedCommands.put("Engage Cartesian", new InstantCommand(() -> setCartesian()));

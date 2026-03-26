@@ -15,7 +15,7 @@ public class EjectHopperCommand extends Command {
   double startTime;
 
   /** Creates a new EjectHopperCommand.
-   * Ejects the hopper, takes 0.3 secods to run
+   * Ejects the hopper, takes 0.4 seconds to run
    */
   public EjectHopperCommand(IntakeSubsystem intake) {
     addRequirements(intake);
@@ -27,7 +27,8 @@ public class EjectHopperCommand extends Command {
   public void initialize() {
     startTime = Timer.getFPGATimestamp();
 
-    intake.setHopper(-0.35);
+    intake.setHopper(-0.4);
+    intake.setIntakeRPS(10);
     
   }
 
@@ -39,11 +40,12 @@ public class EjectHopperCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     intake.stopHopper();
+    intake.stopIntake();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (Timer.getFPGATimestamp() > (startTime + 0.3)); // Run 0.8 second
+    return (Timer.getFPGATimestamp() > (startTime + 0.4)); // Run 0.4 second
   }
 }

@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
@@ -38,22 +39,28 @@ public class ShootTouchingHubCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shoot.setShooterRPM(2750);
-    shoot.setHoodPosition(0.425);
-    if (shoot.isShooterReady() && Timer.getFPGATimestamp() < uptime + 0.6) {
+    shoot.setShooterRPM(3200);
+    shoot.setHoodPosition(0.07);
+
+    if (Timer.getFPGATimestamp() > uptime + 0.2) {
+      // shoot.setFeederRPS(SmartDashboard.getNumber("Set Feed V", 83));
       shoot.startFeeder();
-      shoot.startConveyorDefault();
+    }
+    
+    if (Timer.getFPGATimestamp() > uptime + 0.3) {
+      // shoot.setConveyorRPM(SmartDashboard.getNumber("Set Convey V", 1000));
+      shoot.startConveyor();
     }
 
-    if (intake.getIntakeV() < 1000)
-      intake.setIntakeRPM(1000);
+    if (intake.getIntakeV() < 20)
+      intake.setIntakeRPS(20);
 
-    double cur = Timer.getFPGATimestamp();
-    if (cur - bumpTimer < 0.25) {
-      intake.setHopper(0.12);
-    } else if (cur - bumpTimer < 0.5) {
-      intake.setHopper(-0.12);
-    } else {
+    if (Timer.getFPGATimestamp() > bumpTimer + 0.6) {
+      intake.setHopper(0.18);
+    }
+
+    if (Timer.getFPGATimestamp() > bumpTimer + 2.0) {
+      intake.setHopper(-0.18);
       bumpTimer = Timer.getFPGATimestamp();
     }
 
@@ -62,13 +69,15 @@ public class ShootTouchingHubCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shoot.stowHood();
+    shoot.stopHood();
     shoot.stopConveyor();
     shoot.stopFeeder();
     shoot.stopShooter();
     intake.stopHopper();
     intake.stopIntake();
     System.out.println("End Shoot&Touch Command: " + interrupted);
+    
+    CommandScheduler.getInstance().schedule(new EjectHopperCommand(intake));
 
   }
 

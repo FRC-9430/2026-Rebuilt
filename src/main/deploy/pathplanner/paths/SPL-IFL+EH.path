@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "Eject Hopper",
-      "waypointRelativePos": 0.39661016949152555,
+      "waypointRelativePos": 0.20677966101694917,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -42,13 +42,24 @@
           "name": "Eject Hopper"
         }
       }
+    },
+    {
+      "name": "Start Intake",
+      "waypointRelativePos": 0.5830508474576266,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Start Intake"
+        }
+      }
     }
   ],
   "globalConstraints": {
     "maxVelocity": 3.5,
     "maxAcceleration": 5.0,
-    "maxAngularVelocity": 460.0,
-    "maxAngularAcceleration": 575.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 450.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
