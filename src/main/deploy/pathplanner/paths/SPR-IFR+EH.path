@@ -9,7 +9,7 @@
       "prevControl": null,
       "nextControl": {
         "x": 5.34942754919499,
-        "y": 0.6033273703041135
+        "y": 0.603327370304114
       },
       "isLocked": false,
       "linkedName": "SPR"
@@ -54,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 2.0,
-    "rotation": -90.0
+    "rotation": 270.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 270.0
   },
   "useDefaultConstraints": true
 }
