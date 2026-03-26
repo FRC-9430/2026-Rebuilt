@@ -59,8 +59,10 @@ public class RobotContainer {
     public DriveMode driveMode = DriveMode.CARTESIAN;
 
     public AimAndShootCommand aimAndShootCommand = new AimAndShootCommand(drivetrain, shooter, intake, polar);
+
     public ShootCommand shootCommand = new ShootCommand(shooter, polar, intake);
     public VolleyShootCommand volleyCommand = new VolleyShootCommand(shooter, polar, intake);
+    public ShootTouchingHubCommand shootTouchingHubCommand = new ShootTouchingHubCommand(shooter, intake);
 
     /**
      * Construct and configure the robot: set up the drivetrain, dashboard,
@@ -179,21 +181,16 @@ public class RobotContainer {
         }));
 
         // Climber
-        controller.x().whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            shooter.setHoodPosition(0.3);
-        }))).onFalse(new InstantCommand(() -> {
-            shooter.stopHood();
-        }));
+        controller.x().onTrue(shootTouchingHubCommand);
 
         controller.y().whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            shooter.setHoodPosition(0.35);
+            CommandScheduler.getInstance().cancelAll();
         }))).onFalse(new InstantCommand(() -> {
-            shooter.stopHood();
         }));
 
         // Force Stow Hood
         controller.a().onTrue(new InstantCommand(() -> {
-            shooter.setHoodPosition(0.2);
+            shooter.setHoodPosition(0.08);
         })).onFalse(new InstantCommand(() -> {
             shooter.stopHood();
         }));
