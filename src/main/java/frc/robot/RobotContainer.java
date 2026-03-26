@@ -181,7 +181,11 @@ public class RobotContainer {
         }));
 
         // Climber
-        controller.x().onTrue(shootTouchingHubCommand);
+        controller.x().onTrue(new InstantCommand(() -> {
+            CommandScheduler.getInstance().schedule(shootTouchingHubCommand);
+        })).onFalse(new InstantCommand(() -> {
+            CommandScheduler.getInstance().cancel(shootTouchingHubCommand);
+        }));
 
         controller.y().whileTrue(new RepeatCommand(new InstantCommand(() -> {
             CommandScheduler.getInstance().cancelAll();

@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
@@ -68,13 +69,15 @@ public class ShootTouchingHubCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shoot.stowHood();
+    shoot.stopHood();
     shoot.stopConveyor();
     shoot.stopFeeder();
     shoot.stopShooter();
     intake.stopHopper();
     intake.stopIntake();
     System.out.println("End Shoot&Touch Command: " + interrupted);
+    
+    CommandScheduler.getInstance().schedule(new EjectHopperCommand(intake));
 
   }
 
