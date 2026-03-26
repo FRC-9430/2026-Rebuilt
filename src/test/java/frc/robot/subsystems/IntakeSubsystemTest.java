@@ -4,12 +4,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import edu.wpi.first.units.measure.AngularVelocity;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.StatusCode;
 import com.revrobotics.sim.SparkFlexSim;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.sim.SparkRelativeEncoderSim;
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkBase.ControlType;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,36 +34,72 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedConstruction;
 
 import static frc.robot.Constants.IntakeConstants.*;
 
 class IntakeSubsystemTest {
     IntakeSubsystem subsystem;
 
-    private TalonFXSimState m_intakeSim;
-    private TalonFXSimState m_intakeEncoderSim;
+    // Mocks for internal hardware components
+    private TalonFX mockIntakeMotor;
+    private SparkFlex mockHopperMotor;
+    private TalonFXConfigurator mockIntakeConfigurator;
+    private StatusSignal<AngularVelocity> mockIntakeVelocitySignal;
 
     private static final double TOLERANCE = 0.01;
     private static final double TEST_RPM = 1500.0;
 
     @BeforeEach
     void setUp() {
-        // Initialize the HAL to support hardware simulation
         assertTrue(HAL.initialize(500, 0));
-        subsystem = new IntakeSubsystem();
+        initializeIntakeSubsystemWithMocks();
+    }
 
-        m_intakeSim = new TalonFXSimState(subsystem.m_intakeMotor, null);
-        m_intakeEncoderSim = new TalonFXSimState(subsystem.m_intakeMotor);
+    // Helper method to initialize subsystem with mocks for other tests
+    private void initializeIntakeSubsystemWithMocks() {
+        try (MockedConstruction<TalonFX> mockedTalonFX = Mockito.mockConstruction(TalonFX.class,
+                (mock, context) -> {
+                    int canId = (int) context.arguments().get(0);
+                    if (canId == frc.robot.Constants.CANConstants.INTAKE_MOTOR_CAN_ID) {
+                        mockIntakeMotor = mock;
+                        mockIntakeConfigurator = mock(TalonFXConfigurator.class);
+                        mockIntakeVelocitySignal = (StatusSignal<AngularVelocity>) mock(StatusSignal.class);
+                        when(mock.getConfigurator()).thenReturn(mockIntakeConfigurator);
+                        when(mockIntakeConfigurator.apply(any(TalonFXConfiguration.class))).thenReturn(StatusCode.OK);
+                        when(mock.getVelocity()).thenReturn(mockIntakeVelocitySignal);
+                        when(mockIntakeVelocitySignal.getValueAsDouble()).thenReturn(0.0);
+                    }
+                })) {
+            try (MockedConstruction<SparkFlex> mockedSparkFlex = Mockito.mockConstruction(SparkFlex.class,
+                    (mock, context) -> {
+                        int canId = (int) context.arguments().get(0);
+                        if (canId == frc.robot.Constants.CANConstants.HOPPER_MOTOR_CAN_ID) {
+                            mockHopperMotor = mock;
+                            // Stub configure method
+                            when(mock.configure(any(), any(ResetMode.class), any(PersistMode.class))).thenReturn(com.revrobotics.REVLibError.kOk);
+                            when(mock.get()).thenReturn(0.0); // Default applied output
+                        }
+                    })) {
+                subsystem = new IntakeSubsystem();
+            }
+        } catch (Exception e) {
+            fail("Failed to construct IntakeSubsystem with mocks: " + e.getMessage());
+        }
     }
 
     @AfterEach
     void tearDown() {
-        // Close the subsystem to release hardware resources (SparkFlex objects)
         if (subsystem != null) {
             subsystem.close();
         }
         subsystem = null;
-        m_intakeEncoderSim = null;
+        // Null out captured mocks
+        mockIntakeMotor = null;
+        mockHopperMotor = null;
+        mockIntakeConfigurator = null;
+        mockIntakeVelocitySignal = null;
+        HAL.shutdown();
     }
 
     private void step() {
@@ -68,8 +108,8 @@ class IntakeSubsystemTest {
 
     @Test
     void testMotorsInitialized() {
-        assertNotNull(subsystem.m_intakeMotor);
-        assertNotNull(subsystem.m_hopperMotor);
+        assertNotNull(mockIntakeMotor);
+        assertNotNull(mockHopperMotor);
     }
 
     /**
@@ -78,16 +118,8 @@ class IntakeSubsystemTest {
      * THEN the intake motor should be commanded to that velocity using VelocityVoltage control
      */
     @Test
-    void testSetIntakeRPSUpdatesSetpoint() throws NoSuchFieldException, IllegalAccessException {
-        // Replace the real TalonFX with a mock for verification
-        TalonFX mockIntakeMotor = mock(TalonFX.class);
-        Field intakeMotorField = IntakeSubsystem.class.getDeclaredField("m_intakeMotor");
-        intakeMotorField.setAccessible(true);
-        intakeMotorField.set(subsystem, mockIntakeMotor);
-
-        // Mock the configurator for the mockIntakeMotor
-        when(mockIntakeMotor.getConfigurator()).thenReturn(mock(TalonFXConfigurator.class));
-        when(mockIntakeMotor.getConfigurator().apply(any(TalonFXConfiguration.class))).thenReturn(StatusCode.OK);
+    void testSetIntakeRPSUpdatesSetpoint() {
+        // subsystem is already initialized with mocks in setUp()
 
         double targetRPS = TEST_RPM;
         subsystem.setIntakeRPS(targetRPS);
@@ -105,13 +137,14 @@ class IntakeSubsystemTest {
      */
     @Test
     void testStopIntake() {
+        // subsystem is already initialized with mocks in setUp()
         subsystem.setIntakeRPS(0.6);
         step();
 
         subsystem.stopIntake();
         step();
 
-        assertEquals(0.0, m_intakeSim.getTorqueCurrent(), TOLERANCE);
+        verify(mockIntakeMotor).stopMotor();
     }
 
     /**
@@ -121,16 +154,16 @@ class IntakeSubsystemTest {
      */
     @Test
     void testStopAll() {
+        // subsystem is already initialized with mocks in setUp()
         subsystem.setIntakeRPS(0.6);
-        SparkFlexSim m_basketSim = new SparkFlexSim(subsystem.m_hopperMotor, null);
         subsystem.setHopper(0.4);
         step();
 
         subsystem.stopAll();
         step();
 
-        assertEquals(0.0, m_intakeSim.getSupplyCurrent(), TOLERANCE);
-        assertEquals(0.0, m_basketSim.getAppliedOutput(), TOLERANCE); // Now m_basketSim is initialized correctly
+        verify(mockIntakeMotor).stopMotor();
+        verify(mockHopperMotor).stopMotor();
     }
 
     /**
@@ -140,11 +173,12 @@ class IntakeSubsystemTest {
      */
     @Test
     void testSetBasketOpenLoop() {
+        // subsystem is already initialized with mocks in setUp()
         double speed = -0.4;
         subsystem.setHopper(speed);
         step();
 
-        assertEquals(speed, subsystem.m_hopperMotor.get(), TOLERANCE);
+        verify(mockHopperMotor).set(speed);
     }
 
     /**
@@ -154,13 +188,14 @@ class IntakeSubsystemTest {
      */
     @Test
     void testStopBasket() {
+        // subsystem is already initialized with mocks in setUp()
         subsystem.setHopper(0.7);
         step();
 
         subsystem.stopHopper();
         step();
 
-        assertEquals(0.0, subsystem.m_hopperMotor.get(), TOLERANCE);
+        verify(mockHopperMotor).stopMotor();
     }
 
     /**
@@ -169,16 +204,8 @@ class IntakeSubsystemTest {
      * THEN the intake motor should be set to that speed
      */
     @Test
-    void testStartIntakeUsesDefaultSpeed() throws NoSuchFieldException, IllegalAccessException {
-        // Replace the real TalonFX with a mock for verification
-        TalonFX mockIntakeMotor = mock(TalonFX.class);
-        Field intakeMotorField = IntakeSubsystem.class.getDeclaredField("m_intakeMotor");
-        intakeMotorField.setAccessible(true);
-        intakeMotorField.set(subsystem, mockIntakeMotor);
-
-        // Mock the configurator for the mockIntakeMotor
-        when(mockIntakeMotor.getConfigurator()).thenReturn(mock(TalonFXConfigurator.class));
-        when(mockIntakeMotor.getConfigurator().apply(any(TalonFXConfiguration.class))).thenReturn(StatusCode.OK);
+    void testStartIntakeUsesDefaultSpeed() {
+        // subsystem is already initialized with mocks in setUp()
 
         // Mock DriverStation to simulate autonomous mode for kDefaultAutoIntakeSpeed
         try (var mockedDS = Mockito.mockStatic(DriverStation.class)) {
@@ -201,16 +228,9 @@ class IntakeSubsystemTest {
      */
     @Test
     void testPeriodic() throws NoSuchFieldException, IllegalAccessException {
-        // Mock the intake motor to control its velocity for testing SmartDashboard output
-        TalonFX mockIntakeMotor = mock(TalonFX.class);
-        Field intakeMotorField = IntakeSubsystem.class.getDeclaredField("m_intakeMotor");
-        intakeMotorField.setAccessible(true);
-        intakeMotorField.set(subsystem, mockIntakeMotor);
-
-        // Mock the getVelocity().getValueAsDouble() call
-        when(mockIntakeMotor.getVelocity()).thenReturn(mock(StatusSignal.class));
+        // subsystem is already initialized with mocks in setUp()
+        // Stub the captured mockIntakeVelocitySignal
         when(mockIntakeMotor.getVelocity().getValueAsDouble()).thenReturn(123.45);
-
         subsystem.periodic();
         assertEquals(123.45, SmartDashboard.getNumber("Intake V", 999), TOLERANCE);
     }

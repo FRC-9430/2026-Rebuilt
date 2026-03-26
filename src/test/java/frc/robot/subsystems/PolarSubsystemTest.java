@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.AfterEach;
@@ -20,6 +21,7 @@ import frc.robot.RobotContainer;
 import java.util.Optional;
 
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
+import java.lang.reflect.Field;
 
 class PolarSubsystemTest {
 
@@ -43,6 +45,19 @@ class PolarSubsystemTest {
         when(mockDrivetrain.getPose()).thenReturn(new Pose2d());
 
         try (MockedStatic<DriverStation> ds = mockStatic(DriverStation.class)) {
+            // Reset static fields of PolarUtils to ensure test isolation
+            // This is necessary because PolarUtils uses static variables for its PD controller state,
+            // which can leak between test runs if not explicitly reset.
+            try {
+                Field prevAngleErrorField = PolarSubsystem.PolarUtils.class.getDeclaredField("prevAngleError");
+                prevAngleErrorField.setAccessible(true);
+                prevAngleErrorField.set(null, 0.0);
+                Field prevTimeNsField = PolarSubsystem.PolarUtils.class.getDeclaredField("prevTimeNs");
+                prevTimeNsField.setAccessible(true);
+                prevTimeNsField.set(null, System.nanoTime());
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                fail("Failed to reset PolarUtils static fields: " + e.getMessage());
+            }
             ds.when(DriverStation::getAlliance).thenReturn(Optional.of(Alliance.Blue));
             polarSubsystem = new PolarSubsystem(mockDrivetrain);
         }
@@ -58,6 +73,9 @@ class PolarSubsystemTest {
             }
             polarSubsystem = null;
         }
+        mockDrivetrain = null;
+        mockDriveState = null;
+        HAL.shutdown();
     }
 
     /**
