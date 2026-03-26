@@ -169,7 +169,7 @@ class IntakeSubsystemTest {
         step();
 
         assertEquals(ControlType.kVelocity, intakeController.getControlType());
-        assertEquals(kDefaultIntakeSpeed, intakeController.getSetpoint(), TOLERANCE);
+        assertEquals(kDefaultAutoIntakeSpeed, intakeController.getSetpoint(), TOLERANCE);
     }
 
     /**

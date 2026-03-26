@@ -11,6 +11,7 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANConstants;
@@ -37,7 +38,8 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
      * Runs the intake at the default speed
      */
     public void startIntake() {
-        m_intakeMotor.setControl(IntakeVV.withVelocity(kDefaultIntakeSpeed));
+        m_intakeMotor.setControl(IntakeVV
+                .withVelocity(DriverStation.isAutonomous() ? kDefaultAutoIntakeSpeed : kDefaultTeleIntakeSpeed));
     }
 
     /**
