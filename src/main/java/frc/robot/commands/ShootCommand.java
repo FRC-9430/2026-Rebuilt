@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PolarSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -54,11 +55,11 @@ public class ShootCommand extends Command {
     // shoot.setHoodPosition(SmartDashboard.getNumber("Set Hood Pos", 0.1));
     shoot.setShooterRPM(polar.getShootVelocity());
     shoot.setHoodPosition(polar.getHoodPosition());
-    if (Timer.getFPGATimestamp() > uptime + 0.3) {
-      // shoot.setFeederRPS(SmartDashboard.getNumber("Set Feed V", 60));
+    if (Timer.getFPGATimestamp() > uptime + 0.2) {
+      // shoot.setFeederRPS(SmartDashboard.getNumber("Set Feed V", 83));
       shoot.startFeeder();
     }
-    if (Timer.getFPGATimestamp() > uptime + 0.4) {
+    if (Timer.getFPGATimestamp() > uptime + 0.3) {
       // shoot.setConveyorRPM(SmartDashboard.getNumber("Set Convey V", 1000));
       shoot.startConveyor();
     }
@@ -66,12 +67,12 @@ public class ShootCommand extends Command {
     if (intake.getIntakeV() < 20)
       intake.setIntakeRPS(20);
 
-    double cur = Timer.getFPGATimestamp();
-    if (cur - bumpTimer < 0.3) {
+    if (Timer.getFPGATimestamp() > bumpTimer + 0.6) {
       intake.setHopper(0.18);
-    } else if (cur - bumpTimer < 0.6) {
-      //intake.setHopper(-0.18);
-    } else {
+    }
+
+    if (Timer.getFPGATimestamp() > bumpTimer + 2.0) {
+      intake.setHopper(-0.18);
       bumpTimer = Timer.getFPGATimestamp();
     }
 
@@ -86,6 +87,9 @@ public class ShootCommand extends Command {
     shoot.stopShooter();
     intake.stopHopper();
     intake.stopIntake();
+
+    CommandScheduler.getInstance().schedule(new EjectHopperCommand(intake));
+
     System.out.println("End Shoot Command: " + interrupted);
 
   }
