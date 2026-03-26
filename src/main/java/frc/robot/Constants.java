@@ -142,7 +142,7 @@ public final class Constants {
         public static final double kHoodV = 0.0;
         public static final double kHoodA = 0.0;
 
-        // Feed PID TODO tune feeder
+        // Feed PID
         public static final double kFeedP = 0.0005;
         public static final double kFeedI = 0.0;
         public static final double kFeedD = 0.0;
@@ -251,7 +251,7 @@ public final class Constants {
             CONVEYOR_MOTOR_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
             CONVEYOR_MOTOR_CONFIG.closedLoop.outputRange(0, 1);
             CONVEYOR_MOTOR_CONFIG.closedLoop.pid(kConveyorP, kConveyorI, kConveyorD);
-            CONVEYOR_MOTOR_CONFIG.closedLoop.feedForward.sva(kShooterS, kConveyorV, kConveyorA);
+            CONVEYOR_MOTOR_CONFIG.closedLoop.feedForward.sva(kConveyorS, kConveyorV, kConveyorA);
         }
 
     }
