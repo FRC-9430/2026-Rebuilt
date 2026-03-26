@@ -90,7 +90,7 @@ public final class Constants {
 
         /* Setting up bindings for necessary control of the swerve drive platform */
         public static final SwerveRequest.FieldCentric slow = new SwerveRequest.FieldCentric()
-                .withDeadband((MaxSpeed/3.0) * 0.08).withRotationalDeadband((MaxAngularRate/3.0) * 0.08) // Add a 8% deadband
+                .withDeadband((MaxSpeed/3.0) * 0.08).withRotationalDeadband((MaxAngularRate) * 0.08) // Add a 8% deadband
                 .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
         public static final SwerveRequest.ApplyRobotSpeeds aim = new SwerveRequest.ApplyRobotSpeeds();
