@@ -24,6 +24,7 @@ import frc.robot.commands.EjectHopperCommand;
 import frc.robot.commands.RetractHopperCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.commands.ShootTouchingHubCommand;
+import frc.robot.commands.VolleyShootCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.ElasticDashboard;
@@ -59,6 +60,7 @@ public class RobotContainer {
 
     public AimAndShootCommand aimAndShootCommand = new AimAndShootCommand(drivetrain, shooter, intake, polar);
     public ShootCommand shootCommand = new ShootCommand(shooter, polar, intake);
+    public VolleyShootCommand volleyCommand = new VolleyShootCommand(shooter, polar, intake);
 
     /**
      * Construct and configure the robot: set up the drivetrain, dashboard,
@@ -155,8 +157,19 @@ public class RobotContainer {
         }));
 
         // Shoot
-        controller.leftTrigger(0.05).onTrue(shootCommand)
-                .onFalse(new InstantCommand(() -> shootCommand.cancel()));
+        
+        // controller.leftTrigger(0.05).onTrue((polar.targetIsHub()? shootCommand : volleyCommand))
+        //         .onFalse(new InstantCommand(() -> shootCommand.cancel()));
+
+        controller.leftTrigger(0.05).onTrue(new InstantCommand(()->{
+            if (polar.targetIsHub()) {
+                CommandScheduler.getInstance().schedule(shootCommand);
+            } else {
+                CommandScheduler.getInstance().schedule(volleyCommand);
+            }
+        })).onFalse(new InstantCommand(()->{
+            CommandScheduler.getInstance().cancel(shootCommand, volleyCommand);
+        }));
 
         // Intake
         controller.rightTrigger(0.05).whileTrue(new RepeatCommand(new InstantCommand(() -> {
