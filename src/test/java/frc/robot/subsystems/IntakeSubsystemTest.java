@@ -1,25 +1,34 @@
 package frc.robot.subsystems;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+import com.ctre.phoenix6.sim.TalonFXSimState;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.StatusCode;
 import com.revrobotics.sim.SparkFlexSim;
 import com.revrobotics.sim.SparkRelativeEncoderSim;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkBase.ControlType;
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
 import java.lang.reflect.Field;
 
 import edu.wpi.first.hal.HAL;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.SimHooks;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static frc.robot.Constants.IntakeConstants.*;
@@ -27,9 +36,8 @@ import static frc.robot.Constants.IntakeConstants.*;
 class IntakeSubsystemTest {
     IntakeSubsystem subsystem;
 
-    private SparkFlexSim m_intakeSim;
-    private SparkFlexSim m_basketSim;
-    private SparkRelativeEncoderSim m_intakeEncoderSim;
+    private TalonFXSimState m_intakeSim;
+    private TalonFXSimState m_intakeEncoderSim;
 
     private static final double TOLERANCE = 0.01;
     private static final double TEST_RPM = 1500.0;
@@ -40,9 +48,8 @@ class IntakeSubsystemTest {
         assertTrue(HAL.initialize(500, 0));
         subsystem = new IntakeSubsystem();
 
-        m_intakeSim = new SparkFlexSim(subsystem.m_intakeMotor, null);
-        m_basketSim = new SparkFlexSim(subsystem.m_hopperMotor, null);
-        m_intakeEncoderSim = new SparkRelativeEncoderSim(subsystem.m_intakeMotor);
+        m_intakeSim = new TalonFXSimState(subsystem.m_intakeMotor, null);
+        m_intakeEncoderSim = new TalonFXSimState(subsystem.m_intakeMotor);
     }
 
     @AfterEach
@@ -52,8 +59,6 @@ class IntakeSubsystemTest {
             subsystem.close();
         }
         subsystem = null;
-        m_intakeSim = null;
-        m_basketSim = null;
         m_intakeEncoderSim = null;
     }
 
@@ -67,13 +72,30 @@ class IntakeSubsystemTest {
         assertNotNull(subsystem.m_hopperMotor);
     }
 
+    /**
+     * GIVEN IntakeSubsystem
+     * WHEN setIntakeRPS is called with a specific speed
+     * THEN the intake motor should be commanded to that velocity using VelocityVoltage control
+     */
     @Test
-    void testSetIntakeOpenLoop() {
-        double speed = 0.5;
-        subsystem.setIntake(speed);
-        step();
+    void testSetIntakeRPSUpdatesSetpoint() throws NoSuchFieldException, IllegalAccessException {
+        // Replace the real TalonFX with a mock for verification
+        TalonFX mockIntakeMotor = mock(TalonFX.class);
+        Field intakeMotorField = IntakeSubsystem.class.getDeclaredField("m_intakeMotor");
+        intakeMotorField.setAccessible(true);
+        intakeMotorField.set(subsystem, mockIntakeMotor);
 
-        assertEquals(speed, subsystem.m_intakeMotor.get(), TOLERANCE);
+        // Mock the configurator for the mockIntakeMotor
+        when(mockIntakeMotor.getConfigurator()).thenReturn(mock(TalonFXConfigurator.class));
+        when(mockIntakeMotor.getConfigurator().apply(any(TalonFXConfiguration.class))).thenReturn(StatusCode.OK);
+
+        double targetRPS = TEST_RPM;
+        subsystem.setIntakeRPS(targetRPS);
+
+        // Capture the VelocityVoltage control request passed to setControl
+        ArgumentCaptor<VelocityVoltage> velocityCaptor = ArgumentCaptor.forClass(VelocityVoltage.class);
+        verify(mockIntakeMotor).setControl(velocityCaptor.capture());
+        assertEquals(targetRPS, velocityCaptor.getValue().Velocity, TOLERANCE);
     }
 
     /**
@@ -83,13 +105,13 @@ class IntakeSubsystemTest {
      */
     @Test
     void testStopIntake() {
-        subsystem.setIntake(0.6);
+        subsystem.setIntakeRPS(0.6);
         step();
 
         subsystem.stopIntake();
         step();
 
-        assertEquals(0.0, m_intakeSim.getAppliedOutput(), TOLERANCE);
+        assertEquals(0.0, m_intakeSim.getTorqueCurrent(), TOLERANCE);
     }
 
     /**
@@ -99,15 +121,16 @@ class IntakeSubsystemTest {
      */
     @Test
     void testStopAll() {
-        subsystem.setIntake(0.6);
+        subsystem.setIntakeRPS(0.6);
+        SparkFlexSim m_basketSim = new SparkFlexSim(subsystem.m_hopperMotor, null);
         subsystem.setHopper(0.4);
         step();
 
         subsystem.stopAll();
         step();
 
-        assertEquals(0.0, m_intakeSim.getAppliedOutput(), TOLERANCE);
-        assertEquals(0.0, m_basketSim.getAppliedOutput(), TOLERANCE);
+        assertEquals(0.0, m_intakeSim.getSupplyCurrent(), TOLERANCE);
+        assertEquals(0.0, m_basketSim.getAppliedOutput(), TOLERANCE); // Now m_basketSim is initialized correctly
     }
 
     /**
@@ -142,34 +165,33 @@ class IntakeSubsystemTest {
 
     /**
      * GIVEN IntakeSubsystem
-     * WHEN setIntake is called with a specific speed
+     * WHEN setIntakeRPS is called with a specific speed
      * THEN the intake motor should be set to that speed
      */
     @Test
-    void testSetIntakeRPMUpdatesController() {
-        SparkClosedLoopController intakeController = subsystem.m_intakeController;
+    void testStartIntakeUsesDefaultSpeed() throws NoSuchFieldException, IllegalAccessException {
+        // Replace the real TalonFX with a mock for verification
+        TalonFX mockIntakeMotor = mock(TalonFX.class);
+        Field intakeMotorField = IntakeSubsystem.class.getDeclaredField("m_intakeMotor");
+        intakeMotorField.setAccessible(true);
+        intakeMotorField.set(subsystem, mockIntakeMotor);
 
-        subsystem.setIntakeRPS(TEST_RPM);
-        step();
+        // Mock the configurator for the mockIntakeMotor
+        when(mockIntakeMotor.getConfigurator()).thenReturn(mock(TalonFXConfigurator.class));
+        when(mockIntakeMotor.getConfigurator().apply(any(TalonFXConfiguration.class))).thenReturn(StatusCode.OK);
 
-        assertEquals(ControlType.kVelocity, intakeController.getControlType());
-        assertEquals(TEST_RPM, intakeController.getSetpoint(), TOLERANCE);
-    }
+        // Mock DriverStation to simulate autonomous mode for kDefaultAutoIntakeSpeed
+        try (var mockedDS = Mockito.mockStatic(DriverStation.class)) {
+            mockedDS.when(DriverStation::isAutonomous).thenReturn(true); // Simulate autonomous
 
-    /**
-     * GIVEN IntakeSubsystem
-     * WHEN setIntake is called with no speed
-     * THEN the intake motor should be set to default speed
-     */
-    @Test
-    void testSetIntakeDefaultUsesController() {
-        SparkClosedLoopController intakeController = subsystem.m_intakeController;
+            subsystem.startIntake();
 
-        subsystem.startIntake();
-        step();
+            // Capture the VelocityVoltage control request passed to setControl
+            ArgumentCaptor<VelocityVoltage> velocityCaptor = ArgumentCaptor.forClass(VelocityVoltage.class);
+            verify(mockIntakeMotor).setControl(velocityCaptor.capture());
 
-        assertEquals(ControlType.kVelocity, intakeController.getControlType());
-        assertEquals(kDefaultAutoIntakeSpeed, intakeController.getSetpoint(), TOLERANCE);
+            assertEquals(kDefaultAutoIntakeSpeed, velocityCaptor.getValue().Velocity, TOLERANCE);
+        }
     }
 
     /**
@@ -178,8 +200,18 @@ class IntakeSubsystemTest {
      * THEN the intake velocity should be published to SmartDashboard
      */
     @Test
-    void testPeriodic() {
+    void testPeriodic() throws NoSuchFieldException, IllegalAccessException {
+        // Mock the intake motor to control its velocity for testing SmartDashboard output
+        TalonFX mockIntakeMotor = mock(TalonFX.class);
+        Field intakeMotorField = IntakeSubsystem.class.getDeclaredField("m_intakeMotor");
+        intakeMotorField.setAccessible(true);
+        intakeMotorField.set(subsystem, mockIntakeMotor);
+
+        // Mock the getVelocity().getValueAsDouble() call
+        when(mockIntakeMotor.getVelocity()).thenReturn(mock(StatusSignal.class));
+        when(mockIntakeMotor.getVelocity().getValueAsDouble()).thenReturn(123.45);
+
         subsystem.periodic();
-        assertEquals(0.0, SmartDashboard.getNumber("Intake V", 999));
+        assertEquals(123.45, SmartDashboard.getNumber("Intake V", 999), TOLERANCE);
     }
 }
