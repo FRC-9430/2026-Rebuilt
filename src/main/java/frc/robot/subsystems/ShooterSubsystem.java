@@ -178,7 +178,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
     }
 
     /**
-     * 
+     *
      *
      * @param RPM motor velocity
      */
@@ -282,6 +282,16 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
     }
 
     /**
+     * Get right bottom shooter motor with auxillary shooter configurations
+     *
+     * @author Brady Bontrager, bbontrager
+     *         * @return SparkFlex Returns right bottom shooter motor in Shooter subsystem
+     */
+    public SparkFlex getRightBottomShooterMotor() {
+        return this.m_RightBottomShooterMotor;
+    }
+
+    /**
      * Get secondary shooter motor with auxillary shooter configurations
      * There are two secondary motors, and a parameter is required.
      *
@@ -312,41 +322,30 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
         }
     }
 
-    // /**
-    // * Get hood motor from shooter subsystem
-    // *
-    // * @author Brady Bontrager, bbontrager
-    // * * @return SparkFlex hood motor from shooter subsystem.
-    // */
-    // public SparkFlex getHoodMotor() {
-    // return this.m_hoodMotor;
-    // }
+    /**
+     * Get hood motor from shooter subsystem
+     *
+     * @author Brady Bontrager, bbontrager
+     *         * @return TalonFX hood motor from shooter subsystem.
+     */
+    public TalonFX getHoodMotor() {
+        return this.m_hoodMotor;
+    }
 
-    // /**
-    // * Get feed motor from shooter subsystem
-    // *
-    // * @author Brady Bontrager, bbontrager
-    // * * @return SparkFlex feed motor from shooter subsystem.
-    // */
-    // public SparkFlex getMainFeedMotor() {
-    // return this.m_rightFeedMotor;
-    // }
+    /**
+     * Get feed motor from shooter subsystem
+     *
+     * @author Brady Bontrager, bbontrager
+     *         * @return TalonFX feed motor from shooter subsystem.
+     */
+    public TalonFX getMainFeedMotor() {
+        return this.m_rightFeedMotor;
+    }
 
     public SparkClosedLoopController getShooterPID(String pidController) {
-        // if (pidController.equals("shoot")) {
-        // return m_shooterController;
-        // }
-        // // if (pidController.equals("feed")) {
-        // // return m_feedController;
-        // }
-        // // if (pidController.equals("hood")) {
-        // // return m_hoodController;
-        // // }
-        // Exception e = new java.lang.IllegalArgumentException("Illegal argument in
-        // getShooterPID()");
-        // System.err.println(e.getMessage());
-        // System.err.println(e.getStackTrace());
-        // System.err.println("Using null instead");
+        if (pidController.equals("shoot")) {
+            return m_shooterController;
+        }
         return null;
     }
 
