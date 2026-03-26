@@ -1,6 +1,6 @@
 ## 2026-Rebuilt
 
-CTEC Robotics Program code for 2026 — v1.2.0
+CTEC Robotics Program code for 2026 — v1.1.0
 
 ### Overview
 The 2026 robot features a rear intake, a mid-robot hopper/conveyor, and a front shooter with an articulating hood. Shooting is automated based on robot pose (polar targeting) and uses multiple Limelights for pose estimation.
