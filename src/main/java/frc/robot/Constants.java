@@ -165,6 +165,7 @@ public final class Constants {
         public static final double kDefaultConveyorSpeed = 1000;
 
         public static final double kHoodStowedPosition = 0.1;
+        public static final double kHoodVollyPosition = 0.3;
 
         public static final double kDefaultFeederSpeed = 75;
 
