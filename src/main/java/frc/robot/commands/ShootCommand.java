@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Timer;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PolarSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -53,8 +54,8 @@ public class ShootCommand extends Command {
   public void execute() {
     // shoot.setShooterRPM(SmartDashboard.getNumber("Set Shoot V", 4000));
     // shoot.setHoodPosition(SmartDashboard.getNumber("Set Hood Pos", 0.1));
-    shoot.setShooterRPM(polar.getShootVelocity());
-    shoot.setHoodPosition(polar.getHoodPosition());
+    shoot.setShooterRPM(polar.targetIsHub() ? polar.getShootVelocity() : 260 * polar.getRadius() + 2420);
+    shoot.setHoodPosition(polar.targetIsHub() ? polar.getHoodPosition() : ShooterConstants.kHoodVollyPosition);
     if (Timer.getFPGATimestamp() > uptime + 0.2) {
       // shoot.setFeederRPS(SmartDashboard.getNumber("Set Feed V", 83));
       shoot.startFeeder();
