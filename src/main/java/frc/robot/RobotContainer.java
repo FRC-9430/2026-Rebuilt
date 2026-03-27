@@ -167,7 +167,7 @@ public class RobotContainer {
             if (polar.targetIsHub()) {
                 CommandScheduler.getInstance().schedule(shootCommand);
             } else {
-                CommandScheduler.getInstance().schedule(volleyCommand);
+                CommandScheduler.getInstance().schedule(shootCommand);
             }
         })).onFalse(new InstantCommand(()->{
             CommandScheduler.getInstance().cancel(shootCommand, volleyCommand);
