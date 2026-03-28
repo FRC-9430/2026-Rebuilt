@@ -27,7 +27,7 @@ public class EjectHopperCommand extends Command {
   public void initialize() {
     startTime = Timer.getFPGATimestamp();
 
-    intake.setHopper(-0.4);
+    intake.setHopper(-0.45);
     intake.setIntakeRPS(10);
     
   }
