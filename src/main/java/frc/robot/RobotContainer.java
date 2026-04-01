@@ -122,7 +122,7 @@ public class RobotContainer {
                                 (Math.abs(controller.getLeftX()) > 0.06 ? controller.getLeftX() : 0.0)
                                         / (shootCommand.isScheduled() && polar.targetIsHub() ? 10.0 : 1.0),
                                 MaxSpeed, MaxAngularRate,
-                                (shootCommand.isScheduled()))), // Lead only when shooting
+                                (false))), // Lead only when shooting
                         () -> isCartesian()));
 
         // Idle while the robot is disabled. This ensures the configured
