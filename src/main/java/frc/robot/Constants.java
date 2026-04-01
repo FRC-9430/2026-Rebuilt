@@ -303,7 +303,6 @@ public final class Constants {
     */
     public static final class ClimberArmConstants {
 
-        // TODO: Tune Values
         public static final double kLeftP = 0.0001;
         public static final double kLeftI = 0;
         public static final double kLeftD = 0;
@@ -318,7 +317,6 @@ public final class Constants {
         public static final double kRightV = 0.001692;
         public static final double kRightA = 0;
 
-        public static final double kMaxSpeed = 0.0; // TODO calibrate
         public static final double kTargetRPM = 700.0;
 
         public static final SparkFlexConfig LEFT_MOTOR_CONFIG = new SparkFlexConfig();
