@@ -56,11 +56,11 @@ public class ShootCommand extends Command {
     // shoot.setHoodPosition(SmartDashboard.getNumber("Set Hood Pos", 0.1));
     shoot.setShooterRPM(polar.targetIsHub() ? polar.getShootVelocity() : 260 * polar.getRadius() + 2420);
     shoot.setHoodPosition(polar.targetIsHub() ? polar.getHoodPosition() : ShooterConstants.kHoodVollyPosition);
-    if (Timer.getFPGATimestamp() > uptime + 0.2) {
+    if (Timer.getFPGATimestamp() > uptime + 0.4) {
       // shoot.setFeederRPS(SmartDashboard.getNumber("Set Feed V", 83));
       shoot.startFeeder();
     }
-    if (Timer.getFPGATimestamp() > uptime + 0.3) {
+    if (Timer.getFPGATimestamp() > uptime + 0.6) {
       // shoot.setConveyorRPM(SmartDashboard.getNumber("Set Convey V", 1000));
       shoot.startConveyor();
     }
