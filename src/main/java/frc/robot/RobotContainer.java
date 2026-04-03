@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.revrobotics.util.StatusLogger;
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.util.TunerConstants;
 // import frc.robot.Constants.ClimberArmConstants;
 // import frc.robot.subsystems.ClimbingArmSubsystem;
@@ -133,10 +135,10 @@ public class RobotContainer {
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        // controller.back().and(controller.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        // controller.back().and(controller.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        // controller.start().and(controller.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        // controller.start().and(controller.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        controller.back().and(controller.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        controller.back().and(controller.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        controller.start().and(controller.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        controller.start().and(controller.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading
         controller.povDown().onTrue(new InstantCommand(() -> {
@@ -181,23 +183,27 @@ public class RobotContainer {
         }));
 
         // Climber
-        controller.x().onTrue(new InstantCommand(() -> {
-            CommandScheduler.getInstance().schedule(shootTouchingHubCommand);
-        })).onFalse(new InstantCommand(() -> {
-            CommandScheduler.getInstance().cancel(shootTouchingHubCommand);
-        }));
+        // controller.x().onTrue(new InstantCommand(() -> {
+        //     CommandScheduler.getInstance().schedule(shootTouchingHubCommand);
+        // })).onFalse(new InstantCommand(() -> {
+        //     CommandScheduler.getInstance().cancel(shootTouchingHubCommand);
+        // }));
 
-        controller.y().whileTrue(new RepeatCommand(new InstantCommand(() -> {
-            CommandScheduler.getInstance().cancelAll();
-        }))).onFalse(new InstantCommand(() -> {
-        }));
+        // controller.y().whileTrue(new RepeatCommand(new InstantCommand(() -> {
+        //     CommandScheduler.getInstance().cancelAll();
+        // }))).onFalse(new InstantCommand(() -> {
+        // }));
 
-        SmartDashboard.putNumber("Set Shoot V", 4000);
         // Force Stow Hood
         controller.a().onTrue(new InstantCommand(() -> {
-            shooter.setShooterRPM(SmartDashboard.getNumber("Set Shoot V", 4000));
+            SignalLogger.start();
         })).onFalse(new InstantCommand(() -> {
-            shooter.stopShooter();
+            
+        }));
+        controller.b().onTrue(new InstantCommand(() -> {
+            SignalLogger.stop();
+        })).onFalse(new InstantCommand(() -> {
+            
         }));
 
         // controller.x()
@@ -207,10 +213,10 @@ public class RobotContainer {
         // controller.y().onTrue(new InstantCommand(() -> CommandScheduler.getInstance().cancelAll()));
 
         // Eject Hopper
-        controller.start().onTrue(new EjectHopperCommand(intake));
+        // controller.start().onTrue(new EjectHopperCommand(intake));
 
-        // Retract Hopper
-        controller.back().onTrue(new RetractHopperCommand(intake));
+        // // Retract Hopper
+        // controller.back().onTrue(new RetractHopperCommand(intake));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
