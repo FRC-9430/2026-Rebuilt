@@ -59,7 +59,7 @@ public final class Constants {
         public static final int RIGHT_TOP_SHOOT_MOTOR_CAN_ID = 43;
         public static final int RIGHT_BOTTOM_SHOOT_MOTOR_CAN_ID = 44;
         public static final int LEFT_TOP_SHOOT_MOTOR_CAN_ID = 45;
-        public static final int LEFT_BOTTOM_SHOOT_MOTOR_CAN_ID = 46;
+        // public static final int LEFT_BOTTOM_SHOOT_MOTOR_CAN_ID = 46;
 
         public static final int CONVEYOR_MOTOR_CAN_ID = 26;
 
@@ -81,7 +81,7 @@ public final class Constants {
         public static final double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
 
         // 3/4 of a rotation per second max angular velocity
-        public static final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+        public static final double MaxAngularRate = RotationsPerSecond.of(1).in(RadiansPerSecond);
 
         /* Setting up bindings for necessary control of the swerve drive platform */
         public static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -127,12 +127,12 @@ public final class Constants {
 
     public static final class ShooterConstants {
         // Shooter PID
-        public static final double kShooterP = 0.0001;
+        public static final double kShooterP = 0.00025;
         public static final double kShooterI = 0.0;
-        public static final double kShooterD = 0.0;
-        public static final double kShooterS = 0.0;
-        public static final double kShooterV = 0.001888;
-        public static final double kShooterA = 0.0;
+        public static final double kShooterD = 0.0001;
+        public static final double kShooterS = 0.2;
+        public static final double kShooterV = 0.001769;
+        public static final double kShooterA = 0.2;
 
         // Hood PID
         public static final double kHoodP = 25.8;
@@ -178,26 +178,26 @@ public final class Constants {
         public static final SparkFlexConfig MAIN_SHOOTER_MOTOR_CONFIG = new SparkFlexConfig();
         static {
             MAIN_SHOOTER_MOTOR_CONFIG.idleMode(IdleMode.kCoast);
-            MAIN_SHOOTER_MOTOR_CONFIG.inverted(false);
+            MAIN_SHOOTER_MOTOR_CONFIG.inverted(true);
             MAIN_SHOOTER_MOTOR_CONFIG.closedLoop.pid(kShooterP, kShooterI, kShooterD);
             MAIN_SHOOTER_MOTOR_CONFIG.closedLoop.outputRange(0, 1); // No moving backwards
             MAIN_SHOOTER_MOTOR_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
             MAIN_SHOOTER_MOTOR_CONFIG.closedLoop.feedForward.sva(kShooterS, kShooterV, kShooterA);
-            MAIN_SHOOTER_MOTOR_CONFIG.smartCurrentLimit(60);
+            MAIN_SHOOTER_MOTOR_CONFIG.smartCurrentLimit(40,20);
         }
 
-        public static final SparkFlexConfig AUX_NONINVERTED_SHOOTER_MOTOR_CONFIG = new SparkFlexConfig();
-        static {
-            AUX_NONINVERTED_SHOOTER_MOTOR_CONFIG.idleMode(IdleMode.kCoast);
-            AUX_NONINVERTED_SHOOTER_MOTOR_CONFIG.follow(CANConstants.RIGHT_TOP_SHOOT_MOTOR_CAN_ID);
-            AUX_NONINVERTED_SHOOTER_MOTOR_CONFIG.smartCurrentLimit(60);
-        }
+        // public static final SparkFlexConfig AUX_NONINVERTED_SHOOTER_MOTOR_CONFIG = new SparkFlexConfig();
+        // static {
+        //     AUX_NONINVERTED_SHOOTER_MOTOR_CONFIG.idleMode(IdleMode.kCoast);
+        //     AUX_NONINVERTED_SHOOTER_MOTOR_CONFIG.follow(CANConstants.RIGHT_TOP_SHOOT_MOTOR_CAN_ID);
+        //     AUX_NONINVERTED_SHOOTER_MOTOR_CONFIG.smartCurrentLimit(60);
+        // }
 
         public static final SparkFlexConfig AUX_INVERTED_MOTOR_SHOOTER_CONFIG = new SparkFlexConfig();
         static {
             AUX_INVERTED_MOTOR_SHOOTER_CONFIG.idleMode(IdleMode.kCoast);
-            AUX_INVERTED_MOTOR_SHOOTER_CONFIG.follow(CANConstants.RIGHT_TOP_SHOOT_MOTOR_CAN_ID, true);
-            AUX_INVERTED_MOTOR_SHOOTER_CONFIG.smartCurrentLimit(60);
+            AUX_INVERTED_MOTOR_SHOOTER_CONFIG.follow(CANConstants.LEFT_TOP_SHOOT_MOTOR_CAN_ID, true);
+            AUX_INVERTED_MOTOR_SHOOTER_CONFIG.smartCurrentLimit(40,20);
         }
 
         public static final TalonFXConfiguration HOOD_MOTOR_CONFIG = new TalonFXConfiguration();
@@ -231,6 +231,9 @@ public final class Constants {
             MAIN_FEEDER_MOTOR_CONFIG.Slot0.kV = kFeedV;
             MAIN_FEEDER_MOTOR_CONFIG.Slot0.kA = kFeedA;
             MAIN_FEEDER_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+            MAIN_FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 50;
+            MAIN_FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
+            MAIN_FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 20;
             
         }
 
@@ -242,6 +245,9 @@ public final class Constants {
             AUX_FEEDER_MOTOR_CONFIG.Slot0.kS = kFeedS;
             AUX_FEEDER_MOTOR_CONFIG.Slot0.kV = kFeedV;
             AUX_FEEDER_MOTOR_CONFIG.Slot0.kA = kFeedA;
+            AUX_FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 50;
+            AUX_FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 20;
+            AUX_FEEDER_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
         }
 
         public static final SparkFlexConfig CONVEYOR_MOTOR_CONFIG = new SparkFlexConfig();
@@ -252,6 +258,7 @@ public final class Constants {
             CONVEYOR_MOTOR_CONFIG.closedLoop.outputRange(0, 1);
             CONVEYOR_MOTOR_CONFIG.closedLoop.pid(kConveyorP, kConveyorI, kConveyorD);
             CONVEYOR_MOTOR_CONFIG.closedLoop.feedForward.sva(kConveyorS, kConveyorV, kConveyorA);
+            CONVEYOR_MOTOR_CONFIG.smartCurrentLimit(40, 20);
         }
 
     }
@@ -282,6 +289,7 @@ public final class Constants {
         static {
             HOPPER_MOTOR_CONFIG.inverted(true);
             HOPPER_MOTOR_CONFIG.idleMode(IdleMode.kBrake);
+            HOPPER_MOTOR_CONFIG.smartCurrentLimit(60);
         }
 
     }

@@ -108,9 +108,9 @@ public class RobotContainer {
                 drivetrain.applyRequestWithCondition(
                         () -> (controller.getHID().getRightBumperButton()
                                 ? slow
-                                        .withVelocityX(-controller.getLeftY() * MaxSpeed / 3.0)
-                                        .withVelocityY(-controller.getLeftX() * MaxSpeed / 3.0)
-                                        .withRotationalRate(-controller.getRightX() * MaxAngularRate / 3.0)
+                                        .withVelocityX(-controller.getLeftY() * MaxSpeed / 2.0)
+                                        .withVelocityY(-controller.getLeftX() * MaxSpeed / 2.0)
+                                        .withRotationalRate(-controller.getRightX() * MaxAngularRate / 1.5)
                                 : drive
                                         .withVelocityX(-controller.getLeftY() * MaxSpeed)
                                         .withVelocityY(-controller.getLeftX() * MaxSpeed)
@@ -192,11 +192,12 @@ public class RobotContainer {
         }))).onFalse(new InstantCommand(() -> {
         }));
 
+        SmartDashboard.putNumber("Set Shoot V", 4000);
         // Force Stow Hood
         controller.a().onTrue(new InstantCommand(() -> {
-            shooter.setHoodPosition(0.08);
+            shooter.setShooterRPM(SmartDashboard.getNumber("Set Shoot V", 4000));
         })).onFalse(new InstantCommand(() -> {
-            shooter.stopHood();
+            shooter.stopShooter();
         }));
 
         // controller.x()
