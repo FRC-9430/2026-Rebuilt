@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.542432915921288,
-        "y": 6.363345259391771
+        "x": 2.397232142857143,
+        "y": 6.961595982142857
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.236037288182219,
-        "y": 7.5440360915492946
+        "x": 3.008,
+        "y": 7.408076923076924
       },
       "isLocked": false,
       "linkedName": "SZL"
@@ -20,12 +20,12 @@
         "y": 7.418909413512324
       },
       "prevControl": {
-        "x": 3.8908616467191033,
-        "y": 7.440698945785277
+        "x": 3.8907890828414553,
+        "y": 7.4383205336797
       },
       "nextControl": {
-        "x": 5.975054467429578,
-        "y": 7.373437156139964
+        "x": 5.66494674556213,
+        "y": 7.38731952662722
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 4.568566103653169
       },
       "prevControl": {
-        "x": 8.834379951584507,
-        "y": 8.028512117627642
+        "x": 9.546579881656804,
+        "y": 7.470349112426035
       },
       "nextControl": null,
       "isLocked": false,
@@ -84,7 +84,7 @@
     },
     {
       "name": "Start Intake",
-      "waypointRelativePos": 1.75,
+      "waypointRelativePos": 1.466666666666665,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -110,7 +110,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -47.99034497516538
+    "rotation": -52.82371073188527
   },
   "useDefaultConstraints": true
 }
