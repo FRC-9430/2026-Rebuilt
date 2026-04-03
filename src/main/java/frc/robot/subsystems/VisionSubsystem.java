@@ -28,15 +28,15 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
 
         var state = drive.getState();
 
-        if (Math.abs(state.Speeds.omegaRadiansPerSecond) > 1.5) {
+        if (Math.abs(state.Speeds.omegaRadiansPerSecond) > 2.5) {
             return;
         }
 
-        if (Math.abs(state.Speeds.vxMetersPerSecond) > 0.5) {
+        if (Math.abs(state.Speeds.vxMetersPerSecond) > 2.5) {
             return;
         }
 
-        if (Math.abs(state.Speeds.vyMetersPerSecond) > 0.5) {
+        if (Math.abs(state.Speeds.vyMetersPerSecond) > 2.5) {
             return;
         }
 
