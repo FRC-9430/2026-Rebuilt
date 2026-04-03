@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.332255511654109,
-        "y": 7.209160997767262
+        "x": 2.236037288182219,
+        "y": 7.5440360915492946
       },
       "isLocked": false,
       "linkedName": "SZL"
@@ -36,8 +36,8 @@
         "y": 4.568566103653169
       },
       "prevControl": {
-        "x": 9.000648254740062,
-        "y": 8.285991342080658
+        "x": 8.834379951584507,
+        "y": 8.028512117627642
       },
       "nextControl": null,
       "isLocked": false,
@@ -57,7 +57,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 1.4941529088050325,
+      "minWaypointRelativePos": 1.6776729559748425,
       "maxWaypointRelativePos": 2.0,
       "constraints": {
         "maxVelocity": 1.5,
