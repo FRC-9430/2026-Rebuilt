@@ -60,6 +60,6 @@ public class AimCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (DriverStation.isAutonomous() && Timer.getFPGATimestamp() > uptime + 3.5);
+    return (DriverStation.isAutonomous() && Timer.getFPGATimestamp() > uptime + 3);
   }
 }
