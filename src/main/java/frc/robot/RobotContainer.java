@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.revrobotics.util.StatusLogger;
-import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.util.TunerConstants;
 // import frc.robot.Constants.ClimberArmConstants;
 // import frc.robot.subsystems.ClimbingArmSubsystem;
