@@ -127,9 +127,9 @@ public final class Constants {
 
     public static final class ShooterConstants {
         // Shooter PID
-        public static final double kShooterP = 0.00025;
+        public static final double kShooterP = 0.00035;
         public static final double kShooterI = 0.0;
-        public static final double kShooterD = 0.0001;
+        public static final double kShooterD = 0.016;
         public static final double kShooterS = 0.2;
         public static final double kShooterV = 0.001769;
         public static final double kShooterA = 0.2;
@@ -183,7 +183,7 @@ public final class Constants {
             MAIN_SHOOTER_MOTOR_CONFIG.closedLoop.outputRange(0, 1); // No moving backwards
             MAIN_SHOOTER_MOTOR_CONFIG.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
             MAIN_SHOOTER_MOTOR_CONFIG.closedLoop.feedForward.sva(kShooterS, kShooterV, kShooterA);
-            MAIN_SHOOTER_MOTOR_CONFIG.smartCurrentLimit(40,20);
+            MAIN_SHOOTER_MOTOR_CONFIG.smartCurrentLimit(55,30);
         }
 
         // public static final SparkFlexConfig AUX_NONINVERTED_SHOOTER_MOTOR_CONFIG = new SparkFlexConfig();
@@ -197,7 +197,7 @@ public final class Constants {
         static {
             AUX_INVERTED_MOTOR_SHOOTER_CONFIG.idleMode(IdleMode.kCoast);
             AUX_INVERTED_MOTOR_SHOOTER_CONFIG.follow(CANConstants.LEFT_TOP_SHOOT_MOTOR_CAN_ID, true);
-            AUX_INVERTED_MOTOR_SHOOTER_CONFIG.smartCurrentLimit(40,20);
+            AUX_INVERTED_MOTOR_SHOOTER_CONFIG.smartCurrentLimit(55,30);
         }
 
         public static final TalonFXConfiguration HOOD_MOTOR_CONFIG = new TalonFXConfiguration();
@@ -289,7 +289,7 @@ public final class Constants {
         static {
             HOPPER_MOTOR_CONFIG.inverted(true);
             HOPPER_MOTOR_CONFIG.idleMode(IdleMode.kBrake);
-            HOPPER_MOTOR_CONFIG.smartCurrentLimit(60);
+            HOPPER_MOTOR_CONFIG.smartCurrentLimit(80);
         }
 
     }
