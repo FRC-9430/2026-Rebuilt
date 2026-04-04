@@ -24,14 +24,14 @@ public class TunerConstants {
     // The steer motor uses any SwerveModule.SteerRequestType control request with the
     // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
     private static final Slot0Configs steerGains = new Slot0Configs()
-        .withKP(100).withKI(0).withKD(0.5)
-        .withKS(0.1).withKV(1.50).withKA(0)
+        .withKP(31.741).withKI(0).withKD(1.4618)
+        .withKS(0.13533).withKV(1.5301).withKA(0.065234)
         .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
     private static final Slot0Configs driveGains = new Slot0Configs()
-        .withKP(0.1).withKI(0).withKD(0)
-        .withKS(0).withKV(0.124);
+        .withKP(0.029968).withKI(0).withKD(0)
+        .withKS(0.2428).withKV(0.11949);
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
@@ -55,7 +55,12 @@ public class TunerConstants {
 
     // Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
     // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
-    private static final TalonFXConfiguration driveInitialConfigs = new TalonFXConfiguration();
+    private static final TalonFXConfiguration driveInitialConfigs = new TalonFXConfiguration()
+        .withCurrentLimits(
+            new CurrentLimitsConfigs()
+                .withSupplyCurrentLimit(Amps.of(40))
+                .withSupplyCurrentLowerLimit(Amps.of(20))
+        );
     private static final TalonFXConfiguration steerInitialConfigs = new TalonFXConfiguration()
         .withCurrentLimits(
             new CurrentLimitsConfigs()
@@ -172,43 +177,46 @@ public class TunerConstants {
             .createModuleConstants(
             kFrontLeftSteerMotorId, kFrontLeftDriveMotorId, kFrontLeftEncoderId, kFrontLeftEncoderOffset,
                     kFrontLeftXPos, kFrontLeftYPos, kInvertLeftSide, kFrontLeftSteerMotorInverted,
-                    kFrontLeftEncoderInverted)
-            .withDriveMotorGains(new Slot0Configs()
-                    .withKP(0.14373).withKI(0).withKD(0)
-                    .withKS(0.24242).withKV(0.12226).withKA(0.00478))
-            .withSteerMotorGains(new Slot0Configs()
-                    .withKP(36.412).withKI(0).withKD(1.4307)
-                    .withKS(0.4151).withKV(1.2259).withKA(0.044992));
+                    kFrontLeftEncoderInverted);
+            // .withDriveMotorGains(new Slot0Configs()
+            //         .withKP(0.16261).withKI(0).withKD(0)
+            //         .withKS(0.21293).withKV(0.12159).withKA(0.010443))
+            // .withSteerMotorGains(new Slot0Configs()
+            //         .withKP(27.358).withKI(0).withKD(0.83281)
+            //         .withKS(0.4675).withKV(1.2674).withKA(0.032207));
     public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> FrontRight = ConstantCreator
             .createModuleConstants(
             kFrontRightSteerMotorId, kFrontRightDriveMotorId, kFrontRightEncoderId, kFrontRightEncoderOffset,
                     kFrontRightXPos, kFrontRightYPos, kInvertRightSide, kFrontRightSteerMotorInverted,
-                    kFrontRightEncoderInverted)
-            .withDriveMotorGains(new Slot0Configs()
-                    .withKP(0.12141).withKI(0).withKD(0)
-                    .withKS(0.23505).withKV(0.12153).withKA(0.0037582));
+                    kFrontRightEncoderInverted);
+            // .withDriveMotorGains(new Slot0Configs()
+            //         .withKP(0.16261).withKI(0).withKD(0)
+            //         .withKS(0.21293).withKV(0.12159).withKA(0.010443))
+            // .withSteerMotorGains(new Slot0Configs()
+            //         .withKP(37.623).withKI(0).withKD(1.4857)
+            //         .withKS(0.35128).withKV(1.2653).withKA(0.045541));
     public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> BackLeft = ConstantCreator
             .createModuleConstants(
             kBackLeftSteerMotorId, kBackLeftDriveMotorId, kBackLeftEncoderId, kBackLeftEncoderOffset,
                     kBackLeftXPos, kBackLeftYPos, kInvertLeftSide, kBackLeftSteerMotorInverted,
-                    kBackLeftEncoderInverted)
-            .withDriveMotorGains(new Slot0Configs()
-                    .withKP(0.16857).withKI(0).withKD(0)
-                    .withKS(0.19497).withKV(0.12222).withKA(0.010322))
-            .withSteerMotorGains(new Slot0Configs()
-                    .withKP(37.694).withKI(0).withKD(1.6233)
-                    .withKS(0.42378).withKV(1.2602).withKA(0.013098));
+                    kBackLeftEncoderInverted);
+            // .withDriveMotorGains(new Slot0Configs()
+            //         .withKP(0.05289).withKI(0).withKD(0)
+            //         .withKS(0.23148).withKV(0.12348).withKA(0.0040269))
+            // .withSteerMotorGains(new Slot0Configs()
+            //         .withKP(26.96).withKI(0).withKD(0.65685)
+            //         .withKS(0.43663).withKV(1.164).withKA(0.022546));
     public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> BackRight = ConstantCreator
             .createModuleConstants(
             kBackRightSteerMotorId, kBackRightDriveMotorId, kBackRightEncoderId, kBackRightEncoderOffset,
                     kBackRightXPos, kBackRightYPos, kInvertRightSide, kBackRightSteerMotorInverted,
-                    kBackRightEncoderInverted)
-            .withDriveMotorGains(new Slot0Configs()
-                    .withKP(0.15844).withKI(0).withKD(0)
-                    .withKS(0.14611).withKV(0.1238).withKA(0.01736))
-            .withSteerMotorGains(new Slot0Configs()
-                    .withKP(45.885).withKI(0).withKD(2.5188)
-                    .withKS(0.44995).withKV(1.1525).withKA(0.091446));
+                    kBackRightEncoderInverted);
+            // .withDriveMotorGains(new Slot0Configs()
+            //         .withKP(0.17347).withKI(0).withKD(0)
+            //         .withKS(0.18765).withKV(0.12377).withKA(0.013827))
+            // .withSteerMotorGains(new Slot0Configs()
+            //         .withKP(31.304).withKI(0).withKD(0.94197)
+            //         .withKS(0.46678).withKV(1.0092).withKA(0.027349));
 
     /**
      * Creates a CommandSwerveDrivetrain instance.
