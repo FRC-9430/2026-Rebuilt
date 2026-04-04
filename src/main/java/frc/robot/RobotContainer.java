@@ -85,27 +85,6 @@ public class RobotContainer {
      */
     private void configureBindings() {
 
-        // drivetrain.setDefaultCommand(
-        // drivetrain.applyRequestWithCondition(
-        // () -> drive.withVelocityX((!controller.getHID().getRightBumperButton()
-        // ? -controller.getLeftY()
-        // : -controller.getLeftY() / 3) * MaxSpeed)
-        // .withVelocityY((!controller.getHID().getRightBumperButton()
-        // ? -controller.getLeftX()
-        // : -controller.getLeftX() / 3) * MaxSpeed)
-        // .withRotationalRate(-controller.getRightX() * MaxAngularRate),
-        // () -> aim.withSpeeds(polar.getPolarDriveSpeeds(drivetrain.getState().Pose,
-        // (Math.abs(controller.getLeftY()) > 0.06 ? controller.getLeftY() : 0.0) //
-        // Clamp Input
-        // / (shootCommand.isScheduled() && polar.targetIsHub() ? 5.0 : 1.0), // Slow
-        // When
-        // // Shooting
-        // (Math.abs(controller.getLeftX()) > 0.06 ? controller.getLeftX() : 0.0)
-        // / (shootCommand.isScheduled() && polar.targetIsHub() ? 10.0 : 1.0),
-        // MaxSpeed, MaxAngularRate,
-        // (shootCommand.isScheduled()))), // Lead only when shooting
-        // () -> isCartesian()));
-
         drivetrain.setDefaultCommand(
                 drivetrain.applyRequestWithCondition(
                         () -> (controller.getHID().getRightBumperButton()
@@ -135,10 +114,10 @@ public class RobotContainer {
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        controller.back().and(controller.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        controller.back().and(controller.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        controller.start().and(controller.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        controller.start().and(controller.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // controller.back().and(controller.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        // controller.back().and(controller.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        // controller.start().and(controller.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        // controller.start().and(controller.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading
         controller.povDown().onTrue(new InstantCommand(() -> {
@@ -194,17 +173,16 @@ public class RobotContainer {
         // }))).onFalse(new InstantCommand(() -> {
         // }));
 
-        // Force Stow Hood
-        controller.a().onTrue(new InstantCommand(() -> {
-            SignalLogger.start();
-        })).onFalse(new InstantCommand(() -> {
+        // controller.a().onTrue(new InstantCommand(() -> {
+        //     SignalLogger.start();
+        // })).onFalse(new InstantCommand(() -> {
             
-        }));
-        controller.b().onTrue(new InstantCommand(() -> {
-            SignalLogger.stop();
-        })).onFalse(new InstantCommand(() -> {
+        // }));
+        // controller.b().onTrue(new InstantCommand(() -> {
+        //     SignalLogger.stop();
+        // })).onFalse(new InstantCommand(() -> {
             
-        }));
+        // }));
 
         // controller.x()
         //         .onTrue(new ShootTouchingHubCommand(shooter, intake))
@@ -213,10 +191,10 @@ public class RobotContainer {
         // controller.y().onTrue(new InstantCommand(() -> CommandScheduler.getInstance().cancelAll()));
 
         // Eject Hopper
-        // controller.start().onTrue(new EjectHopperCommand(intake));
+        controller.start().onTrue(new EjectHopperCommand(intake));
 
         // // Retract Hopper
-        // controller.back().onTrue(new RetractHopperCommand(intake));
+        controller.back().onTrue(new RetractHopperCommand(intake));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
