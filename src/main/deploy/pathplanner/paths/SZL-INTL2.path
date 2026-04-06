@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.397232142857143,
-        "y": 6.961595982142857
+        "x": 2.3315026833631483,
+        "y": 6.622951699463328
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.008,
-        "y": 7.408076923076924
+        "x": 2.493756708407871,
+        "y": 7.304418604651163
       },
       "isLocked": false,
       "linkedName": "SZL"
@@ -166,7 +166,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -52.82371073188527
+    "rotation": -48.61188500922298
   },
   "useDefaultConstraints": true
 }
