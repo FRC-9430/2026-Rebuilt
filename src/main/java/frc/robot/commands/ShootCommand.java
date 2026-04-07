@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.security.cert.PolicyNode;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -65,16 +67,20 @@ public class ShootCommand extends Command {
       shoot.startConveyor();
     }
 
-    if (intake.getIntakeV() < 20)
-      intake.setIntakeRPS(20);
+    if (polar.targetIsHub()) {
 
-    if (Timer.getFPGATimestamp() > bumpTimer + 0.6) {
-      intake.setHopper(0.18);
-    }
+      if (intake.getIntakeV() < 20)
+        intake.setIntakeRPS(20);
 
-    if (Timer.getFPGATimestamp() > bumpTimer + 2.0) {
-      intake.setHopper(-0.18);
-      bumpTimer = Timer.getFPGATimestamp();
+      if (Timer.getFPGATimestamp() > bumpTimer + 0.6) {
+        intake.setHopper(0.18);
+      }
+
+      if (Timer.getFPGATimestamp() > bumpTimer + 2.0) {
+        intake.setHopper(-0.18);
+        bumpTimer = Timer.getFPGATimestamp();
+      }
+
     }
 
   }
@@ -86,8 +92,11 @@ public class ShootCommand extends Command {
     shoot.stopConveyor();
     shoot.stopFeeder();
     shoot.stopShooter();
-    intake.stopHopper();
-    intake.stopIntake();
+    
+    if (polar.targetIsHub()) {
+      intake.stopHopper();
+      intake.stopIntake();
+    }
 
     if (DriverStation.isTeleop()) {
       CommandScheduler.getInstance().schedule(new EjectHopperCommand(intake));
