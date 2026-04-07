@@ -1,0 +1,55 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SPL-INTL"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "INTL-SZL"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Aim & Shoot + Timeout"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SZL-INTL2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "INTL2-SZL2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Aim & Shoot + Timeout"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
