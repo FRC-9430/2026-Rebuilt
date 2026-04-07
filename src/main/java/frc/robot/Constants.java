@@ -66,6 +66,7 @@ public final class Constants {
         // Intake Subsystem Motors
         public static final int INTAKE_MOTOR_CAN_ID = 27;
         public static final int HOPPER_MOTOR_CAN_ID = 28;
+        public static final int AUX_INTAKE_MOTOR_CAN_ID = 29;
 
         // Climbing Motors
         public static final int LEFT_CLIMB_MOTOR_CAN_ID = 31;
@@ -283,6 +284,22 @@ public final class Constants {
             INTAKE_MOTOR_CONFIG.Slot0.kS = kIntakeS;
             INTAKE_MOTOR_CONFIG.Slot0.kV = kIntakeV;
             INTAKE_MOTOR_CONFIG.Slot0.kA = kIntakeA;
+            INTAKE_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 60;
+            INTAKE_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 20;
+            INTAKE_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
+        }
+
+        public static final TalonFXConfiguration AUX_INTAKE_MOTOR_CONFIG = new TalonFXConfiguration();
+        static {
+            AUX_INTAKE_MOTOR_CONFIG.Slot0.kP = kIntakeP;
+            AUX_INTAKE_MOTOR_CONFIG.Slot0.kI = kIntakeI;
+            AUX_INTAKE_MOTOR_CONFIG.Slot0.kD = kIntakeD;
+            AUX_INTAKE_MOTOR_CONFIG.Slot0.kS = kIntakeS;
+            AUX_INTAKE_MOTOR_CONFIG.Slot0.kV = kIntakeV;
+            AUX_INTAKE_MOTOR_CONFIG.Slot0.kA = kIntakeA;
+            AUX_INTAKE_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 60;
+            AUX_INTAKE_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 20;
+            AUX_INTAKE_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
         }
 
         public static final SparkFlexConfig HOPPER_MOTOR_CONFIG = new SparkFlexConfig();
