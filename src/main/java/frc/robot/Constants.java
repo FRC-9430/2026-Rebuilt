@@ -64,9 +64,9 @@ public final class Constants {
         public static final int CONVEYOR_MOTOR_CAN_ID = 26;
 
         // Intake Subsystem Motors
-        public static final int INTAKE_MOTOR_CAN_ID = 27;
         public static final int HOPPER_MOTOR_CAN_ID = 28;
         public static final int AUX_INTAKE_MOTOR_CAN_ID = 29;
+        public static final int INTAKE_MOTOR_CAN_ID = 30;
 
         // Climbing Motors
         public static final int LEFT_CLIMB_MOTOR_CAN_ID = 31;
