@@ -36,7 +36,7 @@
         "y": 5.633202146690519
       },
       "prevControl": {
-        "x": 3.4730362606703427,
+        "x": 3.473036260670343,
         "y": 5.612440776727085
       },
       "nextControl": {
@@ -57,7 +57,7 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "SZBL"
     }
   ],
   "rotationTargets": [
