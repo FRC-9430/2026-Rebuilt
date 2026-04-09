@@ -269,7 +269,7 @@ public final class Constants {
         public static final double kDefaultAutoIntakeSpeed = 100;
         public static final double kDefaultTeleIntakeSpeed = 83;
 
-        public static final double kIntakeP = 0.0;
+        public static final double kIntakeP = 0.0005;
         public static final double kIntakeI = 0.0;
         public static final double kIntakeD = 0.0;
         public static final double kIntakeS = 0.0;
