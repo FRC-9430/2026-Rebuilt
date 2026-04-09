@@ -33,7 +33,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
     private final SparkFlex m_RightTopShooterMotor;
     private final SparkFlex m_RightBottomShooterMotor;
     private final SparkFlex m_LeftTopShoooterMotor;
-    private final SparkFlex m_LeftBotShoooterMotor;
+    // private final SparkFlex m_LeftBotShoooterMotor;
 
     private final TalonFX m_hoodMotor;
 
@@ -61,7 +61,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
         m_RightTopShooterMotor = new SparkFlex(CANConstants.RIGHT_TOP_SHOOT_MOTOR_CAN_ID, MotorType.kBrushless);
         m_RightBottomShooterMotor = new SparkFlex(CANConstants.RIGHT_BOTTOM_SHOOT_MOTOR_CAN_ID, MotorType.kBrushless);
         m_LeftTopShoooterMotor = new SparkFlex(CANConstants.LEFT_TOP_SHOOT_MOTOR_CAN_ID, MotorType.kBrushless);
-        m_LeftBotShoooterMotor = new SparkFlex(CANConstants.LEFT_BOTTOM_SHOOT_MOTOR_CAN_ID, MotorType.kBrushless);
+        // m_LeftBotShoooterMotor = new SparkFlex(CANConstants.LEFT_BOTTOM_SHOOT_MOTOR_CAN_ID, MotorType.kBrushless);
 
         m_hoodMotor = new TalonFX(CANConstants.HOOD_MOTOR_CAN_ID);
 
@@ -70,14 +70,14 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
 
         m_conveyorMotor = new SparkFlex(CANConstants.CONVEYOR_MOTOR_CAN_ID, MotorType.kBrushless);
 
-        m_RightTopShooterMotor.configure(MAIN_SHOOTER_MOTOR_CONFIG, ResetMode.kResetSafeParameters,
+        m_RightTopShooterMotor.configure(AUX_INVERTED_MOTOR_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
-        m_RightBottomShooterMotor.configure(AUX_NONINVERTED_SHOOTER_MOTOR_CONFIG, ResetMode.kResetSafeParameters,
+        m_RightBottomShooterMotor.configure(AUX_INVERTED_MOTOR_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
-        m_LeftTopShoooterMotor.configure(AUX_INVERTED_MOTOR_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
+        m_LeftTopShoooterMotor.configure(MAIN_SHOOTER_MOTOR_CONFIG, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
-        m_LeftBotShoooterMotor.configure(AUX_INVERTED_MOTOR_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
-                PersistMode.kPersistParameters);
+        // m_LeftBotShoooterMotor.configure(AUX_INVERTED_MOTOR_SHOOTER_CONFIG, ResetMode.kResetSafeParameters,
+        //         PersistMode.kPersistParameters);
 
         m_hoodMotor.getConfigurator().apply(HOOD_MOTOR_CONFIG);
 
@@ -89,12 +89,12 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
         m_conveyorMotor.configure(CONVEYOR_MOTOR_CONFIG, ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
 
-        m_shooterEncoder = m_RightTopShooterMotor.getEncoder();
+        m_shooterEncoder = m_LeftTopShoooterMotor.getEncoder();
         m_conveyorEncoder = m_conveyorMotor.getEncoder();
         m_hoodEncoder = new CANcoder(CANConstants.HOOD_ENCODER_CAN_ID);
         m_hoodEncoder.getConfigurator().apply(HOOD_CANCODER_CONFIG);
 
-        m_shooterController = m_RightTopShooterMotor.getClosedLoopController();
+        m_shooterController = m_LeftTopShoooterMotor.getClosedLoopController();
         m_conveyorController = m_conveyorMotor.getClosedLoopController();
 
     }
@@ -117,7 +117,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
 
     /** Stop the shooter motors immediately (open-loop stop). */
     public void stopShooter() {
-        m_RightTopShooterMotor.stopMotor();
+        m_LeftTopShoooterMotor.stopMotor();
     }
 
     /**
@@ -282,16 +282,6 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
     }
 
     /**
-     * Get right bottom shooter motor with auxillary shooter configurations
-     *
-     * @author Brady Bontrager, bbontrager
-     *         * @return SparkFlex Returns right bottom shooter motor in Shooter subsystem
-     */
-    public SparkFlex getRightBottomShooterMotor() {
-        return this.m_RightBottomShooterMotor;
-    }
-
-    /**
      * Get secondary shooter motor with auxillary shooter configurations
      * There are two secondary motors, and a parameter is required.
      *
@@ -309,7 +299,7 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
             if (followerMotorType == 1) {
                 return this.m_LeftTopShoooterMotor;
             } else if (followerMotorType == 2) {
-                return this.m_LeftBotShoooterMotor;
+                return null;
             } else {
                 throw new java.lang.IllegalArgumentException(
                         "Invalid parameter passed for shooter follower motor get function");
@@ -355,8 +345,10 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
 
         SmartDashboard.putNumber("Hood V", m_hoodEncoder.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("Shooter V", m_shooterEncoder.getVelocity());
+        SmartDashboard.putNumber("Shooter AMP", m_LeftTopShoooterMotor.getOutputCurrent());
         SmartDashboard.putNumber("Convey V", m_conveyorEncoder.getVelocity());
         SmartDashboard.putNumber("Feed V", m_rightFeedMotor.getVelocity().getValue().magnitude());
+        SmartDashboard.putNumber("Feed AMP", m_rightFeedMotor.getSupplyCurrent().getValueAsDouble());
 
         SmartDashboard.putNumber("Hood Pos", getHoodPosition());
 
@@ -375,9 +367,9 @@ public class ShooterSubsystem extends SubsystemBase implements AutoCloseable {
     @Override
     public void close() {
         m_RightTopShooterMotor.close();
-        m_RightBottomShooterMotor.close();
+        // m_RightBottomShooterMotor.close();
         m_LeftTopShoooterMotor.close();
-        m_LeftBotShoooterMotor.close();
+        // m_LeftBotShoooterMotor.close();
         m_hoodMotor.close();
         m_rightFeedMotor.close();
         // m_leftFeedMotor.close();

@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -14,7 +15,8 @@ public class EjectHopperCommand extends Command {
   final IntakeSubsystem intake;
   double startTime;
 
-  /** Creates a new EjectHopperCommand.
+  /**
+   * Creates a new EjectHopperCommand.
    * Ejects the hopper, takes 0.4 seconds to run
    */
   public EjectHopperCommand(IntakeSubsystem intake) {
@@ -27,20 +29,29 @@ public class EjectHopperCommand extends Command {
   public void initialize() {
     startTime = Timer.getFPGATimestamp();
 
-    intake.setHopper(-0.4);
-    intake.setIntakeRPS(10);
-    
+    intake.setHopper(-0.3);
+
+    if (DriverStation.isTeleop()) {
+      intake.setIntakeRPS(10);
+
+    }
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+  }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     intake.stopHopper();
-    intake.stopIntake();
+
+    if (DriverStation.isTeleop()) {
+      intake.stopIntake();
+    }
+
   }
 
   // Returns true when the command should end.

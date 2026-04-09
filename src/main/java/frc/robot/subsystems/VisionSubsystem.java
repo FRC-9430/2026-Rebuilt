@@ -28,15 +28,15 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
 
         var state = drive.getState();
 
-        if (Math.abs(state.Speeds.omegaRadiansPerSecond) > 1.5) {
+        if (Math.abs(state.Speeds.omegaRadiansPerSecond) > 2.5) {
             return;
         }
 
-        if (Math.abs(state.Speeds.vxMetersPerSecond) > 0.5) {
+        if (Math.abs(state.Speeds.vxMetersPerSecond) > 2.5) {
             return;
         }
 
-        if (Math.abs(state.Speeds.vyMetersPerSecond) > 0.5) {
+        if (Math.abs(state.Speeds.vyMetersPerSecond) > 2.5) {
             return;
         }
 
@@ -71,7 +71,7 @@ public class VisionSubsystem extends SubsystemBase implements AutoCloseable {
                     Math.abs(state.Speeds.vxMetersPerSecond) < 0.05 &&
                     Math.abs(state.Speeds.vyMetersPerSecond) < 0.05) { // Robot is still
                 for (var fiducial : est.rawFiducials) {
-                    if (fiducial.ambiguity < 0.07) { // Low Tag Ambiguity
+                    if (fiducial.ambiguity < 0.15) { // Low Tag Ambiguity
                         drive.resetRotation(est.pose.getRotation()); // Force Robot Rotation
                         break;
                     }

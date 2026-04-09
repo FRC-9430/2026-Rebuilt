@@ -16,44 +16,44 @@
     },
     {
       "anchor": {
-        "x": 6.663685152057245,
-        "y": 7.417996422182468
+        "x": 6.387853309481216,
+        "y": 7.596475849731663
       },
       "prevControl": {
-        "x": 7.31050124304301,
-        "y": 7.143458123346197
+        "x": 7.08906350103694,
+        "y": 7.5512364825345175
       },
       "nextControl": {
-        "x": 6.095821855153327,
-        "y": 7.659023548248491
+        "x": 5.884865831842576,
+        "y": 7.628926654740608
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.5321824686940966,
-        "y": 7.417996422182468
+        "x": 2.899391771019678,
+        "y": 7.596475849731663
       },
       "prevControl": {
-        "x": 4.153435471220304,
-        "y": 7.529723201181521
+        "x": 3.483506261180679,
+        "y": 7.645152057245081
       },
       "nextControl": {
-        "x": 2.646788972867003,
-        "y": 7.2587663451716145
+        "x": 2.0029015886690504,
+        "y": 7.521768334535775
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.542432915921288,
-        "y": 6.363345259391771
+        "x": 2.3315026833631483,
+        "y": 6.622951699463328
       },
       "prevControl": {
-        "x": 2.473525698673075,
-        "y": 6.60366129175563
+        "x": 2.2625954661149352,
+        "y": 6.863267731827187
       },
       "nextControl": null,
       "isLocked": false,
@@ -88,16 +88,16 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.5,
+    "maxVelocity": 4.0,
     "maxAcceleration": 5.0,
-    "maxAngularVelocity": 360.0,
-    "maxAngularAcceleration": 450.0,
+    "maxAngularVelocity": 300.0,
+    "maxAngularAcceleration": 360.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -47.99034497516538
+    "rotation": -48.61188500922298
   },
   "reversed": false,
   "folder": null,

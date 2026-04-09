@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SPL-INTL"
+            "pathName": "SPL-INTR"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "INTL-SZL"
+            "pathName": "INTR-SZR"
           }
         },
         {
@@ -31,13 +31,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SZL-INTL2"
+            "pathName": "SZR-INTR2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "INTL2-SZL2"
+            "pathName": "INTR2-SZR2"
           }
         },
         {

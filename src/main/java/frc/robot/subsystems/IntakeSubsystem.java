@@ -4,8 +4,10 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
@@ -21,15 +23,21 @@ import static frc.robot.Constants.IntakeConstants.*;
 public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
     final TalonFX m_intakeMotor;
+    final TalonFX aux_intakeMotor;
     final SparkFlex m_hopperMotor;
 
     final VelocityVoltage IntakeVV = new VelocityVoltage(0).withSlot(0);
 
     public IntakeSubsystem() {
         m_intakeMotor = new TalonFX(CANConstants.INTAKE_MOTOR_CAN_ID);
+        aux_intakeMotor = new TalonFX(CANConstants.AUX_INTAKE_MOTOR_CAN_ID);
         m_hopperMotor = new SparkFlex(CANConstants.HOPPER_MOTOR_CAN_ID, MotorType.kBrushless);
 
         m_intakeMotor.getConfigurator().apply(INTAKE_MOTOR_CONFIG);
+        aux_intakeMotor.getConfigurator().apply(AUX_INTAKE_MOTOR_CONFIG);
+
+        aux_intakeMotor.setControl(new Follower(CANConstants.INTAKE_MOTOR_CAN_ID, MotorAlignmentValue.Opposed));
+
         m_hopperMotor.configure(HOPPER_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     }
