@@ -9,10 +9,10 @@
       "prevControl": null,
       "nextControl": {
         "x": 4.672463036901124,
-        "y": 0.61956432912565
+        "y": 0.6195643291256498
       },
       "isLocked": false,
-      "linkedName": "SPL"
+      "linkedName": "SPR"
     },
     {
       "anchor": {
@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 5.287160738066913,
-        "y": 0.5294559018448905
+        "y": 0.5294559018448907
       },
       "nextControl": {
         "x": 6.05879868501578,
@@ -41,7 +41,7 @@
       },
       "nextControl": {
         "x": 8.126990560442986,
-        "y": 1.8638974357994395
+        "y": 1.8638974357994396
       },
       "isLocked": false,
       "linkedName": null
