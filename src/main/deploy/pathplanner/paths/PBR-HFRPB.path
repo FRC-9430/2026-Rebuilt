@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.079570661896244,
-        "y": 2.48
+        "x": 7.7994633273703045,
+        "y": 2.4530232558139526
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.079570661896244,
-        "y": 2.48
+        "x": 7.864364937388194,
+        "y": 2.826207513416815
       },
       "isLocked": false,
       "linkedName": "PBR"
@@ -28,7 +28,12 @@
       "linkedName": "HFRPB"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.1871657754010695,
+      "rotationDegrees": -90.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [

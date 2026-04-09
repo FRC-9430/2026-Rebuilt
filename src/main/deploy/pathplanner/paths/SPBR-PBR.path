@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 6.079570661896244,
-        "y": 2.48
+        "x": 7.7994633273703045,
+        "y": 2.4530232558139526
       },
       "prevControl": {
-        "x": 5.079570661896244,
-        "y": 2.48
+        "x": 6.7994633273703045,
+        "y": 2.4530232558139526
       },
       "nextControl": null,
       "isLocked": false,
@@ -40,6 +40,17 @@
         "type": "named",
         "data": {
           "name": "Eject Hopper"
+        }
+      }
+    },
+    {
+      "name": "Start Intake",
+      "waypointRelativePos": 0.6169491525423711,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Start Intake"
         }
       }
     }
