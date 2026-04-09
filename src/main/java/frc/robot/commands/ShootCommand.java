@@ -71,7 +71,7 @@ public class ShootCommand extends Command {
         intake.setIntakeRPS(20);
 
       if (Timer.getFPGATimestamp() > bumpTimer + 0.6) {
-        intake.setHopper(0.18);
+        intake.setHopper(0.3);
       }
 
       if (Timer.getFPGATimestamp() > bumpTimer + 2.0) {

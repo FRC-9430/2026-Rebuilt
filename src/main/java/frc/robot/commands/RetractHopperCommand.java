@@ -15,7 +15,7 @@ public class RetractHopperCommand extends Command {
   double startTime;
 
   /** Creates a new RetractHopperCommand. 
-   * Retracts the hopper, takes 0.4 seconds to run
+   * Retracts the hopper, takes 0.5 seconds to run
   */
   public RetractHopperCommand(IntakeSubsystem intake) {
     addRequirements(intake);
@@ -27,7 +27,7 @@ public class RetractHopperCommand extends Command {
   public void initialize() {
     startTime = Timer.getFPGATimestamp();
 
-    intake.setHopper(0.65);
+    intake.setHopper(0.7);
     intake.setIntakeRPS(10);
     
   }
@@ -47,6 +47,6 @@ public class RetractHopperCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (Timer.getFPGATimestamp() > (startTime + 0.4)); // Run 0.4 second
+    return (Timer.getFPGATimestamp() > (startTime + 0.5)); // Run 0.5 second
   }
 }
