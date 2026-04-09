@@ -1,0 +1,66 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.6619856887298745,
+        "y": 2.48
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.66198568872988,
+        "y": 2.48
+      },
+      "isLocked": false,
+      "linkedName": "SPBR"
+    },
+    {
+      "anchor": {
+        "x": 6.079570661896244,
+        "y": 2.48
+      },
+      "prevControl": {
+        "x": 5.079570661896244,
+        "y": 2.48
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "PBR"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Eject Hopper",
+      "waypointRelativePos": 0.3796610169491527,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Eject Hopper"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 5.0,
+    "maxAngularVelocity": 300.0,
+    "maxAngularAcceleration": 360.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 4.0,
+    "rotation": 180.0
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}
