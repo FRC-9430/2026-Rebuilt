@@ -1,0 +1,107 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.7994633273703045,
+        "y": 4.254042933810375
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.555416562324316,
+        "y": 4.30827554826504
+      },
+      "isLocked": false,
+      "linkedName": "HFLPB"
+    },
+    {
+      "anchor": {
+        "x": 6.0308944543828265,
+        "y": 5.633202146690519
+      },
+      "prevControl": {
+        "x": 7.031408585531459,
+        "y": 5.556239521217549
+      },
+      "nextControl": {
+        "x": 5.781630833007431,
+        "y": 5.652376271411703
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.223899821109123,
+        "y": 5.633202146690519
+      },
+      "prevControl": {
+        "x": 3.4730362606703427,
+        "y": 5.612440776727085
+      },
+      "nextControl": {
+        "x": 2.9747633815479033,
+        "y": 5.6539635166539535
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.077871198568873,
+        "y": 5.081538461538462
+      },
+      "prevControl": {
+        "x": 3.017237292309789,
+        "y": 5.324074086574795
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": 0.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Stop Intake",
+      "waypointRelativePos": 1.9016949152542364,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Start Intake"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 5.0,
+    "maxAngularVelocity": 300.0,
+    "maxAngularAcceleration": 360.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -33.54610858390778
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 88.56790381583531
+  },
+  "useDefaultConstraints": true
+}

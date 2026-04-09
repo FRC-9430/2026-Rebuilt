@@ -1,0 +1,37 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SPBL-PB"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "PB-HFLPB"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HFLPB-SZBL"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Aim & Shoot + Timeout"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
