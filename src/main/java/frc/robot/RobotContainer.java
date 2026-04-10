@@ -20,6 +20,7 @@ import frc.robot.util.TunerConstants;
 // import frc.robot.Constants.ClimberArmConstants;
 // import frc.robot.subsystems.ClimbingArmSubsystem;
 import frc.robot.autos.AimAndShootCommand;
+import frc.robot.commands.DriveForwardCommand;
 import frc.robot.commands.EjectHopperCommand;
 import frc.robot.commands.RetractHopperCommand;
 import frc.robot.commands.ShootCommand;
@@ -252,6 +253,15 @@ public class RobotContainer {
         namedCommands.put("Stop Aim and Shoot", new InstantCommand(() -> aimAndShootCommand.cancel()));
         namedCommands.put("Stow Hood", new InstantCommand(() -> shooter.stowHood()));
         namedCommands.put("Shoot While Touching Hub", new ShootTouchingHubCommand(shooter, intake));
+        namedCommands.put("Drive Forward", new DriveForwardCommand(drivetrain, 2));
+        namedCommands.put("Reset with Front Cam", new InstantCommand(()->{
+            var seenPose = vision.getPoseEstimateMT1().pose;
+            if (!seenPose.equals(new Pose2d())) {
+                drivetrain.resetPose(vision.getPoseEstimateMT1().pose);
+            } else {
+                drivetrain.seedFieldCentric();
+            }
+        }));
 
         namedCommands.put("Stop All Motors & Commands", new InstantCommand(() -> {
             CommandScheduler.getInstance().cancelAll();
