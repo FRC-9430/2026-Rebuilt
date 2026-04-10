@@ -37,7 +37,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Aim & Shoot 5s"
+            "name": "Aim & Shoot + Timeout"
           }
         }
       ]

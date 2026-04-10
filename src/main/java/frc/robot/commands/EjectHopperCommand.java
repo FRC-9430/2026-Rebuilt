@@ -29,7 +29,7 @@ public class EjectHopperCommand extends Command {
   public void initialize() {
     startTime = Timer.getFPGATimestamp();
 
-    intake.setHopper(-0.3);
+    intake.setHopper(-0.4);
 
     if (DriverStation.isTeleop()) {
       intake.setIntakeRPS(10);
