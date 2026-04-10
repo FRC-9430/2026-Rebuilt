@@ -19,13 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Reset with Front Cam"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "RWL-OBL"
+            "name": "Rot Clock"
           }
         },
         {

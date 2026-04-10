@@ -25,6 +25,7 @@ import frc.robot.commands.EjectHopperCommand;
 import frc.robot.commands.RetractHopperCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.commands.ShootTouchingHubCommand;
+import frc.robot.commands.SpinCommand;
 import frc.robot.commands.VolleyShootCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
@@ -254,6 +255,7 @@ public class RobotContainer {
         namedCommands.put("Stow Hood", new InstantCommand(() -> shooter.stowHood()));
         namedCommands.put("Shoot While Touching Hub", new ShootTouchingHubCommand(shooter, intake));
         namedCommands.put("Drive Forward", new DriveForwardCommand(drivetrain, 2));
+        namedCommands.put("Rot Clock", new SpinCommand(drivetrain, 0.6));
         namedCommands.put("Reset with Front Cam", new InstantCommand(()->{
             var seenPose = vision.getPoseEstimateMT1().pose;
             if (!seenPose.equals(new Pose2d())) {
